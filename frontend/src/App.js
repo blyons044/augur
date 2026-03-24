@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
+import Nav from './components/Nav';
 import LandingPage from './pages/LandingPage';
 import DashboardPage from './pages/DashboardPage';
 import IndicatorPage from './pages/IndicatorPage';
@@ -34,6 +35,7 @@ function App() {
 
   return (
     <Router>
+      <Nav />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/empires" element={<EmpireExplorer />} />

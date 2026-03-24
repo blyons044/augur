@@ -186,9 +186,7 @@ function IndicatorPage({ indicatorData, loading, error }) {
 
   return (
     <div className="app indicator-page">
-      <nav className="dashboard-nav">
-        <Link to="/dashboard" className="nav-back">← Back to Dashboard</Link>
-      </nav>
+      
 
       <header className="indicator-header">
         <span className="section-label">{meta.source}</span>

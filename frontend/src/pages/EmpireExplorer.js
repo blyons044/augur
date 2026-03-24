@@ -74,9 +74,7 @@ function EmpireExplorer() {
 
   return (
     <div className="app empire-explorer">
-      <nav className="dashboard-nav">
-        <Link to="/" className="nav-back">← Back to Augur</Link>
-      </nav>
+      
 
       <header className="indicator-header">
         <span className="section-label">Empire Explorer</span>

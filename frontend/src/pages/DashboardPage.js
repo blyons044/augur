@@ -25,9 +25,7 @@ function DashboardPage({ indicators, indicatorData, loading, error }) {
 
   return (
     <div className="app">
-      <nav className="dashboard-nav">
-        <Link to="/" className="nav-back">← Back to Augur</Link>
-      </nav>
+      
       <Header />
       <Dashboard indicators={indicators} indicatorData={indicatorData} />
     </div>
