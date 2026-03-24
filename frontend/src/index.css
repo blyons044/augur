@@ -1,0 +1,43 @@
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Georgia,'Times New Roman',serif;background:#0a0a0a;color:#d4d4d4;line-height:1.6;-webkit-font-smoothing:antialiased}
+.app{max-width:1200px;margin:0 auto;padding:0 24px}
+.loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh}
+.loading-text{color:#999;font-size:14px;margin-top:16px;font-family:'Courier New',monospace}
+.error-text{color:#e74c3c;font-size:14px;margin-top:16px}
+.header{padding:60px 0 40px;border-bottom:1px solid #2a2a2a;margin-bottom:48px}
+.augur-title{font-size:48px;font-weight:400;letter-spacing:16px;color:#fff;font-family:Georgia,serif}
+.augur-subtitle{font-size:14px;letter-spacing:4px;color:#aaa;text-transform:uppercase;margin-top:8px;font-family:'Courier New',monospace}
+.header-meta{margin-top:24px}
+.header-description{font-size:15px;color:#bbb;max-width:680px;line-height:1.7}
+.header-links{margin-top:16px;display:flex;gap:24px}
+.header-link{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#888;cursor:pointer;font-family:'Courier New',monospace;transition:color .2s}
+.header-link:hover{color:#e74c3c}
+.pillar-section{margin-bottom:48px}
+.pillar-title{font-size:13px;letter-spacing:3px;text-transform:uppercase;color:#e74c3c;font-weight:400;margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid #222;font-family:'Courier New',monospace}
+.indicator-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.indicator-card{background:#131313;border:1px solid #252525;padding:24px;transition:border-color .2s,background .2s}
+.indicator-card:hover{border-color:#444;background:#161616}
+.indicator-card.no-data{opacity:.7}
+.indicator-name{font-size:15px;font-weight:400;color:#e0e0e0;margin-bottom:16px}
+.uncomfortable-number{margin-bottom:16px}
+.un-value{display:block;font-size:36px;font-weight:400;color:#e74c3c;font-family:'Courier New',monospace;line-height:1.1;margin-bottom:6px}
+.un-statement{display:block;font-size:13px;color:#bbb;line-height:1.5}
+.trend-analysis{margin:12px 0;padding:10px 12px;background:#0e0e0e;border-left:2px solid #e74c3c}
+.trend-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#777;font-family:'Courier New',monospace;margin-bottom:6px}
+.trend-stats{display:flex;flex-wrap:wrap;gap:16px}
+.trend-stat{display:flex;flex-direction:column}
+.trend-stat-value{font-size:16px;color:#e0e0e0;font-family:'Courier New',monospace;font-weight:400}
+.trend-stat-value.rising{color:#e74c3c}
+.trend-stat-value.falling{color:#27ae60}
+.trend-stat-value.neutral{color:#f39c12}
+.trend-stat-label{font-size:10px;color:#888;font-family:'Courier New',monospace;margin-top:2px}
+.sparkline{width:100%;height:60px;margin:12px 0}
+.no-data-placeholder{height:60px;display:flex;align-items:center;justify-content:center;margin:12px 0;border:1px dashed #2a2a2a}
+.no-data-placeholder span{font-size:11px;color:#555;font-family:'Courier New',monospace;letter-spacing:1px}
+.card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid #222}
+.source{font-size:11px;color:#777;font-family:'Courier New',monospace}
+.data-count{font-size:10px;color:#555;font-family:'Courier New',monospace}
+.dashboard-footer{margin-top:64px;padding:40px 0 60px;border-top:1px solid #222}
+.footer-text{font-size:14px;color:#888;max-width:640px;line-height:1.7;font-family:'Courier New',monospace}
+.footer-methodology{font-size:14px;color:#666;margin-top:16px;font-style:italic;max-width:640px;line-height:1.7}
+@media(max-width:768px){.augur-title{font-size:32px;letter-spacing:10px}.indicator-grid{grid-template-columns:1fr}.header{padding:40px 0 24px}.trend-stats{gap:12px}}
