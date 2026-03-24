@@ -3,7 +3,7 @@ import axios from 'axios';
 import Dashboard from './components/Dashboard';
 import Header from './components/Header';
 import './index.css';
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const API_BASE = process.env.REACT_APP_API_URL || 'https://augur.up.railway.app';
 function App() {
   const [indicators, setIndicators] = useState(null);
   const [indicatorData, setIndicatorData] = useState({});

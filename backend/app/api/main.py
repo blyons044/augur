@@ -37,6 +37,9 @@ app.add_middleware(
         "http://localhost:5173",
         "https://augur.dev",       # Production frontend
         "https://augur.vercel.app",
+        "https://augur-index.vercel.app",
+        "https://frontend-rho-gilt-80.vercel.app",
+        "https://frontend-ceal6bc3p-augurofficial.vercel.app",
     ],
     allow_credentials=False,  # No user accounts, no credentials
     allow_methods=["GET"],    # Read-only
