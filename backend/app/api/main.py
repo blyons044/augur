@@ -1,11 +1,3 @@
-try:
-    try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except ImportError:
-    pass
-except ImportError:
-    pass
 """
 Augur FastAPI Application
 
