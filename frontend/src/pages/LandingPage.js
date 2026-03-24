@@ -53,7 +53,7 @@ function LandingPage() {
           </p>
           <div className="hero-actions">
             <Link to="/dashboard" className="hero-cta">View the Dashboard</Link>
-            <a href="https://github.com/augurofficial/augur" className="hero-secondary" target="_blank" rel="noopener noreferrer">Source Code</a>
+            <Link to="/empires" className="hero-secondary">Empire Explorer</Link>
           </div>
         </div>
       </section>
