@@ -27,9 +27,70 @@ const NAMES = {
   elite_overproduction: 'Elite Overproduction', infrastructure_decay: 'Infrastructure Decay', media_fragmentation: 'Media Fragmentation & Epistemic Divergence',
   geopolitical_standing: 'Geopolitical Standing & External Pressure', resource_stress: 'Resource & Environmental Stress',
 };
+function StressOverview({ indicatorData }) {
+  const scores = [];
+  // Public trust: lower is worse (inverted)
+  const trust = indicatorData.public_trust;
+  if (trust && trust.data) {
+    const pts = trust.data.filter(d => d.series_id === 'gallup_congress' && d.value != null);
+    if (pts.length) scores.push({ name: 'Institutional Trust', value: Math.max(0, 100 - pts[pts.length-1].value), max: 100 });
+  }
+  // Polarization: higher gap is worse
+  const pol = indicatorData.political_polarization;
+  if (pol && pol.data) {
+    const pts = pol.data.filter(d => d.series_id === 'dw_nominate_House_200' && d.value != null);
+    if (pts.length) scores.push({ name: 'Polarization', value: Math.min(100, pts[pts.length-1].value * 150), max: 100 });
+  }
+  // Debt to GDP: higher is worse
+  const debt = indicatorData.debt_to_gdp;
+  if (debt && debt.data) {
+    const pts = debt.data.filter(d => d.series_id === 'GFDEGDQ188S' && d.value != null);
+    if (pts.length) scores.push({ name: 'Debt Burden', value: Math.min(100, pts[pts.length-1].value * 0.8), max: 100 });
+  }
+  // Wealth inequality: higher is worse
+  const wealth = indicatorData.wealth_inequality;
+  if (wealth && wealth.data) {
+    const pts = wealth.data.filter(d => d.series_id === 'WFRBST01134' && d.value != null);
+    if (pts.length) scores.push({ name: 'Wealth Concentration', value: Math.min(100, pts[pts.length-1].value * 2.5), max: 100 });
+  }
+  // Media trust: lower is worse
+  const media = indicatorData.media_fragmentation;
+  if (media && media.data) {
+    const pts = media.data.filter(d => d.series_id === 'gallup_news_trust' && d.value != null);
+    if (pts.length) scores.push({ name: 'Epistemic Fracture', value: Math.max(0, 100 - pts[pts.length-1].value), max: 100 });
+  }
+
+  if (!scores.length) return null;
+  const composite = Math.round(scores.reduce((s, x) => s + x.value, 0) / scores.length);
+
+  return (
+    <div className="stress-overview">
+      <div className="stress-score-container">
+        <div className="stress-composite">
+          <span className="stress-number">{composite}</span>
+          <span className="stress-label">Composite Stress Index</span>
+          <span className="stress-scale">0 = no stress · 100 = critical</span>
+        </div>
+        <div className="stress-bars">
+          {scores.map(s => (
+            <div className="stress-bar-row" key={s.name}>
+              <span className="stress-bar-name">{s.name}</span>
+              <div className="stress-bar-track">
+                <div className="stress-bar-fill" style={{width: s.value+'%', background: s.value > 75 ? 'var(--red)' : s.value > 50 ? 'var(--amber)' : 'var(--green)'}} />
+              </div>
+              <span className="stress-bar-val">{Math.round(s.value)}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Dashboard({ indicators, indicatorData }) {
   return (
     <main className="dashboard">
+      <StressOverview indicatorData={indicatorData} />
       {PILLARS.map((p) => (
         <section key={p.id} className="pillar-section">
           <h2 className="pillar-title">{p.name}</h2>

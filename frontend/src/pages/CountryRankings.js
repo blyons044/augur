@@ -21,9 +21,9 @@ const FLAGS = {
 };
 
 const METRICS = [
-  { id:'gdp_ppp', name:'GDP (PPP)', indicator:'geopolitical_standing', series:'NY.GDP.MKTP.PP.CD', format: v=>'$'+(v/1e12).toFixed(1)+'T', desc:'Economic output adjusted for purchasing power', higherIs:'stronger', sortDir:-1 },
-  { id:'military', name:'Military Spending (% GDP)', indicator:'geopolitical_standing', series:'MS.MIL.XPND.GD.ZS', format: v=>v.toFixed(1)+'%', desc:'Defense expenditure as share of economy', higherIs:'higher burden', sortDir:-1 },
-  { id:'gini', name:'Gini Index', indicator:'wealth_inequality', series:'SI.POV.GINI', format: v=>v.toFixed(1), desc:'Income inequality (0 = perfect equality, 100 = maximum)', higherIs:'more unequal', sortDir:-1 },
+  { id:'gdp_ppp', name:'GDP (PPP)', indicator:'geopolitical_standing', series:'NY.GDP.MKTP.PP.CD', format: v=>'$'+(v/1e12).toFixed(1)+'T', desc:'Economic output adjusted for purchasing power', higherIs:'stronger', sortDir:1 },
+  { id:'military', name:'Military Spending (% GDP)', indicator:'geopolitical_standing', series:'MS.MIL.XPND.GD.ZS', format: v=>v.toFixed(1)+'%', desc:'Defense expenditure as share of economy', higherIs:'higher burden', sortDir:1 },
+  { id:'gini', name:'Gini Index', indicator:'wealth_inequality', series:'SI.POV.GINI', format: v=>v.toFixed(1), desc:'Income inequality (0 = perfect equality, 100 = maximum)', higherIs:'more unequal', sortDir:1 },
 ];
 
 function CountryRankings() {
@@ -86,7 +86,7 @@ function CountryRankings() {
   return (
     <div className="app rankings-page">
       <nav className="dashboard-nav">
-        <Link to="/" className="nav-back">\u2190 Back to Augur</Link>
+        <Link to="/" className="nav-back">← Back to Augur</Link>
       </nav>
       <header className="indicator-header">
         <span className="section-label">Global Rankings</span>
@@ -128,7 +128,7 @@ function CountryRankings() {
         })}
       </div>
       <div className="empire-cta">
-        <Link to="/dashboard" className="hero-cta">View US Dashboard \u2192</Link>
+        <Link to="/dashboard" className="hero-cta">View US Dashboard →</Link>
       </div>
       <footer className="dashboard-footer">
         <p className="footer-methodology">
