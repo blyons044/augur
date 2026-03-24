@@ -110,16 +110,24 @@ const META = {
 };
 
 function FullChart({ data, seriesId, indicatorId }) {
+  // Color palette for multiple series
+  const COLORS = ['#e04040', '#40c080', '#e0a030', '#5080c0', '#c060a0', '#60c0c0'];
+
   const ref = useRef();
   useEffect(() => {
     if (!data || !data.data) return;
-    let pts = data.data.filter(d => d.series_id === seriesId && d.value != null);
-    if (!pts.length) {
-      const sc = {}; data.data.forEach(d => { if (d.value != null) sc[d.series_id] = (sc[d.series_id] || 0) + 1; });
-      const b = Object.entries(sc).sort((a, b) => b[1] - a[1])[0];
-      if (b) pts = data.data.filter(d => d.series_id === b[0] && d.value != null);
-    }
-    if (pts.length < 2) return;
+    // Group by series
+    const seriesMap = {};
+    data.data.forEach(d => {
+      if (d.value == null) return;
+      if (!seriesMap[d.series_id]) seriesMap[d.series_id] = [];
+      seriesMap[d.series_id].push(d);
+    });
+    const allSeries = Object.entries(seriesMap).filter(([k,v]) => v.length >= 2).sort((a,b) => b[1].length - a[1].length);
+    if (!allSeries.length) return;
+    // Use primary series for main chart, show all
+    let pts = seriesMap[seriesId] || allSeries[0][1];
+    if (pts.length < 2) pts = allSeries[0][1];
     if (pts.length > 400) {
       const yr = {}; pts.forEach(p => { const y = p.date_value.substring(0, 4); if (!yr[y]) yr[y] = p; }); pts = Object.values(yr);
     }
@@ -129,7 +137,11 @@ function FullChart({ data, seriesId, indicatorId }) {
 
     const parseDate = d => new Date(d.date_value);
     const x = d3.scaleTime().domain(d3.extent(pts, parseDate)).range([m.l, W - m.r]);
-    const y = d3.scaleLinear().domain(d3.extent(pts, d => d.value)).nice().range([H - m.b, m.t]);
+    // Scale y-axis to encompass all visible series
+    let allVals = [];
+    allSeries.slice(0, 6).forEach(([sid, spts]) => spts.forEach(d => allVals.push(d.value)));
+    const yDomain = allVals.length ? d3.extent(allVals) : d3.extent(pts, d => d.value);
+    const y = d3.scaleLinear().domain(yDomain).nice().range([H - m.b, m.t]);
 
     // Grid lines
     svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(8).tickSize(0)).select('.domain').attr('stroke', '#1c1c30');
@@ -152,6 +164,16 @@ function FullChart({ data, seriesId, indicatorId }) {
     // End dot
     const last = pts[pts.length - 1];
     svg.append('circle').attr('cx', x(parseDate(last))).attr('cy', y(last.value)).attr('r', 4).attr('fill', '#e04040');
+
+    // Overlay additional series as thinner lines
+    allSeries.slice(0, 5).forEach(([sid, spts], idx) => {
+      if (sid === (seriesId || allSeries[0][0])) return;
+      let sp = spts;
+      if (sp.length > 400) { const yr = {}; sp.forEach(p => { const y = p.date_value.substring(0,4); if(!yr[y]) yr[y]=p; }); sp = Object.values(yr); }
+      const col = COLORS[(idx + 1) % COLORS.length];
+      svg.append('path').datum(sp).attr('fill','none').attr('stroke',col).attr('stroke-width',1.2).attr('stroke-opacity',0.7)
+        .attr('d', d3.line().x(d => x(parseDate(d))).y(d => y(d.value)).curve(d3.curveMonotoneX));
+    });
 
     // Hover tooltip
     const tooltip = svg.append('g').style('display', 'none');
@@ -204,6 +226,22 @@ function IndicatorPage({ indicatorData, loading, error }) {
             <span>{data.record_count} observations</span>
             <span>Source: {meta.source}</span>
           </div>
+          {data.data && (() => {
+            const sm = {}; data.data.forEach(d => { if(d.value!=null) { if(!sm[d.series_id]) sm[d.series_id]=0; sm[d.series_id]++; }});
+            const series = Object.entries(sm).filter(([k,v])=>v>=2).sort((a,b)=>b[1]-a[1]).slice(0,6);
+            const COLORS = ['#e04040','#40c080','#e0a030','#5080c0','#c060a0','#60c0c0'];
+            return series.length > 1 ? (
+              <div className="series-legend">
+                {series.map(([sid,count],i) => (
+                  <span key={sid} className="legend-item">
+                    <span className="legend-dot" style={{background:COLORS[i%COLORS.length]}} />
+                    <span className="legend-label">{sid.replace(/_/g,' ')}</span>
+                    <span className="legend-count">{count}</span>
+                  </span>
+                ))}
+              </div>
+            ) : null;
+          })()}
         </section>
       )}
 
@@ -224,6 +262,19 @@ function IndicatorPage({ indicatorData, loading, error }) {
           <a href={meta.sourceUrl} className="source-link" target="_blank" rel="noopener noreferrer">
             View raw data at source →
           </a>
+          {data && data.data && (
+            <button className="export-btn" style={{marginLeft:"20px"}} onClick={() => {
+              const rows = [['date','series','value','unit']];
+              data.data.forEach(d => rows.push([d.date_value, d.series_id, d.value, d.unit || '']));
+              const csv = rows.map(r => r.join(',')).join('\n');
+              const blob = new Blob([csv], {type:'text/csv'});
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url; a.download = id + '_augur_data.csv'; a.click();
+            }}>
+              Download CSV ↓
+            </button>
+          )}
         </section>
       </div>
 
