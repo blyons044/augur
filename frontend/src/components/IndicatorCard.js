@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as d3 from 'd3';
 function fmt(v) {
   if (typeof v !== 'number') return v;
@@ -71,9 +72,10 @@ function TrendAnalysis({t}) {
   );
 }
 function IndicatorCard({id,name,uncomfortableNumber,data,hasData}) {
+  const navigate = useNavigate();
   const trends = hasData ? computeTrends(data, SERIES[id]||'') : null;
   return (
-    <div className={'indicator-card '+(hasData?'has-data':'no-data')}>
+    <div className={'indicator-card '+(hasData?'has-data':'no-data')} onClick={() => navigate('/indicator/'+id)} style={{cursor:'pointer'}}>
       <h3 className="indicator-name">{name}</h3>
       <div className="uncomfortable-number">
         <span className="un-value">{uncomfortableNumber.value}</span>
