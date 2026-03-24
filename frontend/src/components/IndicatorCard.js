@@ -9,9 +9,6 @@ function fmt(v) {
   if (a >= 1e4) return (v/1e3).toFixed(1) + 'K';
   return v.toFixed(1);
 }
-
-
-
 function computeTrends(data, seriesId) {
   if (!data || !data.data) return null;
   let pts = data.data.filter(d => d.series_id === seriesId && d.value != null);
@@ -48,12 +45,12 @@ function SparkLine({ data, seriesId }) {
     const y=d3.scaleLinear().domain(d3.extent(pts,d=>d.value)).range([H-m.b,m.t]);
     const defs=svg.append('defs');
     const g=defs.append('linearGradient').attr('id','g-'+data.indicator_id).attr('x1','0%').attr('y1','0%').attr('x2','0%').attr('y2','100%');
-    g.append('stop').attr('offset','0%').attr('stop-color','#e74c3c').attr('stop-opacity',0.25);
-    g.append('stop').attr('offset','100%').attr('stop-color','#e74c3c').attr('stop-opacity',0);
+    g.append('stop').attr('offset','0%').attr('stop-color','#d94040').attr('stop-opacity',0.25);
+    g.append('stop').attr('offset','100%').attr('stop-color','#d94040').attr('stop-opacity',0);
     svg.append('path').datum(pts).attr('fill','url(#g-'+data.indicator_id+')').attr('d',d3.area().x((_,i)=>x(i)).y0(H-m.b).y1(d=>y(d.value)).curve(d3.curveMonotoneX));
-    svg.append('path').datum(pts).attr('fill','none').attr('stroke','#e74c3c').attr('stroke-width',1.5).attr('d',d3.line().x((_,i)=>x(i)).y(d=>y(d.value)).curve(d3.curveMonotoneX));
+    svg.append('path').datum(pts).attr('fill','none').attr('stroke','#d94040').attr('stroke-width',1.5).attr('d',d3.line().x((_,i)=>x(i)).y(d=>y(d.value)).curve(d3.curveMonotoneX));
     const last=pts[pts.length-1];
-    svg.append('circle').attr('cx',x(pts.length-1)).attr('cy',y(last.value)).attr('r',3).attr('fill','#e74c3c');
+    svg.append('circle').attr('cx',x(pts.length-1)).attr('cy',y(last.value)).attr('r',3).attr('fill','#d94040');
   },[data,seriesId]);
   return <svg ref={ref} viewBox="0 0 280 60" className="sparkline"/>;
 }

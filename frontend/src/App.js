@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
-import Dashboard from './components/Dashboard';
-import Header from './components/Header';
+import LandingPage from './pages/LandingPage';
+import DashboardPage from './pages/DashboardPage';
 import './index.css';
+
 const API_BASE = process.env.REACT_APP_API_URL || 'https://augur.up.railway.app';
+
 function App() {
   const [indicators, setIndicators] = useState(null);
   const [indicatorData, setIndicatorData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -21,10 +25,25 @@ function App() {
         }));
         const dm = {}; results.forEach(([id, d]) => { if (d) dm[id] = d; }); setIndicatorData(dm); setLoading(false);
       } catch (err) { setError(err.message); setLoading(false); }
-    } fetchData();
+    }
+    fetchData();
   }, []);
-  if (loading) return (<div className="loading-screen"><h1 className="augur-title">AUGUR</h1><p className="loading-text">Loading civilizational stress data...</p></div>);
-  if (error) return (<div className="loading-screen"><h1 className="augur-title">AUGUR</h1><p className="error-text">Failed to connect: {error}</p><p className="loading-text">Make sure the API is running on port 8000</p></div>);
-  return (<div className="app"><Header /><Dashboard indicators={indicators} indicatorData={indicatorData} /></div>);
+
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/dashboard" element={
+          <DashboardPage
+            indicators={indicators}
+            indicatorData={indicatorData}
+            loading={loading}
+            error={error}
+          />
+        } />
+      </Routes>
+    </Router>
+  );
 }
+
 export default App;
