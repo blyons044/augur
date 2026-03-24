@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import * as d3 from 'd3';
 
@@ -109,16 +109,24 @@ const META = {
   },
 };
 
-function FullChart({ data, seriesId, indicatorId }) {
+function FullChart({ data, seriesId, indicatorId, timeRange }) {
   // Color palette for multiple series
   const COLORS = ['#e04040', '#40c080', '#e0a030', '#5080c0', '#c060a0', '#60c0c0'];
 
   const ref = useRef();
   useEffect(() => {
     if (!data || !data.data) return;
+    // Filter by time range
+    const now = new Date().getFullYear();
+    const minYear = timeRange === '10yr' ? now - 10 : timeRange === '25yr' ? now - 25 : 0;
+    const filtered = data.data.filter(d => {
+      const yr = parseInt(d.date_value.substring(0,4));
+      return yr >= minYear;
+    });
+
     // Group by series
     const seriesMap = {};
-    data.data.forEach(d => {
+    filtered.forEach(d => {
       if (d.value == null) return;
       if (!seriesMap[d.series_id]) seriesMap[d.series_id] = [];
       seriesMap[d.series_id].push(d);
@@ -139,7 +147,7 @@ function FullChart({ data, seriesId, indicatorId }) {
     const x = d3.scaleTime().domain(d3.extent(pts, parseDate)).range([m.l, W - m.r]);
     // Scale y-axis to encompass all visible series
     let allVals = [];
-    allSeries.slice(0, 6).forEach(([sid, spts]) => spts.forEach(d => allVals.push(d.value)));
+    allSeries.slice(0, 5).forEach(([sid, spts]) => spts.forEach(d => allVals.push(d.value)));
     const yDomain = allVals.length ? d3.extent(allVals) : d3.extent(pts, d => d.value);
     const y = d3.scaleLinear().domain(yDomain).nice().range([H - m.b, m.t]);
 
@@ -195,12 +203,13 @@ function FullChart({ data, seriesId, indicatorId }) {
       })
       .on('mouseleave', () => tooltip.style('display', 'none'));
 
-  }, [data, seriesId]);
+  }, [data, seriesId, timeRange]);
   return <svg ref={ref} viewBox="0 0 900 360" className="full-chart" />;
 }
 
 function IndicatorPage({ indicatorData, loading, error }) {
   const { id } = useParams();
+  const [timeRange, setTimeRange] = useState('all');
   const meta = META[id];
   const data = indicatorData[id];
 
@@ -221,7 +230,14 @@ function IndicatorPage({ indicatorData, loading, error }) {
 
       {data && (
         <section className="chart-section">
-          <FullChart data={data} seriesId={meta.series} indicatorId={id} />
+          <div className="time-range-selector">
+            {['10yr','25yr','all'].map(r => (
+              <button key={r} className={'time-btn'+(timeRange===r?' time-btn-active':'')} onClick={()=>setTimeRange(r)}>
+                {r === 'all' ? 'All Data' : r === '25yr' ? '25 Years' : '10 Years'}
+              </button>
+            ))}
+          </div>
+          <FullChart data={data} seriesId={meta.series} indicatorId={id} timeRange={timeRange} />
           <div className="chart-meta">
             <span>{data.record_count} observations</span>
             <span>Source: {meta.source}</span>
