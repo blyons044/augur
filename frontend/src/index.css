@@ -70,3 +70,24 @@
 .parallel-divider{width:1px;background:var(--border);min-height:60px;align-self:stretch}
 .empire-cta{text-align:center;padding:48px 0 32px}
 @media(max-width:768px){.parallel-comparison{grid-template-columns:1fr;gap:16px}.parallel-divider{width:100%;height:1px;min-height:1px}.empire-selector{flex-direction:column}}
+
+.rankings-page{padding-top:20px}
+.metric-selector{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.metric-desc{margin-bottom:40px}
+.metric-desc p{font:300 16px/1.7 var(--font-body);color:var(--text-secondary)}
+.metric-note{font:400 11px var(--font-mono);color:var(--text-muted);letter-spacing:.5px;margin-top:8px;display:block}
+.rankings-table{display:flex;flex-direction:column;gap:4px;margin-bottom:64px}
+.ranking-row{display:grid;grid-template-columns:40px 36px 160px 1fr 100px 50px;align-items:center;gap:12px;padding:12px 16px;background:var(--bg-card);border:1px solid transparent;transition:all .2s;border-radius:2px}
+.ranking-row:hover{border-color:var(--border);background:var(--bg-card-hover)}
+.ranking-row-us{border-color:var(--red);background:rgba(224,64,64,.05)}
+.ranking-row-us:hover{background:rgba(224,64,64,.08)}
+.ranking-rank{font:500 14px var(--font-mono);color:var(--text-muted);text-align:center}
+.ranking-row-us .ranking-rank{color:var(--red)}
+.ranking-flag{font-size:20px;text-align:center}
+.ranking-country{font:400 14px var(--font-body);color:var(--text-primary);white-space:nowrap}
+.ranking-row-us .ranking-country{color:#fff;font-weight:600}
+.ranking-bar-container{height:20px;background:var(--bg-accent);border-radius:2px;overflow:hidden}
+.ranking-bar{height:100%;border-radius:2px;transition:width .6s ease}
+.ranking-value{font:400 13px var(--font-mono);color:var(--text-bright);text-align:right}
+.ranking-year{font:400 10px var(--font-mono);color:var(--text-muted);text-align:right}
+@media(max-width:768px){.ranking-row{grid-template-columns:30px 30px 120px 1fr 80px;font-size:12px}.ranking-year{display:none}}

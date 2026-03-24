@@ -5,6 +5,7 @@ import LandingPage from './pages/LandingPage';
 import DashboardPage from './pages/DashboardPage';
 import IndicatorPage from './pages/IndicatorPage';
 import EmpireExplorer from './pages/EmpireExplorer';
+import CountryRankings from './pages/CountryRankings';
 import './index.css';
 
 const API_BASE = process.env.REACT_APP_API_URL || 'https://augur.up.railway.app';
@@ -36,6 +37,8 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/empires" element={<EmpireExplorer />} />
+        <Route path="/rankings" element={<CountryRankings />} />
+        <Route path="/rankings" element={<CountryRankings />} />
         <Route path="/indicator/:id" element={
           <IndicatorPage indicatorData={indicatorData} loading={loading} error={error} />
         } />
