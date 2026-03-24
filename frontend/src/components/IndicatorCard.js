@@ -1,5 +1,25 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
+function fmt(v) {
+  if (typeof v !== 'number') return v;
+  const a = Math.abs(v);
+  if (a >= 1e12) return (v/1e12).toFixed(1) + 'T';
+  if (a >= 1e9) return (v/1e9).toFixed(1) + 'B';
+  if (a >= 1e6) return (v/1e6).toFixed(1) + 'M';
+  if (a >= 1e4) return (v/1e3).toFixed(1) + 'K';
+  return v.toFixed(1);
+}
+
+function fmt(v) {
+  if (typeof v !== 'number') return v;
+  const a = Math.abs(v);
+  if (a >= 1e12) return (v/1e12).toFixed(1) + 'T';
+  if (a >= 1e9) return (v/1e9).toFixed(1) + 'B';
+  if (a >= 1e6) return (v/1e6).toFixed(1) + 'M';
+  if (a >= 1e4) return (v/1e3).toFixed(1) + 'K';
+  return v.toFixed(1);
+}
+
 function computeTrends(data, seriesId) {
   if (!data || !data.data) return null;
   let pts = data.data.filter(d => d.series_id === seriesId && d.value != null);
@@ -55,8 +75,8 @@ function TrendAnalysis({t}) {
       <div className="trend-stats">
         <div className="trend-stat"><span className={'trend-stat-value '+t.direction}>{s}{t.totalPct}%</span><span className="trend-stat-label">total change</span></div>
         <div className="trend-stat"><span className={'trend-stat-value '+t.direction}>{s}{t.annPct}%/yr</span><span className="trend-stat-label">annualized</span></div>
-        <div className="trend-stat"><span className="trend-stat-value">{typeof t.lastValue==='number'?t.lastValue.toFixed(1):t.lastValue}</span><span className="trend-stat-label">latest</span></div>
-        <div className="trend-stat"><span className="trend-stat-value">{t.min}–{t.max}</span><span className="trend-stat-label">range</span></div>
+        <div className="trend-stat"><span className="trend-stat-value">{typeof t.lastValue==='number'?fmt(t.lastValue):t.lastValue}</span><span className="trend-stat-label">latest</span></div>
+        <div className="trend-stat"><span className="trend-stat-value">{fmt(parseFloat(t.min))}–{fmt(parseFloat(t.max))}</span><span className="trend-stat-label">range</span></div>
       </div>
     </div>
   );
