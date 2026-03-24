@@ -1,0 +1,29 @@
+# Augur — Civilizational Stress Index
+# Python Dependencies
+
+# Web Framework (read-only API)
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.0
+
+# Database
+psycopg2-binary==2.9.9
+
+# Data Pipeline
+requests==2.32.3
+
+# Data Processing
+pandas==2.2.2
+openpyxl==3.1.5       # For XLSX file reading (WJP, SIPRI)
+
+# Data Integrity
+# hashlib — standard library (SHA-256)
+# json — standard library
+
+# Development
+python-dotenv==1.0.1
+pytest==8.3.2
+httpx==0.27.0          # For testing FastAPI
+
+# Future: Data Version Control
+# dvc==3.55.2          # Phase 2 — once data pipeline is stable

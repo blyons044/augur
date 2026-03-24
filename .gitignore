@@ -1,0 +1,39 @@
+# Environment
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Data (raw downloads — not checked in; reproducible from sources)
+data/raw/
+data/processed/
+data/audit/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (frontend, Phase 2)
+node_modules/
+.next/
+dist/
+build/
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
