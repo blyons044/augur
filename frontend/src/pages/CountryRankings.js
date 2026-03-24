@@ -22,8 +22,14 @@ const FLAGS = {
 
 const METRICS = [
   { id:'gdp_ppp', name:'GDP (PPP)', indicator:'geopolitical_standing', series:'NY.GDP.MKTP.PP.CD', format: v=>'$'+(v/1e12).toFixed(1)+'T', desc:'Economic output adjusted for purchasing power', higherIs:'stronger', sortDir:1 },
-  { id:'military', name:'Military Spending (% GDP)', indicator:'geopolitical_standing', series:'MS.MIL.XPND.GD.ZS', format: v=>v.toFixed(1)+'%', desc:'Defense expenditure as share of economy', higherIs:'higher burden', sortDir:1 },
+  { id:'gdp_pc', name:'GDP Per Capita', indicator:'geopolitical_standing', series:'NY.GDP.PCAP.PP.CD', format: v=>'$'+(v/1000).toFixed(1)+'K', desc:'GDP per person adjusted for purchasing power', higherIs:'wealthier', sortDir:1 },
   { id:'gini', name:'Gini Index', indicator:'wealth_inequality', series:'SI.POV.GINI', format: v=>v.toFixed(1), desc:'Income inequality (0 = perfect equality, 100 = maximum)', higherIs:'more unequal', sortDir:1 },
+  { id:'military', name:'Military (% GDP)', indicator:'geopolitical_standing', series:'MS.MIL.XPND.GD.ZS', format: v=>v.toFixed(1)+'%', desc:'Defense expenditure as share of economy', higherIs:'higher burden', sortDir:1 },
+  { id:'health', name:'Healthcare (% GDP)', indicator:'geopolitical_standing', series:'SH.XPD.CHEX.GD.ZS', format: v=>v.toFixed(1)+'%', desc:'Current health expenditure as share of GDP', higherIs:'higher spending', sortDir:1 },
+  { id:'education', name:'Education (% GDP)', indicator:'geopolitical_standing', series:'SE.XPD.TOTL.GD.ZS', format: v=>v.toFixed(1)+'%', desc:'Government education spending as share of GDP', higherIs:'higher investment', sortDir:1 },
+  { id:'life', name:'Life Expectancy', indicator:'geopolitical_standing', series:'SP.DYN.LE00.IN', format: v=>v.toFixed(1)+' yrs', desc:'Life expectancy at birth in years', higherIs:'longer lived', sortDir:1 },
+  { id:'unemployment', name:'Unemployment', indicator:'geopolitical_standing', series:'SL.UEM.TOTL.ZS', format: v=>v.toFixed(1)+'%', desc:'Unemployment rate as percentage of labor force', higherIs:'more unemployed', sortDir:1 },
+  { id:'inflation', name:'Inflation Rate', indicator:'geopolitical_standing', series:'FP.CPI.TOTL.ZG', format: v=>v.toFixed(1)+'%', desc:'Consumer price inflation rate', higherIs:'higher inflation', sortDir:1 },
 ];
 
 function CountryRankings() {

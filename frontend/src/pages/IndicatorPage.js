@@ -2,6 +2,27 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import * as d3 from 'd3';
 
+const SERIES_NAMES = {
+  'GFDEGDQ188S': 'Debt to GDP Ratio', 'GFDEBTN': 'Total Federal Debt', 'DGS10': '10-Year Treasury Yield',
+  'A191RL1Q225SBEA': 'Real GDP Growth', 'GDP': 'Nominal GDP', 'A091RC1Q027SBEA': 'Federal Interest Payments',
+  'FYOIGDA188S': 'Interest to GDP', 'FYFRGDA188S': 'Federal Revenue to GDP',
+  'WFRBST01134': 'Top 1% Wealth Share', 'WFRBSB50215': 'Bottom 50% Wealth Share',
+  'WFRBSN09153': 'Next 40% Wealth Share', 'SI.POV.GINI': 'Gini Index', 'GINIALLRH': 'US Gini Index',
+  'CPIAUCSL': 'Consumer Price Index', 'PCEPI': 'PCE Price Index', 'FEDFUNDS': 'Federal Funds Rate',
+  'UNRATE': 'Unemployment Rate', 'CIVPART': 'Labor Force Participation', 'MEHOINUSA672N': 'Median Household Income',
+  'NY.GDP.MKTP.PP.CD': 'GDP (PPP)', 'MS.MIL.XPND.GD.ZS': 'Military Spending % GDP',
+  'elec_retail_sales_res': 'Residential Electricity Sales',
+  'gallup_congress': 'Congress', 'gallup_scotus': 'Supreme Court', 'gallup_newspapers': 'Newspapers',
+  'gallup_tvnews': 'TV News', 'gallup_military': 'Military', 'pew_govt_trust': 'Federal Govt Trust',
+  'gallup_news_trust': 'Overall News Trust', 'gallup_news_trust_rep': 'Republican Trust', 'gallup_news_trust_dem': 'Democratic Trust',
+  'wjp_us_overall': 'WJP Overall Score', 'wjp_us_rank': 'WJP Global Rank',
+  'armed_groups_count': 'Armed Groups Count', 'political_violence_justified': 'Political Violence Attitudes',
+  'ogallala_decline_avg': 'Ogallala Aquifer Decline', 'lake_mead_elevation': 'Lake Mead Elevation',
+  'dw_nominate_House_100': 'House Democrats', 'dw_nominate_House_200': 'House Republicans',
+  'dw_nominate_Senate_100': 'Senate Democrats', 'dw_nominate_Senate_200': 'Senate Republicans',
+  'dw_nominate_Senate_328': 'Senate Independents',
+};
+
 const META = {
   political_polarization: {
     title: 'Political Polarization',
@@ -113,16 +134,19 @@ function FullChart({ data, seriesId, indicatorId, timeRange }) {
   // Color palette for multiple series
   const COLORS = ['#e04040', '#40c080', '#e0a030', '#5080c0', '#c060a0', '#60c0c0'];
 
+
   const ref = useRef();
   useEffect(() => {
     if (!data || !data.data) return;
     // Filter by time range
     const now = new Date().getFullYear();
     const minYear = timeRange === '10yr' ? now - 10 : timeRange === '25yr' ? now - 25 : 0;
-    const filtered = data.data.filter(d => {
+    let filtered = data.data.filter(d => {
       const yr = parseInt(d.date_value.substring(0,4));
       return yr >= minYear;
     });
+    // Fall back to all data if filtered set is too small
+    if (filtered.length < 3) filtered = data.data;
 
     // Group by series
     const seriesMap = {};
@@ -141,14 +165,23 @@ function FullChart({ data, seriesId, indicatorId, timeRange }) {
     }
 
     const svg = d3.select(ref.current); svg.selectAll('*').remove();
+    
     const W = 900, H = 360, m = { t: 20, r: 30, b: 40, l: 60 };
 
     const parseDate = d => new Date(d.date_value);
     const x = d3.scaleTime().domain(d3.extent(pts, parseDate)).range([m.l, W - m.r]);
     // Scale y-axis to encompass all visible series
-    let allVals = [];
-    allSeries.slice(0, 5).forEach(([sid, spts]) => spts.forEach(d => allVals.push(d.value)));
-    const yDomain = allVals.length ? d3.extent(allVals) : d3.extent(pts, d => d.value);
+    let allVals = pts.map(d => d.value);
+    const pMedian = allVals.sort((a,b)=>a-b)[Math.floor(allVals.length/2)];
+    allSeries.slice(0, 5).forEach(([sid, spts]) => {
+      if (sid === (seriesId || allSeries[0][0])) return;
+      const sMedian = spts.map(d=>d.value).sort((a,b)=>a-b)[Math.floor(spts.length/2)];
+      const r = Math.abs(sMedian) / Math.max(Math.abs(pMedian), 0.001);
+      if (r <= 10 && r >= 0.1) spts.forEach(d => allVals.push(d.value));
+    });
+    const yExtent = allVals.length ? d3.extent(allVals) : d3.extent(pts, d => d.value);
+    const yPad = (yExtent[1] - yExtent[0]) * 0.08;
+    const yDomain = [yExtent[0] - yPad, yExtent[1] + yPad];
     const y = d3.scaleLinear().domain(yDomain).nice().range([H - m.b, m.t]);
 
     // Grid lines
@@ -161,25 +194,30 @@ function FullChart({ data, seriesId, indicatorId, timeRange }) {
 
     // Area
     const defs = svg.append('defs');
+    defs.append('clipPath').attr('id','chart-clip-'+indicatorId).append('rect').attr('x',m.l).attr('y',m.t).attr('width',W-m.l-m.r).attr('height',H-m.t-m.b);
     const grad = defs.append('linearGradient').attr('id', 'full-grad').attr('x1', '0%').attr('y1', '0%').attr('x2', '0%').attr('y2', '100%');
     grad.append('stop').attr('offset', '0%').attr('stop-color', '#e04040').attr('stop-opacity', 0.2);
     grad.append('stop').attr('offset', '100%').attr('stop-color', '#e04040').attr('stop-opacity', 0);
-    svg.append('path').datum(pts).attr('fill', 'url(#full-grad)').attr('d', d3.area().x(d => x(parseDate(d))).y0(H - m.b).y1(d => y(d.value)).curve(d3.curveMonotoneX));
+    svg.append('path').datum(pts).attr('clip-path','url(#chart-clip-'+indicatorId+')').attr('fill', 'url(#full-grad)').attr('d', d3.area().x(d => x(parseDate(d))).y0(H - m.b).y1(d => y(d.value)).curve(d3.curveMonotoneX));
 
     // Line
-    svg.append('path').datum(pts).attr('fill', 'none').attr('stroke', '#e04040').attr('stroke-width', 2).attr('d', d3.line().x(d => x(parseDate(d))).y(d => y(d.value)).curve(d3.curveMonotoneX));
+    svg.append('path').datum(pts).attr('clip-path','url(#chart-clip-'+indicatorId+')').attr('fill', 'none').attr('stroke', '#e04040').attr('stroke-width', 2).attr('d', d3.line().x(d => x(parseDate(d))).y(d => y(d.value)).curve(d3.curveMonotoneX));
 
     // End dot
     const last = pts[pts.length - 1];
-    svg.append('circle').attr('cx', x(parseDate(last))).attr('cy', y(last.value)).attr('r', 4).attr('fill', '#e04040');
+    svg.append('circle').attr('clip-path','url(#chart-clip-'+indicatorId+')').attr('cx', x(parseDate(last))).attr('cy', y(last.value)).attr('r', 4).attr('fill', '#e04040');
 
-    // Overlay additional series as thinner lines
+    // Overlay only series with similar scale (within 10x of primary median)
+    const primaryMedian = pts.map(d=>d.value).sort((a,b)=>a-b)[Math.floor(pts.length/2)];
     allSeries.slice(0, 5).forEach(([sid, spts], idx) => {
       if (sid === (seriesId || allSeries[0][0])) return;
+      const secMedian = spts.map(d=>d.value).sort((a,b)=>a-b)[Math.floor(spts.length/2)];
+      const ratio = Math.abs(secMedian) / Math.max(Math.abs(primaryMedian), 0.001);
+      if (ratio > 10 || ratio < 0.1) return; // Skip if scale is too different
       let sp = spts;
       if (sp.length > 400) { const yr = {}; sp.forEach(p => { const y = p.date_value.substring(0,4); if(!yr[y]) yr[y]=p; }); sp = Object.values(yr); }
       const col = COLORS[(idx + 1) % COLORS.length];
-      svg.append('path').datum(sp).attr('fill','none').attr('stroke',col).attr('stroke-width',1.2).attr('stroke-opacity',0.7)
+      svg.append('path').datum(sp).attr('clip-path','url(#chart-clip-'+indicatorId+')').attr('fill','none').attr('stroke',col).attr('stroke-width',1.2).attr('stroke-opacity',0.7)
         .attr('d', d3.line().x(d => x(parseDate(d))).y(d => y(d.value)).curve(d3.curveMonotoneX));
     });
 
@@ -251,7 +289,7 @@ function IndicatorPage({ indicatorData, loading, error }) {
                 {series.map(([sid,count],i) => (
                   <span key={sid} className="legend-item">
                     <span className="legend-dot" style={{background:COLORS[i%COLORS.length]}} />
-                    <span className="legend-label">{sid.replace(/_/g,' ')}</span>
+                    <span className="legend-label">{SERIES_NAMES[sid] || sid.replace(/_/g,' ')}</span>
                     <span className="legend-count">{count}</span>
                   </span>
                 ))}
