@@ -2,8 +2,6 @@
 Weekly FRED data refresh cron job.
 Run via: python -m backend.scripts.cron_refresh
 """
-import os
-import sys
 import logging
 from datetime import datetime
 
@@ -22,23 +20,22 @@ from backend.app.core.database import AugurDB
 
 def main():
     log.info(f'Starting scheduled FRED refresh at {datetime.utcnow().isoformat()}')
-    
     audit = AuditLogger()
     pipeline = FREDPipeline(audit_logger=audit)
     db = AugurDB(audit=audit)
-    
-    result = pipeline.fetch_all_series()
-    passed = result.get('passed', 0)
-    total = result.get('total', 0)
-    log.info(f'FRED fetch complete: {passed}/{total} series passed')
-    
-    rows = result.get('rows', result.get('records', []))
-    if rows:
-        db.insert_data_points(rows)
-        log.info(f'Inserted {len(rows)} rows')
-    else:
-        log.info('No new rows to insert (data may already be current)')
-    
+    try:
+        result = pipeline.fetch_all_series()
+        passed = result.get('passed', 0)
+        total = result.get('total', 0)
+        log.info(f'FRED fetch complete: {passed}/{total} series passed')
+        rows = result.get('rows', result.get('records', []))
+        if rows:
+            db.insert_data_points(rows)
+            log.info(f'Inserted {len(rows)} rows')
+        else:
+            log.info('No new rows to insert')
+    except Exception as e:
+        log.error(f'FRED refresh failed: {e}')
     audit.flush()
     log.info('Cron refresh complete')
 
