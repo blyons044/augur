@@ -1,0 +1,46 @@
+name: Weekly Data Refresh
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Every Monday at 6am UTC
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      
+      - name: Run FRED pipeline refresh
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python -m backend.scripts.cron_refresh
+      
+      - name: Run World Bank refresh
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python -c "
+          import os, requests
+          from backend.app.core.integrity import hash_raw_data
+          from backend.app.core.database import AugurDB
+          db = AugurDB()
+          countries = 'USA;GBR;DEU;FRA;JPN;CHN;IND;BRA;RUS;KOR;CAN;AUS;ITA;MEX;IDN;TUR;ZAF;ARG;NGA;SWE'
+          for wb_id, name in [('NY.GDP.MKTP.PP.CD','gdp_ppp'),('MS.MIL.XPND.GD.ZS','military'),('SI.POV.GINI','gini'),('NY.GDP.PCAP.PP.CD','gdp_pc'),('SP.DYN.LE00.IN','life_exp'),('SL.UEM.TOTL.ZS','unemployment'),('FP.CPI.TOTL.ZG','inflation'),('SH.XPD.CHEX.GD.ZS','health'),('SE.XPD.TOTL.GD.ZS','education')]:
+              url = f'https://api.worldbank.org/v2/country/{countries}/indicator/{wb_id}?format=json&per_page=1000&date=1990:2026'
+              resp = requests.get(url, timeout=30)
+              data = resp.json()
+              if len(data)<2 or not data[1]: continue
+              rows = [{'indicator_id':'geopolitical_standing','country_code':r['countryiso3code'],'source_id':'world_bank','series_id':wb_id,'date_value':f\"{r['date']}-01-01\",'year':int(r['date']),'quarter':1,'month':1,'value':r['value'],'raw_value':r['value'],'unit':name,'transformation':None,'source_hash':hash_raw_data(resp.content),'notes':f\"{r['country']['value']}\"} for r in data[1] if r['value'] is not None]
+              if rows: db.insert_data_points(rows)
+              print(f'{name}: {len(rows)} records')
+          "
