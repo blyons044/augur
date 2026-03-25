@@ -12,7 +12,7 @@
 .card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}.source{font:400 10px var(--font-mono);color:var(--text-muted)}.data-count{font:400 10px var(--font-mono);color:var(--text-muted);opacity:.7}
 .dashboard-footer{margin-top:80px;padding:48px 0 72px;border-top:1px solid var(--border)}.footer-text{font:300 13px/1.8 var(--font-mono);color:var(--text-muted);max-width:600px}.footer-methodology{font:italic 400 18px/1.8 var(--font-display);color:var(--text-secondary);margin-top:20px;max-width:600px}
 .landing{overflow-x:hidden}
-.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(224,64,64,.12) 0%,transparent 60%),radial-gradient(ellipse at 70% 30%,rgba(100,60,180,.06) 0%,transparent 50%),linear-gradient(180deg,#080810 0%,#0d0d1a 50%,#080810 100%)}.hero-content{position:relative;z-index:1;text-align:center;max-width:760px;padding:0 32px}
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(224,64,64,.12) 0%,transparent 60%),radial-gradient(ellipse at 70% 30%,rgba(100,60,180,.06) 0%,transparent 50%),linear-gradient(180deg,#080810 0%,#0d0d1a 50%,#080810 100%);animation:heroPulse 8s ease infinite}@keyframes heroPulse{0%,100%{opacity:1}50%{opacity:.85}}.hero-content{position:relative;z-index:1;text-align:center;max-width:760px;padding:0 32px}
 .hero-pre{font:italic 300 18px/1.6 var(--font-body);color:var(--text-secondary);margin-bottom:28px;animation:fadeIn 1s ease .2s both}.hero-title{font:400 100px var(--font-display);letter-spacing:32px;color:#fff;line-height:1;margin-bottom:16px;animation:fadeIn 1s ease .4s both;text-shadow:0 0 80px rgba(224,64,64,.15)}.hero-subtitle{font:400 13px var(--font-mono);letter-spacing:8px;color:var(--red);text-transform:uppercase;margin-bottom:48px;animation:fadeIn 1s ease .6s both}.hero-description{font:300 18px/1.9 var(--font-body);color:var(--text-primary);max-width:580px;margin:0 auto 48px;animation:fadeIn 1s ease .8s both}
 .hero-actions{display:flex;gap:20px;justify-content:center;align-items:center;flex-direction:row;flex-wrap:wrap;animation:fadeIn 1s ease 1s both}.hero-cta{font:400 12px var(--font-mono);letter-spacing:2.5px;text-transform:uppercase;color:#fff;background:var(--red);padding:16px 36px;text-decoration:none;transition:all .3s}.hero-cta:hover{background:#c03535;transform:translateY(-2px);box-shadow:0 8px 32px rgba(224,64,64,.35)}.hero-secondary{font:400 12px var(--font-mono);letter-spacing:2px;text-transform:uppercase;color:var(--text-secondary);text-decoration:none;padding:16px 28px;border:1px solid var(--border);transition:all .3s}.hero-secondary:hover{color:#fff;border-color:var(--border-hover)}
 .scroll-indicator{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;animation:fadeIn 1s ease 1.5s both}.scroll-indicator span{font:400 9px var(--font-mono);letter-spacing:3px;text-transform:uppercase;color:var(--text-muted)}.scroll-line{width:1px;height:40px;background:linear-gradient(180deg,var(--text-muted),transparent);animation:scrollPulse 2s ease infinite}
@@ -222,3 +222,36 @@
 .indicator-chip:hover{border-color:var(--red);color:var(--red)}
 .api-citation{margin-bottom:48px}
 .citation-block{font:400 12px/1.8 var(--font-mono);color:var(--text-secondary);background:var(--bg-card);border:1px solid var(--border);padding:16px;border-radius:4px;white-space:pre-wrap}
+
+@keyframes cardReveal{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.indicator-card{animation:cardReveal .6s ease both}
+.indicator-grid .indicator-card:nth-child(1){animation-delay:.1s}
+.indicator-grid .indicator-card:nth-child(2){animation-delay:.2s}
+.indicator-grid .indicator-card:nth-child(3){animation-delay:.3s}
+.indicator-grid .indicator-card:nth-child(4){animation-delay:.4s}
+@keyframes scoreReveal{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+.stress-number{animation:scoreReveal 1s ease .3s both}
+.stress-bar-fill{animation:barGrow .8s ease both}
+@keyframes barGrow{from{width:0}}
+.stress-bar-row:nth-child(1) .stress-bar-fill{animation-delay:.2s}
+.stress-bar-row:nth-child(2) .stress-bar-fill{animation-delay:.35s}
+.stress-bar-row:nth-child(3) .stress-bar-fill{animation-delay:.5s}
+.stress-bar-row:nth-child(4) .stress-bar-fill{animation-delay:.65s}
+.stress-bar-row:nth-child(5) .stress-bar-fill{animation-delay:.8s}
+.stress-bar-row:nth-child(6) .stress-bar-fill{animation-delay:.95s}
+.pillar-score-value{animation:scoreReveal .8s ease 1.2s both}
+.stress-overview{animation:cardReveal .8s ease both;overflow:hidden}
+.ranking-row{animation:cardReveal .4s ease both}
+.ranking-row:nth-child(1){animation-delay:.05s}
+.ranking-row:nth-child(2){animation-delay:.1s}
+.ranking-row:nth-child(3){animation-delay:.15s}
+.ranking-row:nth-child(4){animation-delay:.2s}
+.ranking-row:nth-child(5){animation-delay:.25s}
+.ranking-row:nth-child(6){animation-delay:.3s}
+.ranking-row:nth-child(7){animation-delay:.35s}
+.ranking-row:nth-child(8){animation-delay:.4s}
+.ranking-row:nth-child(9){animation-delay:.45s}
+.ranking-row:nth-child(10){animation-delay:.5s}
+.un-value{animation:scoreReveal .6s ease .2s both}
+
+.hero-particles{position:absolute;inset:0;z-index:0;pointer-events:none}

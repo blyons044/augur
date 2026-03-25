@@ -1,5 +1,6 @@
 import React from 'react';
 import IndicatorCard from './IndicatorCard';
+import AnimatedNumber from './AnimatedNumber';
 const UN = {
   political_polarization: { value: "0%", statement: "overlap between most conservative Democrat and most liberal Republican in Congress by 2023", source: "VoteView / DW-NOMINATE" },
   public_trust: { value: "8%", statement: "of Americans express confidence in Congress — near-total delegitimization", source: "Gallup, 2023" },
@@ -86,7 +87,7 @@ function StressOverview({ indicatorData }) {
       )}
       <div className="stress-score-container">
         <div className="stress-composite">
-          <span className="stress-number">{composite}</span>
+          <span className="stress-number"><AnimatedNumber value={composite} duration={2000} /></span>
           <span className="stress-label">Composite Stress Index</span>
           <span className="stress-scale">0 = no stress · 100 = critical</span>
         </div>
