@@ -10,6 +10,7 @@ import CountryRankings from './pages/CountryRankings';
 import CountryCompare from './pages/CountryCompare';
 import NarrativeMode from './pages/NarrativeMode';
 import ApiDocs from './pages/ApiDocs';
+import Correlations from './pages/Correlations';
 import NotFound from './pages/NotFound';
 import './index.css';
 
@@ -46,6 +47,7 @@ function App() {
         <Route path="/rankings" element={<CountryRankings />} />
         <Route path="/compare" element={<CountryCompare />} />
         <Route path="/api-docs" element={<ApiDocs />} />
+        <Route path="/correlations" element={<Correlations indicatorData={indicatorData} />} />
         <Route path="/story" element={<NarrativeMode indicatorData={indicatorData} />} />
         <Route path="/indicator/:id" element={
           <IndicatorPage indicatorData={indicatorData} loading={loading} error={error} />

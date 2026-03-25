@@ -22,6 +22,7 @@ function Nav() {
     { to: '/empires', label: 'Empires' },
     { to: '/rankings', label: 'Rankings' },
     { to: '/compare', label: 'Compare' },
+    { to: '/correlations', label: 'Correlations' },
     { to: '/api-docs', label: 'API' },
   ];
   return (
