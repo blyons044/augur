@@ -15,6 +15,7 @@ function Nav() {
     };
     const match = titles[loc.pathname] || (loc.pathname.startsWith('/indicator/') ? loc.pathname.split('/')[2].replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) + ' — AUGUR' : 'AUGUR');
     document.title = match;
+    window.scrollTo(0, 0);
   }, [loc.pathname]);
   const links = [
     { to: '/', label: 'Home' },
