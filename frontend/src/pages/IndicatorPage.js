@@ -39,6 +39,16 @@ const META = {
     thresholds: [
       { level: 0.45, label: 'Zero legislative overlap between parties typically occurs above this level' },
     ],
+    crossCountry: [
+      { country: 'Weimar Germany', value: null, year: 1932, outcome: 'Complete elimination of centrist parties. Coalition government became impossible. Democratic collapse within 14 months.' },
+      { country: 'Chile', value: null, year: 1973, outcome: 'Legislative deadlock between irreconcilable factions. Military intervention followed within months.' },
+      { country: 'United Kingdom', value: null, year: 2016, outcome: 'Brexit polarization. Functional but strained. Three PMs in one year. Institutions bent but held.' },
+    ],
+    crossCountry: [
+      { country: 'Weimar Germany', value: null, year: 1932, outcome: 'Complete elimination of centrist parties. Coalition government became impossible. Democratic collapse within 14 months.' },
+      { country: 'Chile', value: null, year: 1973, outcome: 'Legislative deadlock between irreconcilable factions. Military intervention followed within months.' },
+      { country: 'United Kingdom', value: null, year: 2016, outcome: 'Brexit polarization. Functional but strained. Three PMs in one year. Institutions bent but held.' },
+    ],
   },
   public_trust: {
     title: 'Public Trust in Institutions',
@@ -54,6 +64,16 @@ const META = {
     ],
     thresholds: [
       { level: 20, label: 'Below 20% confidence, institutions typically lose voluntary compliance' },
+    ],
+    crossCountry: [
+      { country: 'Italy', value: 12, year: 2024, outcome: 'Chronically low trust. 70 governments since 1946. Functional but inefficient governance.' },
+      { country: 'Denmark', value: 73, year: 2024, outcome: 'Highest institutional trust in EU. Lowest corruption, highest social mobility.' },
+      { country: 'Venezuela', value: 5, year: 2015, outcome: 'Near-zero trust preceded economic collapse, hyperinflation, and mass emigration.' },
+    ],
+    crossCountry: [
+      { country: 'Italy', value: 12, year: 2024, outcome: 'Chronically low trust. 70 governments since 1946. Functional but inefficient governance.' },
+      { country: 'Denmark', value: 73, year: 2024, outcome: 'Highest institutional trust in EU. Lowest corruption, highest social mobility.' },
+      { country: 'Venezuela', value: 5, year: 2015, outcome: 'Near-zero trust preceded economic collapse, hyperinflation, and mass emigration.' },
     ],
   },
   rule_of_law: {
@@ -88,6 +108,16 @@ const META = {
     thresholds: [
       { level: 30, label: 'Above 30% top-1% share, democratic institutions historically face legitimacy challenges' },
     ],
+    crossCountry: [
+      { country: 'South Africa', value: 63, year: 2024, outcome: 'Highest Gini globally. Persistent social instability. Growth constrained by demand collapse.' },
+      { country: 'Brazil', value: 53, year: 2024, outcome: 'Decades of political instability correlated with inequality. Multiple constitutional crises.' },
+      { country: 'Sweden', value: 29, year: 2024, outcome: 'Low inequality correlates with high trust, strong mobility, and political stability.' },
+    ],
+    crossCountry: [
+      { country: 'South Africa', value: 63, year: 2024, outcome: 'Highest Gini globally. Persistent social instability. Growth constrained by demand collapse.' },
+      { country: 'Brazil', value: 53, year: 2024, outcome: 'Decades of political instability correlated with inequality. Multiple constitutional crises.' },
+      { country: 'Sweden', value: 29, year: 2024, outcome: 'Low inequality correlates with high trust, strong mobility, and political stability.' },
+    ],
   },
   middle_class_decline: {
     title: 'Decline of the Middle Class',
@@ -112,6 +142,18 @@ const META = {
     ],
     thresholds: [
       { level: 90, label: 'Reinhart-Rogoff threshold: GDP growth historically slows above 90% debt-to-GDP' },
+    ],
+    crossCountry: [
+      { country: 'Japan', value: 225, year: 2024, outcome: 'Three decades of stagnation. Debt monetized by central bank. GDP growth averaged 0.7% since 1995.' },
+      { country: 'Greece', value: 103, year: 2009, outcome: 'Sovereign debt crisis. GDP contracted 25%. Required international bailout.' },
+      { country: 'Italy', value: 134, year: 2020, outcome: 'Chronic low growth. Repeated austerity. Brain drain of educated workforce.' },
+      { country: 'United Kingdom', value: 250, year: 1946, outcome: 'Post-war austerity lasted 9 years. Lost reserve currency status. Empire dissolved.' },
+    ],
+    crossCountry: [
+      { country: 'Japan', value: 225, year: 2024, outcome: 'Three decades of stagnation. Debt monetized by central bank. GDP growth averaged 0.7% since 1995.' },
+      { country: 'Greece', value: 103, year: 2009, outcome: 'Sovereign debt crisis. GDP contracted 25%. Required international bailout.' },
+      { country: 'Italy', value: 134, year: 2020, outcome: 'Chronic low growth. Repeated austerity. Brain drain of educated workforce.' },
+      { country: 'United Kingdom', value: 250, year: 1946, outcome: 'Post-war austerity lasted 9 years. Lost reserve currency status. Empire dissolved.' },
     ],
   },
   currency_debasement: {
@@ -404,6 +446,25 @@ function IndicatorPage({ indicatorData, loading, error }) {
           <h2 className="section-title">Why it matters</h2>
           <p>{meta.why}</p>
         </section>
+
+        {meta.crossCountry && (
+          <section className="indicator-section">
+            <h2 className="section-title">What happened elsewhere</h2>
+            <p className="cross-country-intro">Countries and historical cases that reached similar levels on this indicator.</p>
+            <div className="cross-country-list">
+              {meta.crossCountry.map((cc, i) => (
+                <div className="cross-country-card" key={i}>
+                  <div className="cc-header">
+                    <span className="cc-country">{cc.country}</span>
+                    {cc.value && <span className="cc-value">{cc.value}</span>}
+                    <span className="cc-year">{cc.year}</span>
+                  </div>
+                  <p className="cc-outcome">{cc.outcome}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {meta.benchmarks && (
           <section className="indicator-section">

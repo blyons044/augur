@@ -313,3 +313,13 @@
 .accel-warning{color:var(--red)}
 .accel-stable{color:var(--green)}
 @media(max-width:768px){.benchmark-row{flex-wrap:wrap}.acceleration-detail{font-size:11px}}
+
+.cross-country-intro{font:300 15px/1.7 var(--font-body);color:var(--text-secondary);margin-bottom:20px}
+.cross-country-list{display:flex;flex-direction:column;gap:12px}
+.cross-country-card{background:var(--bg-accent);border:1px solid var(--border);padding:18px 20px;border-radius:4px;transition:border-color .2s}
+.cross-country-card:hover{border-color:var(--border-hover)}
+.cc-header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.cc-country{font:600 15px var(--font-body);color:#fff}
+.cc-value{font:500 14px var(--font-mono);color:var(--red)}
+.cc-year{font:400 12px var(--font-mono);color:var(--text-muted)}
+.cc-outcome{font:300 13px/1.7 var(--font-body);color:var(--text-secondary)}
