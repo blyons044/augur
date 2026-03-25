@@ -430,6 +430,7 @@ function StressOverview({ indicatorData }) {
           <span className="stress-number"><AnimatedNumber value={composite} duration={2000} /></span>
           <span className="stress-label">Composite Stress Index</span>
           <span className="stress-scale">0 = no stress · 100 = critical</span>
+          <span className="stress-updated">Data refreshed weekly via automated pipeline</span>
         </div>
         <div className="stress-bars">
           {scores.map(s => (

@@ -10,6 +10,7 @@ import CountryRankings from './pages/CountryRankings';
 import CountryCompare from './pages/CountryCompare';
 import NarrativeMode from './pages/NarrativeMode';
 import ApiDocs from './pages/ApiDocs';
+import NotFound from './pages/NotFound';
 import './index.css';
 
 const API_BASE = process.env.REACT_APP_API_URL || 'https://augur.up.railway.app';
@@ -57,6 +58,7 @@ function App() {
             error={error}
           />
         } />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );

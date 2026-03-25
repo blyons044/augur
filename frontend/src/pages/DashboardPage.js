@@ -1,14 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Dashboard from '../components/Dashboard';
+import { SkeletonDashboard } from '../components/Skeleton';
 import Header from '../components/Header';
 
 function DashboardPage({ indicators, indicatorData, loading, error }) {
   if (loading) {
     return (
-      <div className="loading-screen">
-        <h1 className="augur-title">AUGUR</h1>
-        <p className="loading-text">Loading civilizational stress data...</p>
+      <div className="app">
+        <Header />
+        <SkeletonDashboard />
       </div>
     );
   }

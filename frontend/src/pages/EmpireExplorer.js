@@ -17,7 +17,7 @@ const EMPIRES = {
     ],
     parallels: [
       { indicator: 'Political Polarization', roman: 'Optimates vs Populares — elimination of centrist senators', us: 'DW-NOMINATE party overlap: 50%+ → 0% (1970s–2023)' },
-      { indicator: 'Wealth Inequality', roman: 'Latifundia concentration — 2% owned most land by 100 BC', us: 'Top 1% holds 30.8% of national wealth; bottom 50% holds 2.5%' },
+      { indicator: 'Wealth Inequality', roman: 'Latifundia concentration — a small elite controlled most agricultural land by 100 BC', us: 'Top 1% holds 30.8% of national wealth; bottom 50% holds 2.5%' },
       { indicator: 'Currency Debasement', roman: 'Denarius: 95% silver → 5% over 200 years', us: 'Dollar purchasing power declined 87% since 1971; reserve share: 71% → 58%' },
       { indicator: 'Elite Overproduction', roman: 'More senators than positions — cursus honorum bottleneck', us: '51% of jobs added degree requirements without skill increases' },
       { indicator: 'Infrastructure Decay', roman: 'Aqueduct maintenance abandoned by 3rd century', us: '43,586 structurally deficient bridges; 240K water main breaks/year' },
