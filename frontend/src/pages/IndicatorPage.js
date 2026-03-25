@@ -28,7 +28,7 @@ const META = {
     title: 'Political Polarization',
     number: '0%', numberContext: 'ideological overlap between the most conservative Democrat and most liberal Republican in Congress — down from 50%+ in the 1970s.',
     what: 'DW-NOMINATE scores measure the ideological position of every member of Congress on a liberal-conservative scale, computed from roll-call voting records. When party distributions stop overlapping, bipartisan governance becomes structurally impossible.',
-    why: 'Every documented case of republican (small-r) institutional collapse — Rome, Weimar Germany, the French Fourth Republic — was preceded by the elimination of centrist overlap between factional groups. This is not a cultural preference. It is a structural failure mode.',
+    why: 'Every documented case of republican (small-r) institutional collapse — Rome, Weimar Germany, the French Fourth Republic — was preceded by the elimination of centrist overlap between factional groups. Historically, when this overlap disappears, legislative compromise becomes structurally impossible.',
     series: 'dw_nominate_House_200', source: 'VoteView / UCLA', sourceUrl: 'https://voteview.com/data',
     methodology: 'Raw DW-NOMINATE scores downloaded directly from UCLA VoteView. Party means computed per chamber per Congress. No editorial adjustment. The gap between party means is the polarization measure.',
     benchmarks: [

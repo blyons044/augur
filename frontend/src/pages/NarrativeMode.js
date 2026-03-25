@@ -40,7 +40,7 @@ const CHAPTERS = [
   {
     id: 'intro',
     title: 'Five minutes that might change how you see your country',
-    body: "What you're about to see is publicly available data from the Federal Reserve, the World Bank, UCLA, and government statistical agencies \u2014 processed with zero editorial intervention and presented exactly as it is.",
+    body: "What you're about to see is publicly available data from the Federal Reserve, the World Bank, UCLA, and government statistical agencies \u2014 presented exactly as the sources publish it.",
     note: "Every number links to its source. If anything here were wrong, anyone with a laptop could prove it.",
   },
   {
@@ -56,7 +56,7 @@ const CHAPTERS = [
   {
     id: 'polarization',
     title: 'The center didn\u2019t hold',
-    body: "DW-NOMINATE scores measure the ideology of every member of Congress from their voting record. In the 1970s, the most conservative Democrat and the most liberal Republican overlapped significantly. Today that overlap is zero. This is not a metaphor. It is a mathematical fact derived from roll-call votes.",
+    body: "DW-NOMINATE scores measure the ideology of every member of Congress from their voting record. In the 1970s, the most conservative Democrat and the most liberal Republican overlapped significantly. Today that overlap is zero. Mathematically, from roll-call votes. Zero overlap.",
     indicator: 'political_polarization',
     series: 'dw_nominate_House_200',
     color: '#e04040',
