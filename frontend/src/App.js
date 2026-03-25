@@ -46,10 +46,6 @@ function App() {
         <Route path="/compare" element={<CountryCompare />} />
         <Route path="/api-docs" element={<ApiDocs />} />
         <Route path="/story" element={<NarrativeMode indicatorData={indicatorData} />} />
-        <Route path="/rankings" element={<CountryRankings />} />
-        <Route path="/compare" element={<CountryCompare />} />
-        <Route path="/api-docs" element={<ApiDocs />} />
-        <Route path="/story" element={<NarrativeMode indicatorData={indicatorData} />} />
         <Route path="/indicator/:id" element={
           <IndicatorPage indicatorData={indicatorData} loading={loading} error={error} />
         } />

@@ -7,14 +7,14 @@ const UN = {
   rule_of_law: { value: "26th", statement: "US global ranking on World Justice Project Rule of Law Index — below all other G7 nations", source: "World Justice Project, 2024" },
   civil_unrest: { value: "900+", statement: "active militia and armed political organizations in the US — highest recorded in American history", source: "Bridging Divides Initiative, 2023" },
   wealth_inequality: { value: "30.8%", statement: "of all national wealth held by the top 1%. Bottom 50% holds 2.5%.", source: "Federal Reserve DFA" },
-  middle_class_decline: { value: "50%", statement: "of American adults in middle-income households — first time below majority in measurement history", source: "Pew Research Center, 2023" },
+  middle_class_decline: { value: "$83,700", statement: "real median household income — stagnant in inflation-adjusted terms over four decades despite rising GDP", source: "Federal Reserve / FRED (MEHOINUSA672N)" },
   debt_to_gdp: { value: "122%", statement: "federal debt as percent of GDP — highest peacetime ratio in American history", source: "Federal Reserve / FRED" },
   currency_debasement: { value: "58%", statement: "dollar share of global reserves, down from 71% in 2000 — 13 point decline in 24 years", source: "IMF COFER" },
-  elite_overproduction: { value: "51%", statement: "of middle-skill jobs added degree requirements without corresponding skill increases (2015-2021)", source: "Burning Glass Institute" },
-  infrastructure_decay: { value: "43,586", statement: "US bridges classified as structurally deficient — average bridge age: 44 years", source: "FHWA National Bridge Inventory" },
+  elite_overproduction: { value: "4.2%", statement: "unemployment rate masks credential inflation — 51% of middle-skill jobs added degree requirements without skill increases (Burning Glass, 2021)", source: "FRED (UNRATE) / Burning Glass Institute" },
+  infrastructure_decay: { value: "43,586", statement: "US bridges rated structurally deficient. Augur tracks electricity infrastructure via EIA retail sales data as a systemic capacity proxy.", source: "FHWA / EIA" },
   media_fragmentation: { value: "32%", statement: "of Americans trust national news organizations, down from 76% in 1972", source: "Gallup, 2023" },
   geopolitical_standing: { value: "15%", statement: "US share of global GDP (PPP), down from ~50% in 1945 — two-thirds relative decline", source: "World Bank / IMF" },
-  resource_stress: { value: "6B gal", statement: "of treated drinking water lost daily to water main breaks — ~240,000 breaks per year", source: "AWWA" },
+  resource_stress: { value: "1,065 ft", statement: "Lake Mead elevation — down from 1,214 ft in 2000. Ogallala Aquifer declining ~16 ft since 1950.", source: "USGS / Bureau of Reclamation" },
 };
 const PILLARS = [
   { id: 'social_cohesion', name: 'Social Cohesion', indicators: ['political_polarization', 'public_trust', 'rule_of_law', 'civil_unrest'] },

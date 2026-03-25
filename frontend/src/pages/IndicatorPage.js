@@ -66,7 +66,7 @@ const META = {
   },
   middle_class_decline: {
     title: 'Decline of the Middle Class',
-    number: '$83,700', numberContext: 'real median household income — a measure that has barely kept pace with inflation over four decades.',
+    number: '$83,700', numberContext: 'real median household income — stagnant in inflation-adjusted terms over four decades despite rising GDP and productivity.',
     what: 'The Census Bureau measures median household income annually. This single number captures the economic reality of the typical American household more accurately than GDP, stock indices, or unemployment rates.',
     why: 'A shrinking middle class is both a symptom and an accelerant of institutional stress. It reduces the constituency for institutional stability, increases demand for radical alternatives, and concentrates political power at the extremes.',
     series: 'MEHOINUSA672N', source: 'Federal Reserve / FRED', sourceUrl: 'https://fred.stlouisfed.org/series/MEHOINUSA672N',
@@ -90,7 +90,7 @@ const META = {
   },
   elite_overproduction: {
     title: 'Elite Overproduction',
-    number: '51%', numberContext: 'of middle-skill jobs added degree requirements without corresponding skill increases between 2015 and 2021.',
+    number: '4.2%', numberContext: 'unemployment rate — but the headline number masks credential inflation. 51% of middle-skill jobs added degree requirements without corresponding skill increases (Burning Glass Institute, 2021).',
     what: 'Peter Turchin\'s theory of elite overproduction: when a society produces more credentialed aspirants to elite positions than those positions can absorb, the surplus competes destructively for status, destabilizing institutions.',
     why: 'Credential inflation, combined with stagnant elite-track opportunities, creates a class of frustrated aspirants who become natural leaders of counter-elite movements. This pattern is documented in pre-revolutionary France, late Ottoman Turkey, and Weimar Germany.',
     series: 'UNRATE', source: 'Federal Reserve / FRED + Burning Glass Institute', sourceUrl: 'https://fred.stlouisfed.org/series/UNRATE',
@@ -99,9 +99,9 @@ const META = {
   infrastructure_decay: {
     title: 'Infrastructure Decay',
     number: '43,586', numberContext: 'US bridges classified as structurally deficient — with an average bridge age of 44 years.',
-    what: 'Physical infrastructure condition as measured by federal agencies: bridge structural ratings, power grid reliability, water system integrity, and transportation investment relative to GDP.',
+    what: 'Infrastructure utilization and condition tracked through EIA electricity retail sales data as a proxy for systemic capacity. Bridge deficiency data (43,586 structurally deficient) from FHWA National Bridge Inventory provides the headline figure.',
     why: 'Infrastructure decay is simultaneously a cause and symptom of institutional decline. It reduces economic productivity, increases maintenance costs exponentially, and signals a society consuming inherited capital rather than investing in future capacity.',
-    series: 'elec_retail_sales_res', source: 'FHWA / EIA', sourceUrl: 'https://www.fhwa.dot.gov/bridge/nbi.cfm',
+    series: 'elec_retail_sales_res', source: 'EIA (Energy Information Administration)', sourceUrl: 'https://www.eia.gov/electricity/data/',
     methodology: 'Bridge data from FHWA National Bridge Inventory. Electricity data from EIA retail sales database. Annual observations.',
   },
   media_fragmentation: {
@@ -122,7 +122,7 @@ const META = {
   },
   resource_stress: {
     title: 'Resource & Environmental Stress',
-    number: '6B gal', numberContext: 'of treated drinking water lost daily to water main breaks — approximately 240,000 breaks per year.',
+    number: '1,065 ft', numberContext: 'Lake Mead water elevation, down from 1,214 ft in 2000. The Ogallala Aquifer has declined approximately 16 feet since 1950.',
     what: 'Critical resource sustainability indicators: aquifer depletion rates, reservoir levels, water infrastructure integrity, and energy system resilience.',
     why: 'Resource constraints function as hard limits on institutional adaptability. When critical resources are depleted or infrastructure fails to deliver them, the margin for institutional error narrows dramatically.',
     series: 'lake_mead_elevation', source: 'USGS / Bureau of Reclamation', sourceUrl: 'https://www.usbr.gov/lc/region/g4000/hourly/mead-elv.html',

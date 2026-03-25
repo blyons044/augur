@@ -102,7 +102,7 @@ const CHAPTERS = [
   {
     id: 'cta',
     title: 'Now look at all 13',
-    body: "What you just saw was five of Augur's thirteen indicators. The full dashboard includes civil unrest frequency, infrastructure decay, media fragmentation, elite overproduction, currency debasement, resource stress, rule of law erosion, and middle class decline. Every one is sourced, verified, and updated automatically.",
+    body: "What you just saw was five of Augur's thirteen indicators. The full dashboard includes civil unrest frequency, infrastructure decay, media fragmentation, elite overproduction, currency debasement, resource stress, rule of law erosion, and middle class decline. Every number traces to a publicly available primary source.",
   },
 ];
 
