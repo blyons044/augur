@@ -31,6 +31,14 @@ const META = {
     why: 'Every documented case of republican (small-r) institutional collapse — Rome, Weimar Germany, the French Fourth Republic — was preceded by the elimination of centrist overlap between factional groups. This is not a cultural preference. It is a structural failure mode.',
     series: 'dw_nominate_House_200', source: 'VoteView / UCLA', sourceUrl: 'https://voteview.com/data',
     methodology: 'Raw DW-NOMINATE scores downloaded directly from UCLA VoteView. Party means computed per chamber per Congress. No editorial adjustment. The gap between party means is the polarization measure.',
+    benchmarks: [
+      { label: 'Pre-Civil War US (1850s)', value: 0.52, color: '#a06050' },
+      { label: 'Current level', value: 0.53, color: '#e04040', current: true },
+      { label: 'Functional bipartisan era (1970s)', value: 0.35, color: '#40c080' },
+    ],
+    thresholds: [
+      { level: 0.45, label: 'Zero legislative overlap between parties typically occurs above this level' },
+    ],
   },
   public_trust: {
     title: 'Public Trust in Institutions',
@@ -39,6 +47,14 @@ const META = {
     why: 'Institutional legitimacy is the invisible infrastructure of governance. When citizens stop believing institutions function in good faith, compliance becomes coercive rather than voluntary — and coercive compliance is expensive, fragile, and historically unsustainable.',
     series: 'gallup_congress', source: 'Gallup Confidence in Institutions', sourceUrl: 'https://news.gallup.com/poll/1597/confidence-institutions.aspx',
     methodology: 'Annual survey data from Gallup. Percentage responding "a great deal" or "quite a lot" of confidence. Multiple institutional series tracked independently.',
+    benchmarks: [
+      { label: 'Watergate-era low (1976)', value: 36, color: '#e0a030' },
+      { label: 'Current Congress confidence', value: 8, color: '#e04040', current: true },
+      { label: 'Functional governance threshold', value: 30, color: '#40c080' },
+    ],
+    thresholds: [
+      { level: 20, label: 'Below 20% confidence, institutions typically lose voluntary compliance' },
+    ],
   },
   rule_of_law: {
     title: 'Rule of Law Erosion',
@@ -63,6 +79,15 @@ const META = {
     why: 'Extreme wealth concentration is present in every major case of institutional decline in the historical record. It is not the inequality itself that creates instability — it is the political consequences of inequality: elite capture of institutions, erosion of social mobility, and delegitimization of the economic system.',
     series: 'WFRBST01134', source: 'Federal Reserve DFA', sourceUrl: 'https://www.federalreserve.gov/releases/z1/dataviz/dfa/distribute/chart/',
     methodology: 'Top 1% wealth share from Federal Reserve Distributional Financial Accounts (WFRBST01134). Quarterly data, seasonally adjusted. No transformations applied.',
+    benchmarks: [
+      { label: 'Gilded Age peak (~1928)', value: 36, color: '#a06050' },
+      { label: 'Current top 1% share', value: 31, color: '#e04040', current: true },
+      { label: 'Post-war low (1978)', value: 22, color: '#40c080' },
+      { label: 'OECD average top 1%', value: 18, color: '#5080c0' },
+    ],
+    thresholds: [
+      { level: 30, label: 'Above 30% top-1% share, democratic institutions historically face legitimacy challenges' },
+    ],
   },
   middle_class_decline: {
     title: 'Decline of the Middle Class',
@@ -79,6 +104,15 @@ const META = {
     why: 'Sovereign debt crises are among the most common proximate triggers of institutional rupture. The debt itself is less important than the trajectory — accelerating debt-to-GDP ratios reduce fiscal capacity to respond to crises, creating fragility.',
     series: 'GFDEGDQ188S', source: 'Federal Reserve / FRED', sourceUrl: 'https://fred.stlouisfed.org/series/GFDEGDQ188S',
     methodology: 'Federal debt to GDP ratio from FRED series GFDEGDQ188S. Quarterly data. No transformations applied to source data.',
+    benchmarks: [
+      { label: 'WWII peak (1946)', value: 106, color: '#e0a030' },
+      { label: 'Current US', value: 122, color: '#e04040', current: true },
+      { label: 'Eurozone crisis threshold', value: 90, color: '#a06050' },
+      { label: 'OECD average', value: 68, color: '#40c080' },
+    ],
+    thresholds: [
+      { level: 90, label: 'Reinhart-Rogoff threshold: GDP growth historically slows above 90% debt-to-GDP' },
+    ],
   },
   currency_debasement: {
     title: 'Currency Debasement & Inflation',
@@ -280,6 +314,34 @@ function IndicatorPage({ indicatorData, loading, error }) {
             <span>{data.record_count} observations</span>
             <span>Source: {meta.source}</span>
           </div>
+          {data && data.data && (() => {
+            let pts = data.data.filter(d => d.series_id === meta.series && d.value != null);
+            if (!pts.length) {
+              const sc = {}; data.data.forEach(d => { if(d.value!=null) sc[d.series_id]=(sc[d.series_id]||0)+1; });
+              const b = Object.entries(sc).sort((a,b)=>b[1]-a[1])[0];
+              if(b) pts = data.data.filter(d=>d.series_id===b[0]&&d.value!=null);
+            }
+            if (pts.length < 10) return null;
+            const recent = pts.slice(-5);
+            const prior = pts.slice(-10, -5);
+            if (recent.length < 3 || prior.length < 3) return null;
+            const recentChange = (recent[recent.length-1].value - recent[0].value) / Math.abs(recent[0].value) * 100;
+            const priorChange = (prior[prior.length-1].value - prior[0].value) / Math.abs(prior[0].value) * 100;
+            const accelerating = Math.abs(recentChange) > Math.abs(priorChange) * 1.2;
+            const direction = recentChange > 0 ? 'increasing' : 'decreasing';
+            return (
+              <div className="acceleration-box">
+                <span className="acceleration-label">Rate of Change Analysis</span>
+                <div className="acceleration-detail">
+                  <span>Recent period: <strong style={{color: Math.abs(recentChange) > Math.abs(priorChange) ? 'var(--red)' : 'var(--green)'}}>{recentChange > 0 ? '+' : ''}{recentChange.toFixed(1)}%</strong></span>
+                  <span>Prior period: <strong>{priorChange > 0 ? '+' : ''}{priorChange.toFixed(1)}%</strong></span>
+                  <span className={'acceleration-status ' + (accelerating ? 'accel-warning' : 'accel-stable')}>
+                    {accelerating ? '⚠ Rate of change is accelerating' : '✓ Rate of change is stable or decelerating'}
+                  </span>
+                </div>
+              </div>
+            );
+          })()}
           <div className="chart-actions">
             <button className="share-btn" onClick={() => {
               const url = window.location.href;
@@ -342,6 +404,27 @@ function IndicatorPage({ indicatorData, loading, error }) {
           <h2 className="section-title">Why it matters</h2>
           <p>{meta.why}</p>
         </section>
+
+        {meta.benchmarks && (
+          <section className="indicator-section">
+            <h2 className="section-title">Historical Benchmarks</h2>
+            <div className="benchmarks-list">
+              {meta.benchmarks.map((b, i) => (
+                <div className={'benchmark-row' + (b.current ? ' benchmark-current' : '')} key={i}>
+                  <span className="benchmark-dot" style={{background: b.color}} />
+                  <span className="benchmark-label">{b.label}</span>
+                  <span className="benchmark-value" style={{color: b.color}}>{typeof b.value === 'number' ? b.value.toFixed(1) : b.value}</span>
+                </div>
+              ))}
+            </div>
+            {meta.thresholds && meta.thresholds.map((t, i) => (
+              <div className="threshold-note" key={i}>
+                <span className="threshold-icon">▶</span>
+                <span className="threshold-text">{t.label}</span>
+              </div>
+            ))}
+          </section>
+        )}
 
         <section className="indicator-section">
           <h2 className="section-title">Methodology</h2>
