@@ -9,7 +9,15 @@ const COUNTRIES = {
   JPN:'Japan', CHN:'China', IND:'India', BRA:'Brazil', RUS:'Russia',
   KOR:'South Korea', CAN:'Canada', AUS:'Australia', ITA:'Italy',
   MEX:'Mexico', IDN:'Indonesia', TUR:'Turkey', ZAF:'South Africa',
-  ARG:'Argentina', NGA:'Nigeria', SWE:'Sweden'
+  ARG:'Argentina', NGA:'Nigeria', SWE:'Sweden',
+  SAU:'Saudi Arabia', ARE:'UAE', ISR:'Israel', EGY:'Egypt',
+  THA:'Thailand', VNM:'Vietnam', PHL:'Philippines', MYS:'Malaysia',
+  SGP:'Singapore', NZL:'New Zealand', NOR:'Norway', DNK:'Denmark',
+  FIN:'Finland', CHE:'Switzerland', NLD:'Netherlands', BEL:'Belgium',
+  AUT:'Austria', POL:'Poland', CZE:'Czech Republic', GRC:'Greece',
+  PRT:'Portugal', CHL:'Chile', COL:'Colombia', PER:'Peru',
+  PAK:'Pakistan', BGD:'Bangladesh', KEN:'Kenya', ETH:'Ethiopia',
+  IRN:'Iran', UKR:'Ukraine'
 };
 
 const FLAGS = {
@@ -41,8 +49,10 @@ function CountryRankings() {
   useEffect(() => {
     async function fetchAll() {
       try {
+        const codes = Object.keys(COUNTRIES);
         const results = {};
-        for (const cc of Object.keys(COUNTRIES)) {
+        // Fetch all countries in parallel
+        const promises = codes.map(async cc => {
           try {
             const [geo, ineq] = await Promise.all([
               axios.get(API_BASE+'/api/indicators/geopolitical_standing?country_code='+cc),
@@ -50,7 +60,8 @@ function CountryRankings() {
             ]);
             results[cc] = { geo: geo.data, ineq: ineq ? ineq.data : null };
           } catch(e) { results[cc] = null; }
-        }
+        });
+        await Promise.all(promises);
         setData(results);
         setLoading(false);
       } catch(err) { setError(err.message); setLoading(false); }
@@ -82,7 +93,7 @@ function CountryRankings() {
   if (loading) return (
     <div className="loading-screen">
       <h1 className="augur-title">AUGUR</h1>
-      <p className="loading-text">Loading cross-country data for 20 nations...</p>
+      <p className="loading-text">Loading cross-country data for 50 nations...</p>
     </div>
   );
 
@@ -98,7 +109,7 @@ function CountryRankings() {
         <span className="section-label">Global Rankings</span>
         <h1 className="indicator-page-title">Country Comparison</h1>
         <p className="section-body-intro" style={{maxWidth:'640px'}}>
-          20 nations ranked across structural indicators. Same data sources,
+          50 nations ranked across structural indicators. Same data sources,
           same methodology, same political neutrality applied to every country.
         </p>
       </header>

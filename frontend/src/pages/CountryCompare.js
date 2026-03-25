@@ -10,7 +10,15 @@ const COUNTRIES = {
   JPN:'Japan', CHN:'China', IND:'India', BRA:'Brazil', RUS:'Russia',
   KOR:'South Korea', CAN:'Canada', AUS:'Australia', ITA:'Italy',
   MEX:'Mexico', IDN:'Indonesia', TUR:'Turkey', ZAF:'South Africa',
-  ARG:'Argentina', NGA:'Nigeria', SWE:'Sweden'
+  ARG:'Argentina', NGA:'Nigeria', SWE:'Sweden',
+  SAU:'Saudi Arabia', ARE:'UAE', ISR:'Israel', EGY:'Egypt',
+  THA:'Thailand', VNM:'Vietnam', PHL:'Philippines', MYS:'Malaysia',
+  SGP:'Singapore', NZL:'New Zealand', NOR:'Norway', DNK:'Denmark',
+  FIN:'Finland', CHE:'Switzerland', NLD:'Netherlands', BEL:'Belgium',
+  AUT:'Austria', POL:'Poland', CZE:'Czech Republic', GRC:'Greece',
+  PRT:'Portugal', CHL:'Chile', COL:'Colombia', PER:'Peru',
+  PAK:'Pakistan', BGD:'Bangladesh', KEN:'Kenya', ETH:'Ethiopia',
+  IRN:'Iran', UKR:'Ukraine'
 };
 
 const COMPARE_METRICS = [
