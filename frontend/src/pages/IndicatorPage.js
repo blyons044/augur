@@ -280,6 +280,39 @@ function IndicatorPage({ indicatorData, loading, error }) {
             <span>{data.record_count} observations</span>
             <span>Source: {meta.source}</span>
           </div>
+          <div className="chart-actions">
+            <button className="share-btn" onClick={() => {
+              const url = window.location.href;
+              if (navigator.share) {
+                navigator.share({title: meta.title + ' — AUGUR', url: url});
+              } else {
+                navigator.clipboard.writeText(url);
+                alert('Link copied to clipboard');
+              }
+            }}>Share ↗</button>
+            <button className="share-btn" onClick={() => {
+              const svg = document.querySelector('.full-chart');
+              if (!svg) return;
+              const svgData = new XMLSerializer().serializeToString(svg);
+              const canvas = document.createElement('canvas');
+              canvas.width = 1800; canvas.height = 720;
+              const ctx = canvas.getContext('2d');
+              ctx.fillStyle = '#080810';
+              ctx.fillRect(0, 0, 1800, 720);
+              const img = new Image();
+              img.onload = () => {
+                ctx.drawImage(img, 0, 0, 1800, 720);
+                ctx.fillStyle = '#707088';
+                ctx.font = '14px monospace';
+                ctx.fillText('AUGUR · ' + meta.title + ' · augur-index.vercel.app', 20, 700);
+                const a = document.createElement('a');
+                a.download = id + '_augur_chart.png';
+                a.href = canvas.toDataURL('image/png');
+                a.click();
+              };
+              img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+            }}>Export PNG ↓</button>
+          </div>
           {data.data && (() => {
             const sm = {}; data.data.forEach(d => { if(d.value!=null) { if(!sm[d.series_id]) sm[d.series_id]=0; sm[d.series_id]++; }});
             const series = Object.entries(sm).filter(([k,v])=>v>=2).sort((a,b)=>b[1]-a[1]).slice(0,6);

@@ -9,6 +9,7 @@ import EmpireExplorer from './pages/EmpireExplorer';
 import CountryRankings from './pages/CountryRankings';
 import CountryCompare from './pages/CountryCompare';
 import NarrativeMode from './pages/NarrativeMode';
+import ApiDocs from './pages/ApiDocs';
 import './index.css';
 
 const API_BASE = process.env.REACT_APP_API_URL || 'https://augur.up.railway.app';
@@ -43,9 +44,11 @@ function App() {
         <Route path="/empires" element={<EmpireExplorer />} />
         <Route path="/rankings" element={<CountryRankings />} />
         <Route path="/compare" element={<CountryCompare />} />
+        <Route path="/api-docs" element={<ApiDocs />} />
         <Route path="/story" element={<NarrativeMode indicatorData={indicatorData} />} />
         <Route path="/rankings" element={<CountryRankings />} />
         <Route path="/compare" element={<CountryCompare />} />
+        <Route path="/api-docs" element={<ApiDocs />} />
         <Route path="/story" element={<NarrativeMode indicatorData={indicatorData} />} />
         <Route path="/indicator/:id" element={
           <IndicatorPage indicatorData={indicatorData} loading={loading} error={error} />

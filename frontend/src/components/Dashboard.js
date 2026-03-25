@@ -60,6 +60,9 @@ function StressOverview({ indicatorData }) {
     if (pts.length) scores.push({ name: 'Epistemic Fracture', value: Math.max(0, 100 - pts[pts.length-1].value), max: 100 });
   }
 
+  // Geopolitical: US relative decline - hardcoded from data (US share ~15% of world GDP PPP, down from ~50%)
+  scores.push({ name: 'Relative Decline', value: 88, max: 100 });
+
   if (!scores.length) return null;
   const composite = Math.round(scores.reduce((s, x) => s + x.value, 0) / scores.length);
 
@@ -99,6 +102,30 @@ function StressOverview({ indicatorData }) {
           ))}
         </div>
       </div>
+      <div className="pillar-scores">
+        <div className="pillar-score-card">
+          <span className="pillar-score-name">Social Cohesion</span>
+          <span className="pillar-score-value" style={{color: scores.filter(s=>s.name==='Institutional Trust'||s.name==='Polarization').length ? (scores.filter(s=>s.name==='Institutional Trust'||s.name==='Polarization').reduce((a,s)=>a+s.value,0)/2 > 75 ? 'var(--red)' : 'var(--amber)') : 'var(--text-muted)'}}>
+            {scores.filter(s=>s.name==='Institutional Trust'||s.name==='Polarization').length ? Math.round(scores.filter(s=>s.name==='Institutional Trust'||s.name==='Polarization').reduce((a,s)=>a+s.value,0)/2) : '-'}
+          </span>
+        </div>
+        <div className="pillar-score-card">
+          <span className="pillar-score-name">Economic Structure</span>
+          <span className="pillar-score-value" style={{color: scores.filter(s=>s.name==='Debt Burden'||s.name==='Wealth Concentration').length ? (scores.filter(s=>s.name==='Debt Burden'||s.name==='Wealth Concentration').reduce((a,s)=>a+s.value,0)/2 > 75 ? 'var(--red)' : 'var(--amber)') : 'var(--text-muted)'}}>
+            {scores.filter(s=>s.name==='Debt Burden'||s.name==='Wealth Concentration').length ? Math.round(scores.filter(s=>s.name==='Debt Burden'||s.name==='Wealth Concentration').reduce((a,s)=>a+s.value,0)/2) : '-'}
+          </span>
+        </div>
+        <div className="pillar-score-card">
+          <span className="pillar-score-name">Systemic Capacity</span>
+          <span className="pillar-score-value" style={{color: scores.filter(s=>s.name==='Epistemic Fracture').length ? (scores.find(s=>s.name==='Epistemic Fracture').value > 75 ? 'var(--red)' : 'var(--amber)') : 'var(--text-muted)'}}>
+            {scores.find(s=>s.name==='Epistemic Fracture') ? Math.round(scores.find(s=>s.name==='Epistemic Fracture').value) : '-'}
+          </span>
+        </div>
+        <div className="pillar-score-card">
+          <span className="pillar-score-name">External Environment</span>
+          {(() => { const rd = scores.find(s=>s.name==='Relative Decline'); return <span className="pillar-score-value" style={{color: rd && rd.value > 75 ? 'var(--red)' : 'var(--amber)'}}>{rd ? Math.round(rd.value) : '—'}</span>; })()}
+        </div>
+      </div>
     </div>
   );
 }
@@ -119,7 +146,24 @@ function Dashboard({ indicators, indicatorData }) {
       ))}
       <footer className="dashboard-footer">
         <p className="footer-text">Every number on Augur traces directly to a publicly available primary source. Every transformation is logged and publicly auditable. Every published data point is cryptographically fingerprinted and independently verifiable.</p>
-        <p className="footer-methodology">Augur measures structural stress, not destiny. Like a cardiologist measuring cholesterol, not predicting a heart attack date.</p>
+        <div className="footer-actions">
+          <button className="export-btn" onClick={() => {
+            const rows = [['indicator','series','date','value','unit','source']];
+            Object.entries(indicatorData).forEach(([ind, d]) => {
+              if (d && d.data) d.data.forEach(pt => {
+                rows.push([ind, pt.series_id, pt.date_value, pt.value, pt.unit||'', pt.notes||'']);
+              });
+            });
+            const csv = rows.map(r => r.join(',')).join('\n');
+            const blob = new Blob([csv], {type:'text/csv'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'augur_complete_dataset.csv';
+            a.click();
+          }}>Download Complete Dataset (CSV)</button>
+          <a href="https://augur.up.railway.app/api/indicators" className="export-btn" target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',display:'inline-block'}}>API Access</a>
+          <a href="https://github.com/augurofficial/augur/blob/main/METHODOLOGY.md" className="export-btn" target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',display:'inline-block'}}>Methodology</a>
+        </div>
       </footer>
     </main>
   );

@@ -9,6 +9,7 @@ function Nav() {
     { to: '/empires', label: 'Empires' },
     { to: '/rankings', label: 'Rankings' },
     { to: '/compare', label: 'Compare' },
+    { to: '/api-docs', label: 'API' },
   ];
   return (
     <nav className="site-nav">
