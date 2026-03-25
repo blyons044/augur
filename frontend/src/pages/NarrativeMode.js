@@ -40,7 +40,7 @@ const CHAPTERS = [
   {
     id: 'intro',
     title: 'Five minutes that might change how you see your country',
-    body: "What you're about to see is not opinion. It's not prediction. It's publicly available data from the Federal Reserve, the World Bank, UCLA, and government statistical agencies \u2014 processed with zero editorial intervention and presented exactly as it is.",
+    body: "What you're about to see is publicly available data from the Federal Reserve, the World Bank, UCLA, and government statistical agencies \u2014 processed with zero editorial intervention and presented exactly as it is.",
     note: "Every number links to its source. If anything here were wrong, anyone with a laptop could prove it.",
   },
   {

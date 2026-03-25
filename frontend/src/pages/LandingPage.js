@@ -119,24 +119,26 @@ function LandingPage() {
       {/* ---- WHAT IS AUGUR ---- */}
       <section className={`content-section reveal-section ${isVisible('what') ? 'visible' : ''}`} id="what">
         <div className="section-inner">
-          <span className="section-label">What is Augur</span>
-          <h2 className="section-title">A mirror, not a crystal ball</h2>
+          <span className="section-label">Why this exists</span>
+          <h2 className="section-title">Because nobody will look at the numbers</h2>
           <div className="section-body">
             <p>
-              Augur tracks 13 structural indicators that political scientists and
-              historians have identified in every major civilizational decline on record.
-              Not predictions. Not opinions. Primary-source data from the Federal Reserve,
-              World Bank, and government statistical agencies — processed with full
-              transparency and zero editorial intervention.
+              Try telling someone that Congress has an 8% confidence rating.
+              That the top 1% holds more wealth than the bottom 50% combined.
+              That federal debt just hit the highest peacetime ratio in American
+              history. They shrug. They've heard it before. Nothing happened.
+              It won't happen here.
             </p>
             <p>
-              The data is either accurate or it isn't. Every number links to its
-              source. Every transformation is logged. If anything here were wrong,
-              anyone with a laptop could prove it.
+              Augur exists because the data is right there, published by the
+              Federal Reserve, the World Bank, UCLA, and government agencies,
+              and almost nobody is looking at it in context. These are the same
+              structural indicators that historians have documented in every
+              empire that ever fell.
             </p>
             <blockquote className="pull-quote">
-              The question is never whether empires decline. The question is whether the people living through it can see the data clearly enough to act.
-              <span className="quote-context">Augur exists to make the data visible.</span>
+              The more people who see this clearly, the more resilient we all become.
+              <span className="quote-context">That's why Augur exists.</span>
             </blockquote>
           </div>
         </div>
