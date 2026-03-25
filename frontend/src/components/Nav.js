@@ -8,6 +8,7 @@ function Nav() {
     { to: '/dashboard', label: 'Dashboard' },
     { to: '/empires', label: 'Empires' },
     { to: '/rankings', label: 'Rankings' },
+    { to: '/compare', label: 'Compare' },
   ];
   return (
     <nav className="site-nav">

@@ -63,8 +63,24 @@ function StressOverview({ indicatorData }) {
   if (!scores.length) return null;
   const composite = Math.round(scores.reduce((s, x) => s + x.value, 0) / scores.length);
 
+  // Alert: check for all-time extremes
+  const alerts = [];
+  scores.forEach(s => {
+    if (s.value > 90) alerts.push(s.name + ' is at critical levels');
+  });
+
   return (
     <div className="stress-overview">
+      {alerts.length > 0 && (
+        <div className="stress-alerts">
+          {alerts.map((a, i) => (
+            <div className="stress-alert" key={i}>
+              <span className="alert-icon">⚠</span>
+              <span className="alert-text">{a}</span>
+            </div>
+          ))}
+        </div>
+      )}
       <div className="stress-score-container">
         <div className="stress-composite">
           <span className="stress-number">{composite}</span>

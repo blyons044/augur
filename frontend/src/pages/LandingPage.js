@@ -52,7 +52,7 @@ function LandingPage() {
             sourced, cryptographically verified, and politically symmetrical.
           </p>
           <div className="hero-actions">
-            <Link to="/dashboard" className="hero-cta">View the Dashboard</Link>
+            <Link to="/story" className="hero-cta">The Story in 5 Minutes</Link>
             <Link to="/empires" className="hero-secondary">Empire Explorer</Link>
           </div>
         </div>
