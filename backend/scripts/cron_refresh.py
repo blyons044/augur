@@ -27,12 +27,17 @@ def main():
     pipeline = FREDPipeline(audit_logger=audit)
     db = AugurDB(audit=audit)
     
-    result = pipeline.fetch_all()
-    log.info(f'FRED fetch complete: {result["passed"]}/{result["total"]} series passed')
+    result = pipeline.fetch_all_series()
+    passed = result.get('passed', 0)
+    total = result.get('total', 0)
+    log.info(f'FRED fetch complete: {passed}/{total} series passed')
     
-    if result.get('rows'):
-        db.insert_data_points(result['rows'])
-        log.info(f'Inserted {len(result["rows"])} rows')
+    rows = result.get('rows', result.get('records', []))
+    if rows:
+        db.insert_data_points(rows)
+        log.info(f'Inserted {len(rows)} rows')
+    else:
+        log.info('No new rows to insert (data may already be current)')
     
     audit.flush()
     log.info('Cron refresh complete')
