@@ -28,6 +28,179 @@ const NAMES = {
   elite_overproduction: 'Elite Overproduction', infrastructure_decay: 'Infrastructure Decay', media_fragmentation: 'Media Fragmentation & Epistemic Divergence',
   geopolitical_standing: 'Geopolitical Standing & External Pressure', resource_stress: 'Resource & Environmental Stress',
 };
+function CompositeTimeline({ indicatorData }) {
+  const ref = React.useRef();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setTimeout(() => setMounted(true), 200);
+    if (!indicatorData || !ref.current) return;
+
+    // Compute composite score per year from available data
+    const yearScores = {};
+
+    // Trust: gallup_congress (lower = more stress)
+    const trust = indicatorData.public_trust;
+    if (trust && trust.data) {
+      trust.data.filter(d => d.series_id === 'gallup_congress' && d.value != null).forEach(d => {
+        const yr = parseInt(d.date_value.substring(0, 4));
+        if (!yearScores[yr]) yearScores[yr] = { scores: [], count: 0 };
+        yearScores[yr].scores.push(Math.max(0, 100 - d.value));
+        yearScores[yr].count++;
+      });
+    }
+
+    // Polarization: dw_nominate_House_200
+    const pol = indicatorData.political_polarization;
+    if (pol && pol.data) {
+      pol.data.filter(d => d.series_id === 'dw_nominate_House_200' && d.value != null).forEach(d => {
+        const yr = parseInt(d.date_value.substring(0, 4));
+        if (!yearScores[yr]) yearScores[yr] = { scores: [], count: 0 };
+        yearScores[yr].scores.push(Math.min(100, d.value * 150));
+        yearScores[yr].count++;
+      });
+    }
+
+    // Debt: GFDEGDQ188S
+    const debt = indicatorData.debt_to_gdp;
+    if (debt && debt.data) {
+      const debtPts = debt.data.filter(d => d.series_id === 'GFDEGDQ188S' && d.value != null);
+      // Aggregate to yearly
+      const byYear = {};
+      debtPts.forEach(d => {
+        const yr = parseInt(d.date_value.substring(0, 4));
+        byYear[yr] = d.value;
+      });
+      Object.entries(byYear).forEach(([yr, val]) => {
+        const y = parseInt(yr);
+        if (!yearScores[y]) yearScores[y] = { scores: [], count: 0 };
+        yearScores[y].scores.push(Math.min(100, val * 0.8));
+        yearScores[y].count++;
+      });
+    }
+
+    // Wealth: WFRBST01134
+    const wealth = indicatorData.wealth_inequality;
+    if (wealth && wealth.data) {
+      wealth.data.filter(d => d.series_id === 'WFRBST01134' && d.value != null).forEach(d => {
+        const yr = parseInt(d.date_value.substring(0, 4));
+        if (!yearScores[yr]) yearScores[yr] = { scores: [], count: 0 };
+        yearScores[yr].scores.push(Math.min(100, d.value * 2.5));
+        yearScores[yr].count++;
+      });
+    }
+
+    // Media: gallup_news_trust
+    const media = indicatorData.media_fragmentation;
+    if (media && media.data) {
+      media.data.filter(d => d.series_id === 'gallup_news_trust' && d.value != null).forEach(d => {
+        const yr = parseInt(d.date_value.substring(0, 4));
+        if (!yearScores[yr]) yearScores[yr] = { scores: [], count: 0 };
+        yearScores[yr].scores.push(Math.max(0, 100 - d.value));
+        yearScores[yr].count++;
+      });
+    }
+
+    // Build the timeline - only years with 2+ scores
+    const timeline = Object.entries(yearScores)
+      .filter(([yr, data]) => data.scores.length >= 2 && parseInt(yr) >= 1990)
+      .map(([yr, data]) => ({
+        year: parseInt(yr),
+        score: Math.round(data.scores.reduce((a, b) => a + b, 0) / data.scores.length),
+        components: data.scores.length,
+      }))
+      .sort((a, b) => a.year - b.year);
+
+    if (timeline.length < 3) return;
+
+    // Draw with D3
+    const d3 = require('d3');
+    const svg = d3.select(ref.current);
+    svg.selectAll('*').remove();
+
+    const W = 900, H = 260, m = { t: 30, r: 30, b: 40, l: 55 };
+
+    const x = d3.scaleLinear().domain(d3.extent(timeline, d => d.year)).range([m.l, W - m.r]);
+    const y = d3.scaleLinear().domain([0, 100]).range([H - m.b, m.t]);
+
+    // Danger zone shading
+    svg.append('rect').attr('x', m.l).attr('y', y(100)).attr('width', W - m.l - m.r).attr('height', y(75) - y(100)).attr('fill', 'rgba(224,64,64,0.04)');
+    svg.append('rect').attr('x', m.l).attr('y', y(75)).attr('width', W - m.l - m.r).attr('height', y(50) - y(75)).attr('fill', 'rgba(224,160,48,0.03)');
+
+    // Threshold lines
+    svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(75)).attr('y2', y(75)).attr('stroke', 'rgba(224,64,64,0.2)').attr('stroke-dasharray', '4,4');
+    svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(50)).attr('y2', y(50)).attr('stroke', 'rgba(224,160,48,0.2)').attr('stroke-dasharray', '4,4');
+
+    // Threshold labels
+    svg.append('text').attr('x', W - m.r + 4).attr('y', y(75) + 4).text('HIGH').attr('fill', '#e04040').attr('font-size', '8px').attr('font-family', "'JetBrains Mono'").attr('opacity', 0.5);
+    svg.append('text').attr('x', W - m.r + 4).attr('y', y(50) + 4).text('ELEVATED').attr('fill', '#e0a030').attr('font-size', '8px').attr('font-family', "'JetBrains Mono'").attr('opacity', 0.5);
+
+    // Axes
+    svg.append('g').attr('transform', 'translate(0,' + (H - m.b) + ')').call(d3.axisBottom(x).ticks(8).tickFormat(d3.format('d')).tickSize(0)).select('.domain').attr('stroke', '#1c1c30');
+    svg.selectAll('.tick text').attr('fill', '#707088').attr('font-family', "'JetBrains Mono'").attr('font-size', '10px');
+    svg.append('g').attr('transform', 'translate(' + m.l + ',0)').call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r))).select('.domain').remove();
+    svg.selectAll('.tick line').attr('stroke', '#1c1c30').attr('stroke-dasharray', '2,4');
+    svg.selectAll('.tick text').attr('fill', '#707088').attr('font-family', "'JetBrains Mono'").attr('font-size', '10px');
+
+    // Area fill
+    const defs = svg.append('defs');
+    const grad = defs.append('linearGradient').attr('id', 'composite-grad').attr('x1', '0%').attr('y1', '0%').attr('x2', '0%').attr('y2', '100%');
+    grad.append('stop').attr('offset', '0%').attr('stop-color', '#e04040').attr('stop-opacity', 0.3);
+    grad.append('stop').attr('offset', '100%').attr('stop-color', '#e04040').attr('stop-opacity', 0);
+
+    svg.append('path').datum(timeline).attr('fill', 'url(#composite-grad)')
+      .attr('d', d3.area().x(d => x(d.year)).y0(H - m.b).y1(d => y(d.score)).curve(d3.curveMonotoneX));
+
+    // Line
+    svg.append('path').datum(timeline).attr('fill', 'none').attr('stroke', '#e04040').attr('stroke-width', 2.5)
+      .attr('d', d3.line().x(d => x(d.year)).y(d => y(d.score)).curve(d3.curveMonotoneX));
+
+    // End dot with value
+    const last = timeline[timeline.length - 1];
+    svg.append('circle').attr('cx', x(last.year)).attr('cy', y(last.score)).attr('r', 5).attr('fill', '#e04040');
+    svg.append('text').attr('x', x(last.year) - 8).attr('y', y(last.score) - 12).text(last.score)
+      .attr('fill', '#e04040').attr('font-size', '16px').attr('font-weight', 'bold').attr('font-family', "'JetBrains Mono'");
+
+    // Start value
+    const first = timeline[0];
+    svg.append('text').attr('x', x(first.year) - 5).attr('y', y(first.score) - 10).text(first.score)
+      .attr('fill', '#707088').attr('font-size', '12px').attr('font-family', "'JetBrains Mono'");
+
+    // Hover tooltip
+    const tooltip = svg.append('g').style('display', 'none');
+    tooltip.append('line').attr('y1', m.t).attr('y2', H - m.b).attr('stroke', '#e04040').attr('stroke-width', 1).attr('stroke-dasharray', '3,3');
+    tooltip.append('circle').attr('r', 5).attr('fill', '#e04040');
+    const tipBg = tooltip.append('rect').attr('fill', '#10101c').attr('stroke', '#1c1c30').attr('rx', 4);
+    const tipText = tooltip.append('text').attr('fill', '#f0f0f5').attr('font-family', "'JetBrains Mono'").attr('font-size', '11px');
+
+    svg.append('rect').attr('width', W).attr('height', H).attr('fill', 'transparent')
+      .on('mousemove', function(event) {
+        const [mx] = d3.pointer(event);
+        const yr = Math.round(x.invert(mx));
+        const pt = timeline.find(d => d.year === yr);
+        if (!pt) return;
+        tooltip.style('display', null);
+        tooltip.select('line').attr('x1', x(pt.year)).attr('x2', x(pt.year));
+        tooltip.select('circle').attr('cx', x(pt.year)).attr('cy', y(pt.score));
+        const label = pt.year + ': ' + pt.score + '/100';
+        tipText.attr('x', x(pt.year) + 10).attr('y', m.t + 20).text(label);
+        tipBg.attr('x', x(pt.year) + 6).attr('y', m.t + 6).attr('width', label.length * 7 + 12).attr('height', 22);
+      })
+      .on('mouseleave', () => tooltip.style('display', 'none'));
+
+  }, [indicatorData]);
+
+  return (
+    <div className={'composite-timeline' + (mounted ? ' composite-timeline-visible' : '')}>
+      <div className="composite-timeline-header">
+        <span className="empire-arc-label">Composite Stress Index Over Time</span>
+        <span className="empire-arc-sublabel">Backtested from historical data across all available indicators</span>
+      </div>
+      <svg ref={ref} viewBox="0 0 900 260" className="composite-timeline-chart" />
+    </div>
+  );
+}
+
 function EmpireArc() {
   const canvasRef = React.useRef(null);
   const [hoveredEmpire, setHoveredEmpire] = React.useState(null);
@@ -302,6 +475,7 @@ function Dashboard({ indicators, indicatorData }) {
   return (
     <main className="dashboard">
       <StressOverview indicatorData={indicatorData} />
+      <CompositeTimeline indicatorData={indicatorData} />
       <EmpireArc />
       {PILLARS.map((p) => (
         <section key={p.id} className="pillar-section">

@@ -263,3 +263,8 @@
 .empire-arc-sublabel{font:300 14px var(--font-body);color:var(--text-secondary)}
 .empire-arc-canvas{width:100%;max-width:900px;height:auto;display:block;margin:0 auto}
 @media(max-width:768px){.empire-arc-canvas{max-width:100%}}
+
+.composite-timeline{margin-bottom:48px;background:var(--bg-card);border:1px solid var(--border);padding:28px;opacity:0;transform:translateY(20px);transition:opacity 1s ease,transform 1s ease}
+.composite-timeline-visible{opacity:1;transform:translateY(0)}
+.composite-timeline-header{margin-bottom:16px}
+.composite-timeline-chart{width:100%;height:auto;max-width:900px;display:block;margin:0 auto}
