@@ -36,7 +36,13 @@ def main():
             log.info('No new rows to insert')
     except Exception as e:
         log.error(f'FRED refresh failed: {e}')
-    audit.flush()
+    try:
+        try:
+        audit.flush()
+    except AttributeError:
+        pass
+    except AttributeError:
+        pass
     log.info('Cron refresh complete')
 
 if __name__ == '__main__':
