@@ -28,6 +28,173 @@ const NAMES = {
   elite_overproduction: 'Elite Overproduction', infrastructure_decay: 'Infrastructure Decay', media_fragmentation: 'Media Fragmentation & Epistemic Divergence',
   geopolitical_standing: 'Geopolitical Standing & External Pressure', resource_stress: 'Resource & Environmental Stress',
 };
+function EmpireArc() {
+  const canvasRef = React.useRef(null);
+  const [hoveredEmpire, setHoveredEmpire] = React.useState(null);
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setTimeout(() => setMounted(true), 300);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = 900, H = 340;
+    canvas.width = W * 2; canvas.height = H * 2;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.scale(2, 2);
+
+    // Build the curve points
+    const points = [];
+    for (let x = 0; x <= 1; x += 0.005) {
+      const peak = 0.38;
+      const spread = x < peak ? 0.18 : 0.25;
+      const y = Math.exp(-Math.pow(x - peak, 2) / (2 * spread * spread));
+      points.push({ x: 80 + x * (W - 110), y: 290 - y * 230, t: x });
+    }
+
+    function getPoint(t) {
+      const idx = Math.min(Math.floor(t * points.length), points.length - 1);
+      return points[idx];
+    }
+
+    const empires = [
+      { name: 'Rome', t: 0.33, color: '#c0a050', year: '117 AD', labelY: -28 },
+      { name: 'Spanish', t: 0.37, color: '#a06050', year: '1580', labelY: -48 },
+      { name: 'Ottoman', t: 0.40, color: '#50a080', year: '1590', labelY: -28 },
+      { name: 'British', t: 0.46, color: '#5080c0', year: '1920', labelY: -48 },
+    ];
+
+    const usT = 0.56;
+
+    function draw(time) {
+      ctx.clearRect(0, 0, W, H);
+
+      // Grid lines
+      ctx.strokeStyle = '#1c1c30';
+      ctx.lineWidth = 0.5;
+      for (let y = 60; y < 300; y += 60) {
+        ctx.beginPath(); ctx.moveTo(60, y); ctx.lineTo(W - 30, y); ctx.stroke();
+      }
+
+      // Y-axis label
+      ctx.save();
+      ctx.translate(20, 200);
+      ctx.rotate(-Math.PI / 2);
+      ctx.font = '9px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#505068';
+      ctx.textAlign = 'center';
+      ctx.fillText('INSTITUTIONAL CAPACITY', 0, 0);
+      ctx.restore();
+      ctx.textAlign = 'start';
+
+      // Fill under curve
+      ctx.beginPath();
+      points.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+      ctx.lineTo(points[points.length-1].x, 290);
+      ctx.lineTo(80, 290);
+      ctx.closePath();
+      const fillGrad = ctx.createLinearGradient(80, 0, W - 30, 0);
+      fillGrad.addColorStop(0, 'rgba(42, 74, 58, 0.06)');
+      fillGrad.addColorStop(0.35, 'rgba(64, 192, 128, 0.06)');
+      fillGrad.addColorStop(0.5, 'rgba(224, 160, 48, 0.04)');
+      fillGrad.addColorStop(0.7, 'rgba(224, 64, 64, 0.04)');
+      fillGrad.addColorStop(1, 'rgba(74, 26, 26, 0.02)');
+      ctx.fillStyle = fillGrad;
+      ctx.fill();
+
+      // Draw curve
+      ctx.beginPath();
+      points.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+      const grad = ctx.createLinearGradient(80, 0, W - 30, 0);
+      grad.addColorStop(0, '#2a4a3a');
+      grad.addColorStop(0.3, '#40c080');
+      grad.addColorStop(0.45, '#e0a030');
+      grad.addColorStop(0.65, '#e04040');
+      grad.addColorStop(1, '#4a1a1a');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      // Phase labels
+      ctx.font = '8px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#404058';
+      ['FOUNDATION', 'EXPANSION', 'PEAK', 'STRAIN', 'DECLINE'].forEach((p, i) => {
+        ctx.fillText(p, [100, 230, 350, 500, 660][i], 310);
+      });
+
+      // Empire markers
+      empires.forEach(emp => {
+        const p = getPoint(emp.t);
+        // Vertical line down to curve
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y + emp.labelY + 14);
+        ctx.lineTo(p.x, p.y);
+        ctx.strokeStyle = emp.color;
+        ctx.globalAlpha = 0.3;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        // Dot on curve
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = emp.color;
+        ctx.fill();
+        // Label above
+        ctx.font = 'bold 9px "JetBrains Mono", monospace';
+        ctx.fillStyle = emp.color;
+        ctx.fillText(emp.name, p.x - 15, p.y + emp.labelY);
+        ctx.font = '8px "JetBrains Mono", monospace';
+        ctx.fillStyle = '#606078';
+        ctx.fillText(emp.year, p.x - 12, p.y + emp.labelY + 12);
+      });
+
+      // US "You Are Here" pulsing
+      const usP = getPoint(usT);
+      const pulse = (Math.sin(time / 800) + 1) / 2;
+
+      // Outer pulse rings
+      ctx.beginPath();
+      ctx.arc(usP.x, usP.y, 16 + pulse * 6, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(224, 64, 64, ' + (0.1 + pulse * 0.1) + ')';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(usP.x, usP.y, 10 + pulse * 3, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(224, 64, 64, ' + (0.2 + pulse * 0.1) + ')';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Inner dot
+      ctx.beginPath();
+      ctx.arc(usP.x, usP.y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#e04040';
+      ctx.fill();
+
+      // Label
+      ctx.font = 'bold 11px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#e04040';
+      ctx.fillText('YOU ARE HERE', usP.x + 22, usP.y - 4);
+      ctx.font = '10px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#a0a0b8';
+      ctx.fillText('United States, 2026', usP.x + 22, usP.y + 12);
+
+      requestAnimationFrame((t) => draw(t));
+    }
+    requestAnimationFrame((t) => draw(t));
+  }, []);
+
+  return (
+    <div className={'empire-arc' + (mounted ? ' empire-arc-visible' : '')}>
+      <div className="empire-arc-header">
+        <span className="empire-arc-label">The Lifecycle</span>
+        <span className="empire-arc-sublabel">Where empires have peaked and declined — and where the data places the United States</span>
+      </div>
+      <canvas ref={canvasRef} className="empire-arc-canvas" />
+    </div>
+  );
+}
+
 function StressOverview({ indicatorData }) {
   const scores = [];
   // Public trust: lower is worse (inverted)
@@ -135,6 +302,7 @@ function Dashboard({ indicators, indicatorData }) {
   return (
     <main className="dashboard">
       <StressOverview indicatorData={indicatorData} />
+      <EmpireArc />
       {PILLARS.map((p) => (
         <section key={p.id} className="pillar-section">
           <h2 className="pillar-title">{p.name}</h2>

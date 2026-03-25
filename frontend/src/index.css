@@ -255,3 +255,11 @@
 .un-value{animation:scoreReveal .6s ease .2s both}
 
 .hero-particles{position:absolute;inset:0;z-index:0;pointer-events:none}
+
+.empire-arc{margin-bottom:64px;background:var(--bg-card);border:1px solid var(--border);padding:28px;opacity:0;transform:translateY(20px);transition:opacity 1s ease,transform 1s ease}
+.empire-arc-visible{opacity:1;transform:translateY(0)}
+.empire-arc-header{margin-bottom:20px}
+.empire-arc-label{font:500 10px var(--font-mono);letter-spacing:3px;text-transform:uppercase;color:var(--red);display:block;margin-bottom:6px}
+.empire-arc-sublabel{font:300 14px var(--font-body);color:var(--text-secondary)}
+.empire-arc-canvas{width:100%;max-width:900px;height:auto;display:block;margin:0 auto}
+@media(max-width:768px){.empire-arc-canvas{max-width:100%}}
