@@ -655,7 +655,7 @@ function Dashboard({ indicators, indicatorData }) {
               </svg>
               <span className="connection-b">Polarization</span>
             </div>
-            <p className="connection-text">As institutional trust falls, polarization accelerates. When people stop trusting the system, they retreat to tribal loyalties. Every historical case follows this sequence.</p>
+            <p className="connection-text">As institutional trust falls, polarization accelerates. When people stop trusting the system, they retreat to tribal loyalties. This pattern recurs across multiple historical cases.</p>
             <span className="connection-strength">r = -0.89</span>
           </div>
           <div className="connection-card">

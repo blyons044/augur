@@ -196,7 +196,7 @@ function LandingPage() {
             the Ottomans, the British, the Spanish — each followed structurally
             similar trajectories. The indicators below are not metaphors.
             They are the specific, measurable conditions that preceded
-            every documented case of institutional collapse.
+            documented cases of institutional stress and decline.
           </p>
           <div className="empire-timeline">
             {EMPIRES.map((empire, i) => (
