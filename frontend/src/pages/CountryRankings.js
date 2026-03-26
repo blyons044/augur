@@ -37,6 +37,12 @@ const METRICS = [
   { id:'education', name:'Education (% GDP)', indicator:'geopolitical_standing', series:'SE.XPD.TOTL.GD.ZS', format: v=>v.toFixed(1)+'%', desc:'Government education spending as share of GDP', higherIs:'higher investment', sortDir:1 },
   { id:'life', name:'Life Expectancy', indicator:'geopolitical_standing', series:'SP.DYN.LE00.IN', format: v=>v.toFixed(1)+' yrs', desc:'Life expectancy at birth in years', higherIs:'longer lived', sortDir:1 },
   { id:'unemployment', name:'Unemployment', indicator:'geopolitical_standing', series:'SL.UEM.TOTL.ZS', format: v=>v.toFixed(1)+'%', desc:'Unemployment rate as percentage of labor force', higherIs:'more unemployed', sortDir:1 },
+  { id:'trade', name:'Trade (% GDP)', indicator:'geopolitical_standing', series:'NE.TRD.GNFS.ZS', format: v=>v.toFixed(1)+'%', desc:'Total trade as share of GDP', higherIs:'more open', sortDir:1 },
+  { id:'savings', name:'Gross Savings (% GDP)', indicator:'geopolitical_standing', series:'NY.GNS.ICTR.ZS', format: v=>v.toFixed(1)+'%', desc:'Gross national savings rate', higherIs:'higher savings', sortDir:1 },
+  { id:'fdi', name:'FDI Inflows (% GDP)', indicator:'geopolitical_standing', series:'BX.KLT.DINV.WD.GD.ZS', format: v=>v.toFixed(1)+'%', desc:'Foreign direct investment as share of GDP', higherIs:'more investment', sortDir:1 },
+  { id:'internet', name:'Internet Users (%)', indicator:'geopolitical_standing', series:'IT.NET.USER.ZS', format: v=>v.toFixed(1)+'%', desc:'Population using the internet', higherIs:'more connected', sortDir:1 },
+  { id:'urban', name:'Urbanization (%)', indicator:'geopolitical_standing', series:'SP.URB.TOTL.IN.ZS', format: v=>v.toFixed(1)+'%', desc:'Urban population as share of total', higherIs:'more urbanized', sortDir:1 },
+  { id:'aging', name:'Population 65+ (%)', indicator:'geopolitical_standing', series:'SP.POP.65UP.TO.ZS', format: v=>v.toFixed(1)+'%', desc:'Share of population aged 65 and older', higherIs:'older population', sortDir:1 },
   { id:'inflation', name:'Inflation Rate', indicator:'geopolitical_standing', series:'FP.CPI.TOTL.ZG', format: v=>v.toFixed(1)+'%', desc:'Consumer price inflation rate', higherIs:'higher inflation', sortDir:1 },
 ];
 
