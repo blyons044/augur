@@ -101,9 +101,71 @@ function CompositeTimeline({ indicatorData }) {
       });
     }
 
+    // Employment ratio: EMRATIO (lower = more stress)
+    const emp = indicatorData.elite_overproduction;
+    if (emp && emp.data) {
+      const byYear = {};
+      emp.data.filter(d => d.series_id === 'EMRATIO' && d.value != null).forEach(d => {
+        const yr = parseInt(d.date_value.substring(0, 4));
+        byYear[yr] = d.value;
+      });
+      Object.entries(byYear).forEach(([yr, val]) => {
+        const y = parseInt(yr);
+        if (!yearScores[y]) yearScores[y] = { scores: [], count: 0 };
+        yearScores[y].scores.push(Math.max(0, 100 - val));
+        yearScores[y].count++;
+      });
+    }
+
+    // Unemployment: UNRATE (higher = more stress)
+    if (emp && emp.data) {
+      const byYear = {};
+      emp.data.filter(d => d.series_id === 'UNRATE' && d.value != null).forEach(d => {
+        const yr = parseInt(d.date_value.substring(0, 4));
+        byYear[yr] = d.value;
+      });
+      Object.entries(byYear).forEach(([yr, val]) => {
+        const y = parseInt(yr);
+        if (!yearScores[y]) yearScores[y] = { scores: [], count: 0 };
+        yearScores[y].scores.push(Math.min(100, val * 10));
+        yearScores[y].count++;
+      });
+    }
+
+    // Consumer sentiment: UMCSENT (lower = more stress)
+    const mc = indicatorData.middle_class_decline;
+    if (mc && mc.data) {
+      const byYear = {};
+      mc.data.filter(d => d.series_id === 'UMCSENT' && d.value != null).forEach(d => {
+        const yr = parseInt(d.date_value.substring(0, 4));
+        byYear[yr] = d.value;
+      });
+      Object.entries(byYear).forEach(([yr, val]) => {
+        const y = parseInt(yr);
+        if (!yearScores[y]) yearScores[y] = { scores: [], count: 0 };
+        yearScores[y].scores.push(Math.max(0, 100 - val));
+        yearScores[y].count++;
+      });
+    }
+
+    // Savings rate: PSAVERT (lower = more stress)
+    if (mc && mc.data) {
+      const byYear = {};
+      mc.data.filter(d => d.series_id === 'PSAVERT' && d.value != null).forEach(d => {
+        const yr = parseInt(d.date_value.substring(0, 4));
+        byYear[yr] = d.value;
+      });
+      Object.entries(byYear).forEach(([yr, val]) => {
+        const y = parseInt(yr);
+        if (!yearScores[y]) yearScores[y] = { scores: [], count: 0 };
+        yearScores[y].scores.push(Math.max(0, Math.min(100, 100 - val * 5)));
+        yearScores[y].count++;
+      });
+    }
+
     // Build the timeline - only years with 2+ scores
     const timeline = Object.entries(yearScores)
-      .filter(([yr, data]) => data.scores.length >= 2 && parseInt(yr) >= 1990)
+      .filter(([yr, data]) => data.scores.length >= 5 && parseInt(yr) >= 1990)
       .map(([yr, data]) => ({
         year: parseInt(yr),
         score: Math.round(Math.exp(data.scores.reduce((a, s) => a + Math.log(Math.max(s, 1)), 0) / data.scores.length)),
@@ -182,9 +244,13 @@ function CompositeTimeline({ indicatorData }) {
         tooltip.style('display', null);
         tooltip.select('line').attr('x1', x(pt.year)).attr('x2', x(pt.year));
         tooltip.select('circle').attr('cx', x(pt.year)).attr('cy', y(pt.score));
-        const label = pt.year + ': ' + pt.score + '/100';
-        tipText.attr('x', x(pt.year) + 10).attr('y', m.t + 20).text(label);
-        tipBg.attr('x', x(pt.year) + 6).attr('y', m.t + 6).attr('width', label.length * 7 + 12).attr('height', 22);
+        const label = pt.year + ': ' + pt.score + ' (' + pt.components + ' indicators)';
+        const tipW = label.length * 7 + 12;
+        const nearRight = x(pt.year) + tipW + 20 > W;
+        const tx = nearRight ? x(pt.year) - tipW - 10 : x(pt.year) + 10;
+        const tbx = nearRight ? x(pt.year) - tipW - 14 : x(pt.year) + 6;
+        tipText.attr('x', tx).attr('y', m.t + 20).text(label);
+        tipBg.attr('x', tbx).attr('y', m.t + 6).attr('width', tipW).attr('height', 22);
       })
       .on('mouseleave', () => tooltip.style('display', 'none'));
 
