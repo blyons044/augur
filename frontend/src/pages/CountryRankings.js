@@ -32,7 +32,7 @@ const FLAGS = {
 const METRICS = [
   { id:'gdp_ppp', name:'GDP (PPP)', indicator:'geopolitical_standing', series:'NY.GDP.MKTP.PP.CD', format: v=>'$'+(v/1e12).toFixed(1)+'T', desc:'Economic output adjusted for purchasing power', higherIs:'stronger', sortDir:1 },
   { id:'gdp_pc', name:'GDP Per Capita', indicator:'geopolitical_standing', series:'NY.GDP.PCAP.PP.CD', format: v=>'$'+(v/1000).toFixed(1)+'K', desc:'GDP per person adjusted for purchasing power', higherIs:'wealthier', sortDir:1 },
-  { id:'gini', name:'Gini Index', indicator:'wealth_inequality', series:'SI.POV.GINI', format: v=>v.toFixed(1), desc:'Income inequality (0 = perfect equality, 100 = maximum)', higherIs:'most equal first', sortDir:-1 },
+  { id:'gini', name:'Gini Index', indicator:'geopolitical_standing', series:'SI.POV.GINI', format: v=>v.toFixed(1), desc:'Income inequality (0 = perfect equality, 100 = maximum)', higherIs:'most equal first', sortDir:-1 },
   { id:'military', name:'Military (% GDP)', indicator:'geopolitical_standing', series:'MS.MIL.XPND.GD.ZS', format: v=>v.toFixed(1)+'%', desc:'Defense expenditure as share of economy', higherIs:'highest spending first', sortDir:1 },
   { id:'health', name:'Healthcare (% GDP)', indicator:'geopolitical_standing', series:'SH.XPD.CHEX.GD.ZS', format: v=>v.toFixed(1)+'%', desc:'Current health expenditure as share of GDP (higher spending does not necessarily mean better outcomes)', higherIs:'highest spending first', sortDir:1 },
   { id:'education', name:'Education (% GDP)', indicator:'geopolitical_standing', series:'SE.XPD.TOTL.GD.ZS', format: v=>v.toFixed(1)+'%', desc:'Government education spending as share of GDP', higherIs:'higher investment', sortDir:1 },
@@ -68,11 +68,12 @@ function CountryRankings() {
         // Fetch all countries in parallel
         const promises = codes.map(async cc => {
           try {
-            const [geo, ineq] = await Promise.all([
+            const [geo, ineq, rol] = await Promise.all([
               axios.get(API_BASE+'/api/indicators/geopolitical_standing?country_code='+cc),
               axios.get(API_BASE+'/api/indicators/wealth_inequality?country_code='+cc).catch(()=>null),
+              axios.get(API_BASE+'/api/indicators/rule_of_law?country_code='+cc).catch(()=>null),
             ]);
-            results[cc] = { geo: geo.data, ineq: ineq ? ineq.data : null };
+            results[cc] = { geo: geo.data, ineq: ineq ? ineq.data : null, rol: rol ? rol.data : null };
           } catch(e) { results[cc] = null; }
         });
         await Promise.all(promises);
@@ -88,7 +89,7 @@ function CountryRankings() {
   function getLatestValue(cc) {
     const d = data[cc];
     if (!d) return null;
-    const source = metric.indicator === 'wealth_inequality' ? d.ineq : d.geo;
+    const source = metric.indicator === 'wealth_inequality' ? d.ineq : metric.indicator === 'rule_of_law' ? d.rol : d.geo;
     if (!source || !source.data) return null;
     const pts = source.data.filter(p => p.series_id === metric.series && p.value != null);
     if (!pts.length) return null;
