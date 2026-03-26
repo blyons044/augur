@@ -426,3 +426,16 @@
 .reading-value{font:500 24px var(--font-mono);display:block;margin-bottom:8px}
 .reading-text{font:300 12px/1.6 var(--font-body);color:var(--text-secondary);margin:0}
 @media(max-width:768px){.reading-grid{grid-template-columns:repeat(2,1fr)}.insights-list{grid-template-columns:1fr}}
+
+.resilience-section{margin-bottom:48px}
+.resilience-header{margin-bottom:20px}
+.resilience-desc{font:300 14px/1.7 var(--font-body);color:var(--text-muted)}
+.resilience-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.resilience-card{background:var(--bg-card);border:1px solid rgba(64,192,128,.2);padding:18px;transition:border-color .2s}
+.resilience-card:hover{border-color:rgba(64,192,128,.4)}
+.resilience-name{display:block;font:500 9px var(--font-mono);letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+.resilience-value{display:block;font:400 24px var(--font-display);color:#fff;margin-bottom:4px}
+.resilience-context{display:block;font:300 11px var(--font-body);color:var(--text-muted)}
+@media(max-width:768px){.resilience-grid{grid-template-columns:repeat(2,1fr)}}
+
+.stress-uncertainty{display:block;font:400 9px var(--font-mono);color:var(--text-muted);margin-top:4px;letter-spacing:.3px;opacity:.5;max-width:250px;line-height:1.5}

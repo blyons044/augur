@@ -246,7 +246,13 @@ function Correlations({ indicatorData }) {
               Pearson correlations across common annual observations. Minimum 5
               overlapping years required. Correlation identifies patterns, not causes.
               Two indicators moving together doesn't mean one causes the other.
-              It means they respond to shared structural conditions.
+
+              Important caveat: many of these indicators have been trending in the same
+              direction for decades. Two things that both trend upward will show high
+              correlation even if they're unrelated. The correlations here identify
+              co-movement, not necessarily structural connection. The contextual
+              explanations above draw on historical research, not just the statistical
+              relationship.
             </p>
           </section>
         </>

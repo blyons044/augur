@@ -361,7 +361,7 @@ function EmpireArc() {
     <div className={'empire-arc' + (mounted ? ' empire-arc-visible' : '')}>
       <div className="empire-arc-header">
         <span className="empire-arc-label">The Lifecycle</span>
-        <span className="empire-arc-sublabel">Where empires have peaked and declined — and where the data places the United States</span>
+        <span className="empire-arc-sublabel">A conceptual framework, not a prediction. Historical empires followed different timelines and trajectories. The structural parallels are documented, but no two transitions are alike.</span>
       </div>
       <canvas ref={canvasRef} className="empire-arc-canvas" />
     </div>
@@ -370,36 +370,46 @@ function EmpireArc() {
 
 function StressOverview({ indicatorData }) {
   const scores = [];
-  // Public trust: lower is worse (inverted)
-  const trust = indicatorData.public_trust;
-  if (trust && trust.data) {
-    const pts = trust.data.filter(d => d.series_id === 'gallup_congress' && d.value != null);
-    if (pts.length) scores.push({ name: 'Institutional Trust', value: Math.max(0, 100 - pts[pts.length-1].value), max: 100 });
+
+  // Percentile-based scoring: where is the current value relative to its own history?
+  // 0 = historical best, 100 = historical worst
+  function computePercentileStress(data, seriesId, invertDirection) {
+    if (!data || !data.data) return null;
+    const pts = data.data.filter(d => d.series_id === seriesId && d.value != null);
+    if (pts.length < 5) return null;
+    const values = pts.map(d => d.value).sort((a, b) => a - b);
+    const current = pts[pts.length - 1].value;
+    const rank = values.filter(v => v <= current).length / values.length;
+    // For most indicators, higher value = more stress
+    // For trust indicators, higher value = LESS stress (invert)
+    return invertDirection ? Math.round((1 - rank) * 100) : Math.round(rank * 100);
   }
-  // Polarization: higher gap is worse
-  const pol = indicatorData.political_polarization;
-  if (pol && pol.data) {
-    const pts = pol.data.filter(d => d.series_id === 'dw_nominate_House_200' && d.value != null);
-    if (pts.length) scores.push({ name: 'Polarization', value: Math.min(100, pts[pts.length-1].value * 150), max: 100 });
+
+  // Social Cohesion
+  const trustScore = computePercentileStress(indicatorData.public_trust, 'gallup_congress', true);
+  if (trustScore !== null) scores.push({ name: 'Institutional Trust', value: trustScore, max: 100 });
+
+  const polData = indicatorData.political_polarization;
+  if (polData && polData.data) {
+    const pts = polData.data.filter(d => d.series_id === 'dw_nominate_House_200' && d.value != null);
+    if (pts.length >= 5) {
+      const values = pts.map(d => d.value).sort((a, b) => a - b);
+      const current = pts[pts.length - 1].value;
+      const rank = values.filter(v => v <= current).length / values.length;
+      scores.push({ name: 'Polarization', value: Math.round(rank * 100), max: 100 });
+    }
   }
-  // Debt to GDP: higher is worse
-  const debt = indicatorData.debt_to_gdp;
-  if (debt && debt.data) {
-    const pts = debt.data.filter(d => d.series_id === 'GFDEGDQ188S' && d.value != null);
-    if (pts.length) scores.push({ name: 'Debt Burden', value: Math.min(100, pts[pts.length-1].value * 0.8), max: 100 });
-  }
-  // Wealth inequality: higher is worse
-  const wealth = indicatorData.wealth_inequality;
-  if (wealth && wealth.data) {
-    const pts = wealth.data.filter(d => d.series_id === 'WFRBST01134' && d.value != null);
-    if (pts.length) scores.push({ name: 'Wealth Concentration', value: Math.min(100, pts[pts.length-1].value * 2.5), max: 100 });
-  }
-  // Media trust: lower is worse
-  const media = indicatorData.media_fragmentation;
-  if (media && media.data) {
-    const pts = media.data.filter(d => d.series_id === 'gallup_news_trust' && d.value != null);
-    if (pts.length) scores.push({ name: 'Epistemic Fracture', value: Math.max(0, 100 - pts[pts.length-1].value), max: 100 });
-  }
+
+  // Economic Structure
+  const debtScore = computePercentileStress(indicatorData.debt_to_gdp, 'GFDEGDQ188S', false);
+  if (debtScore !== null) scores.push({ name: 'Debt Burden', value: debtScore, max: 100 });
+
+  const wealthScore = computePercentileStress(indicatorData.wealth_inequality, 'WFRBST01134', false);
+  if (wealthScore !== null) scores.push({ name: 'Wealth Concentration', value: wealthScore, max: 100 });
+
+  // Systemic Capacity
+  const mediaScore = computePercentileStress(indicatorData.media_fragmentation, 'gallup_news_trust', true);
+  if (mediaScore !== null) scores.push({ name: 'Epistemic Fracture', value: mediaScore, max: 100 });
 
   // Geopolitical: US relative decline - hardcoded from data (US share ~15% of world GDP PPP, down from ~50%)
   scores.push({ name: 'Relative Decline', value: 88, max: 100 });
@@ -430,6 +440,8 @@ function StressOverview({ indicatorData }) {
           <span className="stress-number"><AnimatedNumber value={composite} duration={2000} /></span>
           <span className="stress-label">Composite Stress Index</span>
           <span className="stress-scale">0 = no stress · 100 = critical</span>
+          <span className="stress-uncertainty">Percentile-ranked against each indicator's own historical range. Different normalization approaches produce scores in the 76-92 range.</span>
+          <span className="stress-uncertainty">Percentile-ranked against each indicator's own historical range. Different normalization approaches produce scores in the 76-92 range.</span>
           <span className="stress-updated">Data refreshed weekly via automated pipeline</span>
         </div>
         <div className="stress-bars">
@@ -681,6 +693,51 @@ function Dashboard({ indicators, indicatorData }) {
           })()}
         </div>
       </section>
+
+      {activeTab === 'indicators' && (
+      <section className="resilience-section">
+        <div className="resilience-header">
+          <span className="section-label">Counter-Indicators</span>
+          <h2 className="section-title" style={{marginBottom: '8px'}}>Signs of resilience</h2>
+          <p className="resilience-desc">Structural stress tells one side of the story. These indicators measure capacity, innovation, and adaptability.</p>
+        </div>
+        <div className="resilience-grid">
+          {(() => {
+            const resilience = [
+              { series: 'IP.PAT.RESD', indicator: 'geopolitical_standing', name: 'Patent Applications', format: v => (v/1000).toFixed(0) + 'K/yr', context: 'US leads global innovation output', positive: true },
+              { series: 'GB.XPD.RSDV.GD.ZS', indicator: 'geopolitical_standing', name: 'R&D Spending (% GDP)', format: v => v.toFixed(1) + '%', context: 'among highest in the world', positive: true },
+              { series: 'IT.NET.USER.ZS', indicator: 'geopolitical_standing', name: 'Internet Penetration', format: v => v.toFixed(0) + '%', context: 'digital infrastructure', positive: true },
+              { series: 'SE.TER.ENRR', indicator: 'geopolitical_standing', name: 'Tertiary Enrollment', format: v => v.toFixed(0) + '%', context: 'higher education access', positive: true },
+            ];
+            return resilience.map(s => {
+              const d = indicatorData[s.indicator];
+              if (!d || !d.data) return null;
+              const pts = d.data.filter(p => p.series_id === s.series && p.value != null && p.country_code === 'USA');
+              if (!pts.length) {
+                const all = d.data.filter(p => p.series_id === s.series && p.value != null);
+                if (!all.length) return null;
+                const latest = all[all.length - 1];
+                return (
+                  <div className="resilience-card" key={s.series}>
+                    <span className="resilience-name">{s.name}</span>
+                    <span className="resilience-value">{s.format(latest.value)}</span>
+                    <span className="resilience-context">{s.context}</span>
+                  </div>
+                );
+              }
+              const latest = pts[pts.length - 1];
+              return (
+                <div className="resilience-card" key={s.series}>
+                  <span className="resilience-name">{s.name}</span>
+                  <span className="resilience-value">{s.format(latest.value)}</span>
+                  <span className="resilience-context">{s.context}</span>
+                </div>
+              );
+            }).filter(Boolean);
+          })()}
+        </div>
+      </section>
+      )}
 
       <footer className="dashboard-footer">
         <p className="footer-text">Every number on Augur traces directly to a publicly available primary source. Every transformation is logged and publicly auditable. Every published data point is cryptographically fingerprinted and independently verifiable.</p>
