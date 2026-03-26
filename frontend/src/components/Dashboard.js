@@ -696,6 +696,7 @@ function Dashboard({ indicators, indicatorData }) {
           <a href="https://augur.up.railway.app/api/indicators" className="export-btn" target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',display:'inline-block'}}>API Access</a>
           <a href="https://github.com/augurofficial/augur/blob/main/METHODOLOGY.md" className="export-btn" target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',display:'inline-block'}}>Methodology</a>
         </div>
+        <p className="footer-copyright">© 2026 Augur. Open source under MIT License. Data sourced from public government APIs.</p>
       </footer>
     </main>
   );
