@@ -2,7 +2,7 @@
 
 ### Civilizational Stress Index
 
-**13 indicators. 4 pillars. 50 countries. 350,000+ data points. 10 primary sources.**
+**13 indicators. 4 pillars. 50 countries. 458,000+ data points. 10 primary sources.**
 
 Augur is a data-driven civilizational stress index that tracks the structural conditions historians and political scientists have documented as precursors to institutional decline across every empire that has ever fallen.
 
@@ -120,7 +120,7 @@ BibTeX:
   author={Adkins, Becca},
   year={2026},
   url={https://augur-index.vercel.app},
-  note={Open source. 350,000+ data points across 50 countries from 10 primary sources.}
+  note={Open source. 458,000+ data points across 50 countries from 10 primary sources.}
 }
 ```
 
