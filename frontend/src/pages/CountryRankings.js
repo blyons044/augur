@@ -43,6 +43,10 @@ const METRICS = [
   { id:'internet', name:'Internet Users (%)', indicator:'geopolitical_standing', series:'IT.NET.USER.ZS', format: v=>v.toFixed(1)+'%', desc:'Population using the internet', higherIs:'more connected', sortDir:1 },
   { id:'urban', name:'Urbanization (%)', indicator:'geopolitical_standing', series:'SP.URB.TOTL.IN.ZS', format: v=>v.toFixed(1)+'%', desc:'Urban population as share of total', higherIs:'more urbanized', sortDir:1 },
   { id:'aging', name:'Population 65+ (%)', indicator:'geopolitical_standing', series:'SP.POP.65UP.TO.ZS', format: v=>v.toFixed(1)+'%', desc:'Share of population aged 65 and older', higherIs:'older population', sortDir:1 },
+  { id:'corruption', name:'Corruption Control', indicator:'geopolitical_standing', series:'CC.EST', format: v=>v.toFixed(2), desc:'Control of corruption estimate (-2.5 to 2.5)', higherIs:'less corrupt', sortDir:1 },
+  { id:'govt_eff', name:'Govt Effectiveness', indicator:'geopolitical_standing', series:'GE.EST', format: v=>v.toFixed(2), desc:'Government effectiveness estimate (-2.5 to 2.5)', higherIs:'more effective', sortDir:1 },
+  { id:'pol_stability', name:'Political Stability', indicator:'geopolitical_standing', series:'PV.EST', format: v=>v.toFixed(2), desc:'Political stability and absence of violence (-2.5 to 2.5)', higherIs:'more stable', sortDir:1 },
+  { id:'fertility', name:'Fertility Rate', indicator:'geopolitical_standing', series:'SP.DYN.TFRT.IN', format: v=>v.toFixed(2), desc:'Total fertility rate (births per woman)', higherIs:'higher fertility', sortDir:1 },
   { id:'inflation', name:'Inflation Rate', indicator:'geopolitical_standing', series:'FP.CPI.TOTL.ZG', format: v=>v.toFixed(1)+'%', desc:'Consumer price inflation rate', higherIs:'higher inflation', sortDir:1 },
 ];
 
