@@ -105,7 +105,7 @@ function LandingPage() {
           <h1 className="hero-title">AUGUR</h1>
           <p className="hero-subtitle">Civilizational Stress Index</p>
           <p className="hero-description">
-            13 indicators. 4 pillars. 57,000+ data points from the Federal Reserve,
+            13 indicators. 4 pillars. 350,000+ data points from the Federal Reserve,
             World Bank, UCLA, and primary government sources. Every number publicly
             sourced, cryptographically verified, and politically symmetrical.
           </p>
@@ -120,21 +120,20 @@ function LandingPage() {
       <section className={`content-section reveal-section ${isVisible('what') ? 'visible' : ''}`} id="what">
         <div className="section-inner">
           <span className="section-label">Why this exists</span>
-          <h2 className="section-title">Because nobody will look at the numbers</h2>
+          <h2 className="section-title">Everyone sees the pieces. Nobody sees the pattern.</h2>
           <div className="section-body">
             <p>
-              Try telling someone that Congress has an 8% confidence rating.
-              That the top 1% holds more wealth than the bottom 50% combined.
-              That federal debt just hit the highest peacetime ratio in American
-              history. They shrug. They've heard it before. Nothing happened.
-              It won't happen here.
+              People know Congress has an 8% confidence rating. They know the
+              top 1% holds more wealth than the bottom 50% combined. They know
+              federal debt just hit the highest peacetime ratio in American
+              history. What they don't see is that these are the same indicators,
+              moving in the same direction, in the same pattern, that historians
+              have documented in every empire that ever fell.
             </p>
             <p>
-              Augur exists because the data is right there, published by the
-              Federal Reserve, the World Bank, UCLA, and government agencies,
-              and almost nobody is looking at it in context. These are the same
-              structural indicators that historians have documented in every
-              empire that ever fell.
+              The data is published by the Federal Reserve, the World Bank,
+              UCLA, and government agencies. It's all public. Augur just puts
+              it in one place and connects the dots.
             </p>
             <blockquote className="pull-quote">
               The more people who see this clearly, the more resilient we all become.
@@ -289,7 +288,7 @@ function LandingPage() {
         <div className="section-inner cta-inner">
           <h2 className="cta-title">See the data</h2>
           <p className="cta-description">
-            57,000+ data points. 13 indicators. Every number traced to its source.
+            350,000+ data points. 13 indicators. Every number traced to its source.
           </p>
           <Link to="/dashboard" className="hero-cta">Enter the Dashboard</Link>
           <div className="cta-links">
