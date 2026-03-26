@@ -137,4 +137,55 @@ function ApiDocs() {
   );
 }
 
+
+function BulkDownload() {
+  const [downloading, setDownloading] = React.useState(false);
+  
+  async function downloadAll() {
+    setDownloading(true);
+    try {
+      const indicators = ['political_polarization','public_trust','rule_of_law','civil_unrest','wealth_inequality','middle_class_decline','debt_to_gdp','currency_debasement','elite_overproduction','infrastructure_decay','media_fragmentation','geopolitical_standing','resource_stress'];
+      let allRows = ['indicator,country,series_id,date,value,unit'];
+      for (const ind of indicators) {
+        try {
+          const resp = await fetch('https://augur.up.railway.app/api/indicators/' + ind);
+          const data = await resp.json();
+          if (data && data.data) {
+            data.data.forEach(d => {
+              allRows.push([ind, d.country_code, d.series_id, d.date_value, d.value, d.unit || ''].join(','));
+            });
+          }
+        } catch(e) { console.error(ind, e); }
+      }
+      const blob = new Blob([allRows.join('\n')], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'augur_full_dataset_' + new Date().toISOString().substring(0,10) + '.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch(e) { console.error(e); }
+    setDownloading(false);
+  }
+
+  return (
+    <div className="bulk-download-section">
+      <h3>Bulk Data Export</h3>
+      <p style={{color:'var(--text-secondary)',fontSize:'14px',marginBottom:'16px'}}>
+        Download the complete Augur dataset as a single CSV file. Includes all 13 indicators, 
+        all countries, all time series. Suitable for academic analysis, independent verification, 
+        or building your own models.
+      </p>
+      <button onClick={downloadAll} disabled={downloading} style={{
+        background: downloading ? 'var(--bg-accent)' : 'var(--red)',
+        color: '#fff', border: 'none', padding: '12px 24px', fontSize: '14px',
+        cursor: downloading ? 'wait' : 'pointer', fontFamily: 'var(--font-mono)',
+        letterSpacing: '1px'
+      }}>
+        {downloading ? 'DOWNLOADING...' : 'DOWNLOAD FULL DATASET (CSV)'}
+      </button>
+    </div>
+  );
+}
+
 export default ApiDocs;

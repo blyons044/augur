@@ -58,6 +58,7 @@ function CountryRankings() {
   const [loading, setLoading] = useState(true);
   const [selectedMetric, setSelectedMetric] = useState('gdp_ppp');
   const [error, setError] = useState(null);
+  const [incomeFilter, setIncomeFilter] = useState('all');
 
   useEffect(() => {
     async function fetchAll() {
@@ -110,7 +111,9 @@ function CountryRankings() {
     </div>
   );
 
-  const ranked = getRankedCountries();
+  const allRanked = getRankedCountries();
+  const INCOME_GROUPS = {USA:'High income',GBR:'High income',DEU:'High income',FRA:'High income',JPN:'High income',CHN:'Upper middle income',IND:'Lower middle income',BRA:'Upper middle income',RUS:'Upper middle income',KOR:'High income',CAN:'High income',AUS:'High income',ITA:'High income',MEX:'Upper middle income',IDN:'Lower middle income',TUR:'Upper middle income',ZAF:'Upper middle income',ARG:'Upper middle income',NGA:'Lower middle income',SWE:'High income',SAU:'High income',ARE:'High income',ISR:'High income',EGY:'Lower middle income',THA:'Upper middle income',VNM:'Lower middle income',PHL:'Lower middle income',MYS:'Upper middle income',SGP:'High income',NZL:'High income',NOR:'High income',DNK:'High income',FIN:'High income',CHE:'High income',NLD:'High income',BEL:'High income',AUT:'High income',POL:'High income',CZE:'High income',GRC:'High income',PRT:'High income',CHL:'High income',COL:'Upper middle income',PER:'Upper middle income',PAK:'Lower middle income',BGD:'Lower middle income',KEN:'Lower middle income',ETH:'Low income',IRN:'Lower middle income',UKR:'Lower middle income'};
+  const ranked = incomeFilter === 'all' ? allRanked : allRanked.filter(r => INCOME_GROUPS[r.code] === incomeFilter);
   const maxVal = ranked.length ? Math.max(...ranked.map(r => Math.abs(r.value))) : 1;
 
   return (

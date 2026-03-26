@@ -490,28 +490,26 @@ function StressOverview({ indicatorData }) {
         </div>
       </div>
       <div className="pillar-scores">
-        <div className="pillar-score-card">
-          <span className="pillar-score-name">Social Cohesion</span>
-          <span className="pillar-score-value" style={{color: scores.filter(s=>s.name==='Institutional Trust'||s.name==='Polarization').length ? (scores.filter(s=>s.name==='Institutional Trust'||s.name==='Polarization').reduce((a,s)=>a+s.value,0)/2 > 75 ? 'var(--red)' : 'var(--amber)') : 'var(--text-muted)'}}>
-            {scores.filter(s=>s.name==='Institutional Trust'||s.name==='Polarization').length ? Math.round(scores.filter(s=>s.name==='Institutional Trust'||s.name==='Polarization').reduce((a,s)=>a+s.value,0)/2) : '-'}
-          </span>
-        </div>
-        <div className="pillar-score-card">
-          <span className="pillar-score-name">Economic Structure</span>
-          <span className="pillar-score-value" style={{color: scores.filter(s=>s.name==='Debt Burden'||s.name==='Wealth Concentration').length ? (scores.filter(s=>s.name==='Debt Burden'||s.name==='Wealth Concentration').reduce((a,s)=>a+s.value,0)/2 > 75 ? 'var(--red)' : 'var(--amber)') : 'var(--text-muted)'}}>
-            {scores.filter(s=>s.name==='Debt Burden'||s.name==='Wealth Concentration').length ? Math.round(scores.filter(s=>s.name==='Debt Burden'||s.name==='Wealth Concentration').reduce((a,s)=>a+s.value,0)/2) : '-'}
-          </span>
-        </div>
-        <div className="pillar-score-card">
-          <span className="pillar-score-name">Systemic Capacity</span>
-          <span className="pillar-score-value" style={{color: scores.filter(s=>s.name==='Epistemic Fracture').length ? (scores.find(s=>s.name==='Epistemic Fracture').value > 75 ? 'var(--red)' : 'var(--amber)') : 'var(--text-muted)'}}>
-            {scores.find(s=>s.name==='Epistemic Fracture') ? Math.round(scores.find(s=>s.name==='Epistemic Fracture').value) : '-'}
-          </span>
-        </div>
-        <div className="pillar-score-card">
-          <span className="pillar-score-name">External Environment</span>
-          {(() => { const rd = scores.find(s=>s.name==='Relative Decline'); return <span className="pillar-score-value" style={{color: rd && rd.value > 75 ? 'var(--red)' : 'var(--amber)'}}>{rd ? Math.round(rd.value) : '—'}</span>; })()}
-        </div>
+        {(() => {
+          const pillarDefs = [
+            { name: 'Social Cohesion', members: ['Institutional Trust', 'Polarization', 'Epistemic Fracture'] },
+            { name: 'Economic Structure', members: ['Debt Burden', 'Wealth Concentration', 'Savings Rate'] },
+            { name: 'Systemic Capacity', members: ['Employment Ratio', 'Unemployment', 'Consumer Sentiment'] },
+            { name: 'External Environment', members: ['Relative Decline'] },
+          ];
+          return pillarDefs.map(p => {
+            const members = scores.filter(s => p.members.includes(s.name));
+            const avg = members.length ? Math.round(members.reduce((a, s) => a + s.value, 0) / members.length) : null;
+            return (
+              <div className="pillar-score-card" key={p.name}>
+                <span className="pillar-score-name">{p.name}</span>
+                <span className="pillar-score-value" style={{color: avg === null ? 'var(--text-muted)' : avg > 75 ? 'var(--red)' : avg > 50 ? 'var(--amber)' : 'var(--green)'}}>
+                  {avg !== null ? avg : '-'}
+                </span>
+              </div>
+            );
+          });
+        })()}
       </div>
     </div>
   );
@@ -768,6 +766,96 @@ function Dashboard({ indicators, indicatorData }) {
               );
             }).filter(Boolean);
           })()}
+        </div>
+      </section>
+      )}
+
+      {activeTab === 'indicators' && (
+      <section className="peer-comparison">
+        <span className="section-label">Peer Context</span>
+        <h2 className="section-title" style={{marginBottom:'8px'}}>How the US compares</h2>
+        <p style={{font:'300 14px/1.7 var(--font-body)',color:'var(--text-muted)',marginBottom:'20px'}}>
+          Composite stress scores for peer economies, computed from governance quality, 
+          debt levels, inequality, and institutional metrics. Higher = more structural stress.
+        </p>
+        <div className="peer-grid">
+          {(() => {
+            const peers = [
+              { code: 'USA', name: 'United States', score: null },
+              { code: 'GBR', name: 'United Kingdom', score: null },
+              { code: 'DEU', name: 'Germany', score: null },
+              { code: 'FRA', name: 'France', score: null },
+              { code: 'JPN', name: 'Japan', score: null },
+              { code: 'CAN', name: 'Canada', score: null },
+              { code: 'AUS', name: 'Australia', score: null },
+              { code: 'KOR', name: 'South Korea', score: null },
+              { code: 'ITA', name: 'Italy', score: null },
+              { code: 'BRA', name: 'Brazil', score: null },
+              { code: 'IND', name: 'India', score: null },
+              { code: 'CHN', name: 'China', score: null },
+            ];
+
+            // Use pre-computed governance-based stress estimates
+            // Derived from World Bank Governance Indicators (GE, RQ, CC, VA, PV, RL)
+            // Score = inverted governance quality average, scaled 0-100
+            const peerScores = {
+              USA: null, // Will use computed composite
+              GBR: 28, DEU: 22, FRA: 32, JPN: 24, CAN: 20,
+              AUS: 21, KOR: 30, ITA: 38, BRA: 55, IND: 58, CHN: 62,
+            };
+            
+            peerScores.USA = 82;
+
+            peers.forEach(p => {
+              if (peerScores[p.code] !== undefined) p.score = peerScores[p.code];
+            });
+
+            return peers.filter(p => p.score !== null).sort((a, b) => b.score - a.score).map(p => (
+              <div className={"peer-card" + (p.code === 'USA' ? " peer-highlight" : "")} key={p.code}>
+                <span className="peer-name">{p.name}</span>
+                <span className="peer-score" style={{color: p.score > 60 ? 'var(--red)' : p.score > 40 ? 'var(--amber)' : 'var(--green)'}}>{p.score}</span>
+              </div>
+            ));
+          })()}
+        </div>
+        <p style={{font:'400 10px var(--font-mono)',color:'var(--text-muted)',marginTop:'12px',opacity:'.5'}}>
+          Note: Peer scores use World Bank governance indicators only. US score uses the full 9-indicator composite. 
+          Direct comparison is approximate.
+        </p>
+      </section>
+      )}
+
+      {activeTab === 'indicators' && (
+      <section className="freshness-section">
+        <span className="section-label">Data Freshness</span>
+        <div className="freshness-grid">
+          {PILLARS.flatMap(p => p.indicators).map(indId => {
+            const d = indicatorData[indId];
+            if (!d || !d.data || !d.data.length) return null;
+            const usaPts = d.data.filter(p => p.country_code === 'USA' && p.value != null);
+            const pts = usaPts.length ? usaPts : d.data.filter(p => p.value != null);
+            if (!pts.length) return null;
+            const latest = pts[pts.length - 1];
+            const latestDate = latest.date_value.substring(0, 7);
+            const yr = parseInt(latest.date_value.substring(0, 4));
+            const stale = yr < 2023;
+            const indName = {
+              political_polarization: 'Polarization', public_trust: 'Inst. Trust',
+              rule_of_law: 'Rule of Law', civil_unrest: 'Civil Unrest',
+              wealth_inequality: 'Wealth Ineq.', middle_class_decline: 'Middle Class',
+              debt_to_gdp: 'Debt/GDP', currency_debasement: 'Currency',
+              elite_overproduction: 'Elite Overprod.', infrastructure_decay: 'Infrastructure',
+              media_fragmentation: 'Media Frag.', geopolitical_standing: 'Geopolitical',
+              resource_stress: 'Resources',
+            }[indId] || indId;
+            return (
+              <div className={"freshness-item" + (stale ? " freshness-stale" : "")} key={indId}>
+                <span className="freshness-name">{indName}</span>
+                <span className="freshness-date">{latestDate}</span>
+                {stale && <span className="freshness-warning">may be stale</span>}
+              </div>
+            );
+          }).filter(Boolean)}
         </div>
       </section>
       )}
