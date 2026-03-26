@@ -8,6 +8,10 @@ const INDICATORS = [
   { id: 'currency_debasement', name: 'CPI', series: 'CPIAUCSL', short: 'CPI' },
   { id: 'media_fragmentation', name: 'Media Trust', series: 'gallup_news_trust', short: 'MED' },
   { id: 'elite_overproduction', name: 'Unemployment', series: 'UNRATE', short: 'UNE' },
+  { id: 'civil_unrest', name: 'Overdose Deaths', series: 'drug_overdose_deaths', short: 'OD' },
+  { id: 'middle_class_decline', name: 'Home Price', series: 'MSPUS', short: 'HOM' },
+  { id: 'middle_class_decline', name: 'Savings Rate', series: 'PSAVERT', short: 'SAV' },
+  { id: 'infrastructure_decay', name: 'Ind. Production', series: 'INDPRO', short: 'IND' },
 ];
 
 function computeCorrelation(x, y) {
@@ -100,7 +104,7 @@ function Correlations({ indicatorData }) {
       {matrix ? (
         <>
           <div className="corr-matrix-container">
-            <div className="corr-matrix" style={{display:'grid', gridTemplateColumns: '80px repeat(7, 1fr)', gap: '2px'}}>
+            <div className="corr-matrix" style={{display:'grid', gridTemplateColumns: '80px repeat(11, 1fr)', gap: '2px'}}>
               <div />
               {INDICATORS.map(ind => (
                 <div className="corr-header" key={ind.id}>{ind.short}</div>

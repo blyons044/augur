@@ -48,6 +48,8 @@ const METRICS = [
   { id:'govt_eff', name:'Govt Effectiveness', indicator:'geopolitical_standing', series:'GE.EST', format: v=>v.toFixed(2), desc:'Government effectiveness estimate (-2.5 to 2.5)', higherIs:'more effective', sortDir:1 },
   { id:'pol_stability', name:'Political Stability', indicator:'geopolitical_standing', series:'PV.EST', format: v=>v.toFixed(2), desc:'Political stability and absence of violence (-2.5 to 2.5)', higherIs:'more stable', sortDir:1 },
   { id:'fertility', name:'Fertility Rate', indicator:'geopolitical_standing', series:'SP.DYN.TFRT.IN', format: v=>v.toFixed(2), desc:'Total fertility rate (replacement level is ~2.1 births per woman)', higherIs:'highest fertility first', sortDir:1 },
+  { id:'freedom', name:'Freedom Score', indicator:'rule_of_law', series:'freedom_score', format: v=>v.toFixed(0)+'/100', desc:'Freedom House Freedom in the World score (0-100)', higherIs:'most free first', sortDir:1 },
+  { id:'cpi', name:'Corruption Index', indicator:'rule_of_law', series:'cpi_score', format: v=>v.toFixed(0)+'/100', desc:'Transparency International Corruption Perceptions Index (higher = less corrupt)', higherIs:'least corrupt first', sortDir:1 },
   { id:'inflation', name:'Inflation Rate', indicator:'geopolitical_standing', series:'FP.CPI.TOTL.ZG', format: v=>v.toFixed(1)+'%', desc:'Consumer price inflation rate', higherIs:'lowest inflation first', sortDir:-1 },
 ];
 
