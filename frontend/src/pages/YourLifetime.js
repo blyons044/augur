@@ -19,8 +19,9 @@ const TRACKED = [
     unit: '%', color: '#e04040',
     narrative: (birth, then, now) => {
       if (!then || !now) return null;
-      const change = Math.round(((now - then) / then) * 100);
-      return `When you were born, ${Math.round(then)}% of Americans trusted Congress. Today it's ${Math.round(now)}%. That's a ${Math.abs(change)}% ${change < 0 ? 'collapse' : 'increase'} in your lifetime.`;
+      const lost = Math.round(then - now);
+      const pctOfTotal = Math.round((lost / then) * 100);
+      return `Congress had ${Math.round(then)}% confidence the year you were born. It's ${Math.round(now)}% now. ${pctOfTotal}% of all institutional trust that existed when you arrived has evaporated while you've been alive.`;
     }
   },
   {
@@ -28,7 +29,10 @@ const TRACKED = [
     unit: '%', color: '#e0a030',
     narrative: (birth, then, now) => {
       if (!then || !now) return null;
-      return `Federal debt was ${Math.round(then)}% of GDP the year you were born. It's ${Math.round(now)}% now. Every dollar of GDP is backed by $${(now/100).toFixed(2)} in federal debt.`;
+      const added = Math.round(now - then);
+      const totalDebt = 122; // current level
+      const yourShare = Math.round((added / totalDebt) * 100);
+      return `Debt-to-GDP was ${Math.round(then)}% when you were born. It's ${Math.round(now)}% now. ${yourShare}% of all federal debt relative to the economy was added during your lifetime. Not across 250 years of American history. Just yours.`;
     }
   },
   {
@@ -36,7 +40,12 @@ const TRACKED = [
     unit: '%', color: '#c060a0',
     narrative: (birth, then, now) => {
       if (!then || !now) return null;
-      return `The top 1% held ${then.toFixed(1)}% of national wealth when you were born. They hold ${now.toFixed(1)}% now. That gap grew by ${(now - then).toFixed(1)} percentage points during your life.`;
+      const postWarLow = 22;
+      const gildedAge = 36;
+      const range = gildedAge - postWarLow;
+      const yourGrowth = now - then;
+      const pctOfRange = Math.round((yourGrowth / range) * 100);
+      return `The top 1% held ${then.toFixed(1)}% when you were born and ${now.toFixed(1)}% now. To put that in context, the entire swing from the post-war low to the Gilded Age peak was ${range} points. Your lifetime accounts for ${Math.abs(pctOfRange)}% of that swing.`;
     }
   },
   {
@@ -44,8 +53,11 @@ const TRACKED = [
     unit: '', color: '#5080c0',
     narrative: (birth, then, now) => {
       if (!then || !now) return null;
-      const pctChange = Math.round(((now - then) / then) * 100);
-      return `Congressional polarization has shifted ${Math.abs(pctChange)}% ${pctChange > 0 ? 'further apart' : 'closer together'} since you were born. The ideological center that once held Congress together has disappeared entirely.`;
+      const civilWarLevel = 0.52;
+      if (now > civilWarLevel) {
+        return `Congressional polarization is now higher than it was in the years before the Civil War. When you were born, the score was ${then.toFixed(2)}. The pre-Civil War peak was ${civilWarLevel}. It's ${now.toFixed(2)} now. You grew up while it passed a threshold the country has only crossed once before.`;
+      }
+      return `Polarization was ${then.toFixed(2)} when you were born and ${now.toFixed(2)} now. The pre-Civil War peak was ${civilWarLevel}. The gap is closing.`;
     }
   },
   {
@@ -54,7 +66,8 @@ const TRACKED = [
     narrative: (birth, then, now) => {
       if (!then || !now) return null;
       const multiplier = (now / then).toFixed(1);
-      return `A dollar when you were born buys ${(100/parseFloat(multiplier)).toFixed(0)} cents worth of goods today. Prices have multiplied ${multiplier}x in your lifetime.`;
+      const cents = (100 / parseFloat(multiplier)).toFixed(0);
+      return `Prices have multiplied ${multiplier}x since you were born. A dollar from your birth year is worth ${cents} cents today. Your parents' savings lost ${100 - parseInt(cents)}% of their purchasing power during your life.`;
     }
   },
   {
@@ -62,7 +75,9 @@ const TRACKED = [
     unit: '%', color: '#60c0c0',
     narrative: (birth, then, now) => {
       if (!then || !now) return null;
-      return `News media trust was ${Math.round(then)}% when you were born. It's ${Math.round(now)}% now. Shared factual reality has eroded ${Math.round(then - now)} points during your life.`;
+      const drop = Math.round(then - now);
+      const majority = then > 50;
+      return `When you were born, ${Math.round(then)}% of Americans trusted the news. ${majority ? 'A majority. ' : ''}It's ${Math.round(now)}% now. ${drop > 0 ? `${drop} points of shared reality disappeared while you were alive.` : 'Trust has held roughly steady.'}`;
     }
   },
 ];
@@ -232,8 +247,8 @@ function YourLifetime({ indicatorData }) {
           {revealed >= TRACKED.length && (
             <div className="lifetime-summary">
               <p>
-                Every number above comes from a publicly available government source.
-                None of it is editorialized. You lived through all of it.
+                All of this happened while you were alive. Every number comes from
+                federal government data. The question is what you do with it now.
               </p>
             </div>
           )}
