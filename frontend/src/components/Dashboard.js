@@ -488,6 +488,82 @@ function Dashboard({ indicators, indicatorData }) {
           </div>
         </section>
       ))}
+      <section className="changes-section">
+        <div className="changes-header">
+          <span className="section-label">Latest Movements</span>
+          <h2 className="section-title" style={{marginBottom: '8px'}}>What changed</h2>
+        </div>
+        <div className="changes-feed">
+          {(() => {
+            const changes = [];
+            const tracked = [
+              { id: 'debt_to_gdp', series: 'GFDEGDQ188S', name: 'Debt to GDP', format: v => v.toFixed(1) + '%', unit: '%' },
+              { id: 'wealth_inequality', series: 'WFRBST01134', name: 'Top 1% Wealth Share', format: v => v.toFixed(1) + '%', unit: '%' },
+              { id: 'political_polarization', series: 'dw_nominate_House_200', name: 'House GOP Ideology', format: v => v.toFixed(3), unit: '' },
+              { id: 'public_trust', series: 'gallup_congress', name: 'Congress Confidence', format: v => Math.round(v) + '%', unit: '%' },
+              { id: 'currency_debasement', series: 'CPIAUCSL', name: 'Consumer Price Index', format: v => v.toFixed(1), unit: '' },
+              { id: 'currency_debasement', series: 'M2SL', name: 'M2 Money Supply', format: v => '$' + (v/1000).toFixed(1) + 'T', unit: '' },
+              { id: 'elite_overproduction', series: 'UNRATE', name: 'Unemployment Rate', format: v => v.toFixed(1) + '%', unit: '%' },
+              { id: 'middle_class_decline', series: 'MORTGAGE30US', name: 'Mortgage Rate', format: v => v.toFixed(2) + '%', unit: '%' },
+              { id: 'middle_class_decline', series: 'MSPUS', name: 'Median Home Price', format: v => '$' + (v/1000).toFixed(0) + 'K', unit: '' },
+              { id: 'media_fragmentation', series: 'gallup_news_trust', name: 'News Trust', format: v => Math.round(v) + '%', unit: '%' },
+              { id: 'elite_overproduction', series: 'JTSJOL', name: 'Job Openings', format: v => (v/1000).toFixed(1) + 'M', unit: '' },
+              { id: 'geopolitical_standing', series: 'NY.GDP.MKTP.PP.CD', name: 'US GDP (PPP)', format: v => '$' + (v/1e12).toFixed(1) + 'T', unit: '' },
+            ];
+            tracked.forEach(t => {
+              const d = indicatorData[t.id];
+              if (!d || !d.data) return;
+              const pts = d.data.filter(p => p.series_id === t.series && p.value != null && p.country_code === 'USA');
+              if (pts.length < 2) {
+                const all = d.data.filter(p => p.series_id === t.series && p.value != null);
+                if (all.length < 2) return;
+                const latest = all[all.length - 1];
+                const prev = all[all.length - 2];
+                const pctChange = ((latest.value - prev.value) / Math.abs(prev.value)) * 100;
+                if (Math.abs(pctChange) < 0.01) return;
+                changes.push({
+                  name: t.name,
+                  from: t.format(prev.value),
+                  to: t.format(latest.value),
+                  pctChange: pctChange,
+                  date: latest.date_value,
+                  prevDate: prev.date_value,
+                });
+                return;
+              }
+              const latest = pts[pts.length - 1];
+              const prev = pts[pts.length - 2];
+              const pctChange = ((latest.value - prev.value) / Math.abs(prev.value)) * 100;
+              if (Math.abs(pctChange) < 0.01) return;
+              changes.push({
+                name: t.name,
+                from: t.format(prev.value),
+                to: t.format(latest.value),
+                pctChange: pctChange,
+                date: latest.date_value,
+                prevDate: prev.date_value,
+              });
+            });
+            changes.sort((a, b) => Math.abs(b.pctChange) - Math.abs(a.pctChange));
+            if (!changes.length) return <p className="no-changes">All indicators stable since last update.</p>;
+            return changes.slice(0, 8).map((ch, i) => (
+              <div className="change-item" key={i}>
+                <div className="change-top">
+                  <span className="change-name">{ch.name}</span>
+                  <span className="change-arrow">{ch.from} {ch.pctChange > 0 ? '\u2191' : '\u2193'} {ch.to}</span>
+                </div>
+                <div className="change-bottom">
+                  <span className={'change-pct ' + (Math.abs(ch.pctChange) > 5 ? 'change-big' : '')} style={{color: ch.pctChange > 0 ? 'var(--red)' : 'var(--green)'}}>
+                    {ch.pctChange > 0 ? '+' : ''}{ch.pctChange.toFixed(1)}%
+                  </span>
+                  <span className="change-date">{ch.prevDate.substring(0,7)} to {ch.date.substring(0,7)}</span>
+                </div>
+              </div>
+            ));
+          })()}
+        </div>
+      </section>
+
       <section className="supplementary-section">
         <div className="supplementary-header">
           <span className="section-label">Supplementary Indicators</span>

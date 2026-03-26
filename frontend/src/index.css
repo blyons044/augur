@@ -364,3 +364,18 @@
 @media(max-width:768px){.supplementary-grid{grid-template-columns:1fr}}
 
 .supp-explainer{font:300 11px/1.6 var(--font-body);color:var(--text-muted);margin:0 0 8px 0;opacity:.7}
+
+.changes-section{margin-bottom:48px}
+.changes-header{margin-bottom:20px}
+.changes-feed{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.change-item{background:var(--bg-card);border:1px solid var(--border);padding:16px 18px;transition:border-color .2s;animation:cardReveal .4s ease both}
+.change-item:hover{border-color:var(--border-hover)}
+.change-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px}
+.change-name{font:500 10px var(--font-mono);letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted)}
+.change-arrow{font:400 13px var(--font-mono);color:var(--text-primary)}
+.change-bottom{display:flex;justify-content:space-between;align-items:center}
+.change-pct{font:500 14px var(--font-mono)}
+.change-big{font-size:16px}
+.change-date{font:400 9px var(--font-mono);color:var(--text-muted);letter-spacing:.5px}
+.no-changes{font:300 14px var(--font-body);color:var(--text-muted)}
+@media(max-width:768px){.changes-feed{grid-template-columns:1fr}}
