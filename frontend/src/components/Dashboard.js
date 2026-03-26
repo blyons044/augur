@@ -369,147 +369,127 @@ function EmpireArc() {
 }
 
 function StressOverview({ indicatorData }) {
+  const SPECS = {
+    institutional_trust: { name:'Institutional Trust', role:'leading', series:'gallup_congress', source:'public_trust', dir:'low', redFlag:85, redLabel:'Below crisis threshold' },
+    political_polarization: { name:'Polarization', role:'leading', series:'dw_nominate_House_200', source:'political_polarization', dir:'high', redFlag:80, redLabel:'Historically extreme', tx: v => Math.min(100, v*150) },
+    debt_burden: { name:'Debt Burden', role:'coincident', series:'GFDEGDQ188S', source:'debt_to_gdp', dir:'high', redFlag:90, redLabel:'Exceeds sustainability threshold', tx: v => Math.min(100, v*0.8) },
+    wealth_concentration: { name:'Wealth Concentration', role:'leading', series:'WFRBST01134', source:'wealth_inequality', dir:'high', redFlag:80, redLabel:'Gilded Age levels', tx: v => Math.min(100, v*2.5) },
+    epistemic_fracture: { name:'Epistemic Fracture', role:'coincident', series:'gallup_news_trust', source:'media_fragmentation', dir:'low', redFlag:75, redLabel:'Below functional democracy threshold' },
+    employment_ratio: { name:'Employment Ratio', role:'coincident', series:'EMRATIO', source:'elite_overproduction', dir:'low', redFlag:80, redLabel:'Below historical trend', tx: v => Math.max(0, 100-v) },
+    unemployment: { name:'Unemployment', role:'lagging', series:'UNRATE', source:'elite_overproduction', dir:'high', redFlag:85, redLabel:'Above structural rate', tx: v => Math.min(100, v*10) },
+    consumer_sentiment: { name:'Consumer Sentiment', role:'lagging', series:'UMCSENT', source:'middle_class_decline', dir:'low', redFlag:80, redLabel:'Recessionary levels', tx: v => Math.max(0, 100-v) },
+    savings_rate: { name:'Savings Rate', role:'lagging', series:'PSAVERT', source:'middle_class_decline', dir:'low', redFlag:75, redLabel:'Household fragility', tx: v => Math.max(0, Math.min(100, 100 - v*5)) },
+  };
   const scores = [];
-
-  // Blended scoring: 50% percentile rank + 50% range position
-  // Percentile: where does current sit among all observations
-  // Range: where does current sit between historical min and max
-  // Blending prevents extreme scores when values cluster near the top
-  function computePercentileStress(data, seriesId, invertDirection) {
-    if (!data || !data.data) return null;
-    const pts = data.data.filter(d => d.series_id === seriesId && d.value != null);
-    if (pts.length < 5) return null;
-    const values = pts.map(d => d.value);
-    const current = values[values.length - 1];
-    const sorted = [...values].sort((a, b) => a - b);
-    const min = sorted[0];
-    const max = sorted[sorted.length - 1];
-
-    // Percentile rank
-    const pctRank = sorted.filter(v => v <= current).length / sorted.length;
-
-    // Range position (0-1)
-    const range = max - min;
-    const rangePos = range > 0 ? (current - min) / range : 0.5;
-
-    // Blend
-    const raw = invertDirection
-      ? ((1 - pctRank) * 0.5 + (1 - rangePos) * 0.5)
-      : (pctRank * 0.5 + rangePos * 0.5);
-
-    return Math.round(raw * 100);
-  }
-
-  // Social Cohesion
-  const trustScore = computePercentileStress(indicatorData.public_trust, 'gallup_congress', true);
-  if (trustScore !== null) scores.push({ name: 'Institutional Trust', value: trustScore, max: 100 });
-
-  const polData = indicatorData.political_polarization;
-  if (polData && polData.data) {
-    const pts = polData.data.filter(d => d.series_id === 'dw_nominate_House_200' && d.value != null);
-    if (pts.length >= 5) {
-      const values = pts.map(d => d.value).sort((a, b) => a - b);
-      const current = pts[pts.length - 1].value;
-      const rank = values.filter(v => v <= current).length / values.length;
-      scores.push({ name: 'Polarization', value: Math.round(rank * 100), max: 100 });
+  Object.entries(SPECS).forEach(([id, sp]) => {
+    const src = indicatorData[sp.source];
+    if (src && src.data) {
+      const pts = src.data.filter(d => d.series_id === sp.series && d.value != null);
+      if (pts.length) {
+        const raw = pts[pts.length-1].value;
+        let stress = sp.dir === 'low'
+          ? (sp.tx ? sp.tx(raw) : Math.max(0, 100-raw))
+          : (sp.tx ? sp.tx(raw) : Math.min(100, raw));
+        scores.push({ id, name:sp.name, raw, stress:Math.round(stress), role:sp.role,
+          redFlag:sp.redFlag, redLabel:sp.redLabel, isRedFlag: stress >= sp.redFlag });
+      }
     }
-  }
-
-  // Economic Structure
-  const debtScore = computePercentileStress(indicatorData.debt_to_gdp, 'GFDEGDQ188S', false);
-  if (debtScore !== null) scores.push({ name: 'Debt Burden', value: debtScore, max: 100 });
-
-  const wealthScore = computePercentileStress(indicatorData.wealth_inequality, 'WFRBST01134', false);
-  if (wealthScore !== null) scores.push({ name: 'Wealth Concentration', value: wealthScore, max: 100 });
-
-  // Systemic Capacity
-  const mediaScore = computePercentileStress(indicatorData.media_fragmentation, 'gallup_news_trust', true);
-  if (mediaScore !== null) scores.push({ name: 'Epistemic Fracture', value: mediaScore, max: 100 });
-
-  // Additional indicators for balanced composite
-
-  // Employment-Population Ratio (higher = less stress)
-  const empScore = computePercentileStress(indicatorData.elite_overproduction, 'EMRATIO', true);
-  if (empScore !== null) scores.push({ name: 'Employment Ratio', value: empScore, max: 100 });
-
-  // Unemployment Rate (higher = more stress)
-  const unempScore = computePercentileStress(indicatorData.elite_overproduction, 'UNRATE', false);
-  if (unempScore !== null) scores.push({ name: 'Unemployment', value: unempScore, max: 100 });
-
-  // Consumer Sentiment (higher = less stress)
-  const sentScore = computePercentileStress(indicatorData.middle_class_decline, 'UMCSENT', true);
-  if (sentScore !== null) scores.push({ name: 'Consumer Sentiment', value: sentScore, max: 100 });
-
-  // Personal Savings Rate (higher = less stress)
-  const savScore = computePercentileStress(indicatorData.middle_class_decline, 'PSAVERT', true);
-  if (savScore !== null) scores.push({ name: 'Savings Rate', value: savScore, max: 100 });
-
-  // Geopolitical: US relative decline - hardcoded from data (US share ~15% of world GDP PPP, down from ~50%)
-  scores.push({ name: 'Relative Decline', value: 88, max: 100 });
-
-  if (!scores.length) return null;
-  const composite = Math.round(scores.reduce((s, x) => s + x.value, 0) / scores.length);
-
-  // Alert: check for all-time extremes
-  const alerts = [];
-  scores.forEach(s => {
-    if (s.value > 90) alerts.push(s.name + ' is at critical levels');
   });
+  if (!scores.length) return null;
+
+  // Geometric aggregation (Fix #2)
+  const geoProduct = scores.reduce((acc, s) => acc + Math.log(Math.max(s.stress, 1)), 0);
+  const geometric = Math.round(Math.exp(geoProduct / scores.length));
+  const arithmetic = Math.round(scores.reduce((s, x) => s + x.stress, 0) / scores.length);
+
+  // Monte Carlo sensitivity (Fix #1) — 1000 client-side sims
+  const sims = [];
+  const rng = (seed) => { let s = seed; return () => { s = (s*16807)%2147483647; return s/2147483647; }; };
+  const rand = rng(42);
+  for (let i = 0; i < 1000; i++) {
+    const wts = scores.map(() => 0.5 + rand()*1.0);
+    const tw = wts.reduce((a,b) => a+b, 0);
+    const ls = scores.reduce((acc, s, j) => acc + wts[j]*Math.log(Math.max(s.stress, 1)), 0);
+    sims.push(Math.exp(ls / tw));
+  }
+  sims.sort((a,b) => a-b);
+  const ciLo = Math.round(sims[Math.floor(sims.length*0.05)]);
+  const ciHi = Math.round(sims[Math.floor(sims.length*0.95)]);
+  const ciW = ciHi - ciLo;
+
+  const redFlags = scores.filter(s => s.isRedFlag);
+  const leading = scores.filter(s => s.role === 'leading');
+  const lagging = scores.filter(s => s.role === 'lagging');
+  const leadAvg = leading.length ? Math.round(leading.reduce((a,s) => a+s.stress, 0)/leading.length) : 0;
+  const lagAvg = lagging.length ? Math.round(lagging.reduce((a,s) => a+s.stress, 0)/lagging.length) : 0;
+  const gap = leadAvg - lagAvg;
+  const coverage = Math.round((scores.length / Object.keys(SPECS).length) * 100);
+  const roleColor = { leading:'#e04040', coincident:'#e0a030', lagging:'#6090c0' };
+  const roleBg = { leading:'rgba(224,64,64,0.12)', coincident:'rgba(224,160,48,0.12)', lagging:'rgba(96,144,192,0.12)' };
 
   return (
     <div className="stress-overview">
-      {alerts.length > 0 && (
-        <div className="stress-alerts">
-          {alerts.map((a, i) => (
-            <div className="stress-alert" key={i}>
-              <span className="alert-icon">⚠</span>
-              <span className="alert-text">{a}</span>
-            </div>
-          ))}
-        </div>
-      )}
       <div className="stress-score-container">
         <div className="stress-composite">
-          <span className="stress-number"><AnimatedNumber value={composite} duration={2000} /></span>
+          <span className="stress-number">{geometric}</span>
           <span className="stress-label">Composite Stress Index</span>
           <span className="stress-scale">0 = no stress · 100 = critical</span>
-          <span className="stress-uncertainty">Percentile-ranked against each indicator's own historical range. Different normalization approaches produce scores in the 76-92 range.</span>
-          <span className="stress-uncertainty">Percentile-ranked against each indicator's own historical range. Different normalization approaches produce scores in the 76-92 range.</span>
-          <span className="stress-updated">Data refreshed weekly via automated pipeline</span>
+          <span style={{display:'block',marginTop:'6px',font:'400 10px var(--font-mono)',color:'var(--text-muted)',letterSpacing:'.5px'}}>
+            90% CI: [{ciLo}, {ciHi}] · width: {ciW}
+          </span>
+          <span style={{display:'block',marginTop:'4px',font:'400 9px var(--font-mono)',color:'var(--text-muted)'}}>
+            {ciW < 20 ? 'Robust to weight changes' : 'Sensitive to weight choices'} · Geometric mean
+          </span>
         </div>
-        <div className="stress-bars">
-          {scores.map(s => (
-            <div className="stress-bar-row" key={s.name}>
-              <span className="stress-bar-name">{s.name}</span>
-              <div className="stress-bar-track">
-                <div className="stress-bar-fill" style={{width: s.value+'%', background: s.value > 75 ? 'var(--red)' : s.value > 50 ? 'var(--amber)' : 'var(--green)'}} />
+        <div style={{display:'flex',flexDirection:'column',gap:'16px'}}>
+          {redFlags.length > 0 && (
+            <div style={{padding:'10px 14px',borderRadius:'4px',background:'rgba(224,64,64,0.08)',border:'1px solid rgba(224,64,64,0.2)'}}>
+              <div style={{font:'500 10px var(--font-mono)',color:'var(--red)',letterSpacing:'1.5px',textTransform:'uppercase',marginBottom:'6px'}}>
+                {redFlags.length} Red flag{redFlags.length > 1 ? 's' : ''} — individual thresholds breached
               </div>
-              <span className="stress-bar-val">{Math.round(s.value)}</span>
+              {redFlags.map(f => (
+                <div key={f.id} style={{font:'400 11px var(--font-mono)',color:'var(--text-secondary)',padding:'2px 0'}}>
+                  {f.name}: {f.stress}/100 — {f.redLabel}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
-      <div className="pillar-scores">
-        {(() => {
-          const pillarDefs = [
-            { name: 'Social Cohesion', members: ['Institutional Trust', 'Polarization', 'Epistemic Fracture'] },
-            { name: 'Economic Structure', members: ['Debt Burden', 'Wealth Concentration', 'Savings Rate'] },
-            { name: 'Systemic Capacity', members: ['Employment Ratio', 'Unemployment', 'Consumer Sentiment'] },
-            { name: 'External Environment', members: ['Relative Decline'] },
-          ];
-          return pillarDefs.map(p => {
-            const members = scores.filter(s => p.members.includes(s.name));
-            const avg = members.length ? Math.round(members.reduce((a, s) => a + s.value, 0) / members.length) : null;
-            return (
-              <div className="pillar-score-card" key={p.name}>
-                <span className="pillar-score-name">{p.name}</span>
-                <span className="pillar-score-value" style={{color: avg === null ? 'var(--text-muted)' : avg > 75 ? 'var(--red)' : avg > 50 ? 'var(--amber)' : 'var(--green)'}}>
-                  {avg !== null ? avg : '-'}
+          )}
+          <div className="stress-bars">
+            {scores.sort((a,b) => b.stress-a.stress).map(s => (
+              <div className="stress-bar-row" key={s.id}>
+                <span className="stress-bar-name" style={{display:'flex',alignItems:'center',gap:'6px'}}>
+                  {s.name}
+                  <span style={{font:'400 8px var(--font-mono)',padding:'1px 5px',borderRadius:'3px',letterSpacing:'.5px',color:roleColor[s.role],background:roleBg[s.role],textTransform:'uppercase'}}>{s.role}</span>
                 </span>
+                <div className="stress-bar-track">
+                  <div className="stress-bar-fill" style={{width:s.stress+'%',background:s.isRedFlag?'var(--red)':s.stress>50?'var(--amber)':'var(--green)'}} />
+                </div>
+                <span className="stress-bar-val" style={{color:s.isRedFlag?'var(--red)':'var(--text-bright)',fontWeight:s.isRedFlag?'600':'500'}}>{s.stress}</span>
               </div>
-            );
-          });
-        })()}
+            ))}
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(140px, 1fr))',gap:'8px',marginTop:'8px'}}>
+            <div style={{padding:'8px 10px',background:'var(--bg-accent)',borderRadius:'4px'}}>
+              <div style={{font:'500 9px var(--font-mono)',color:'var(--text-muted)',letterSpacing:'1px',textTransform:'uppercase'}}>Method</div>
+              <div style={{font:'400 11px var(--font-mono)',color:'var(--text-secondary)',marginTop:'2px'}}>Geometric mean</div>
+              <div style={{font:'400 9px var(--font-mono)',color:'var(--text-muted)',marginTop:'2px'}}>Arithmetic: {arithmetic}</div>
+            </div>
+            <div style={{padding:'8px 10px',background:'var(--bg-accent)',borderRadius:'4px'}}>
+              <div style={{font:'500 9px var(--font-mono)',color:'var(--text-muted)',letterSpacing:'1px',textTransform:'uppercase'}}>Coverage</div>
+              <div style={{font:'400 11px var(--font-mono)',color:'var(--text-secondary)',marginTop:'2px'}}>{scores.length}/{Object.keys(SPECS).length} indicators ({coverage}%)</div>
+            </div>
+            <div style={{padding:'8px 10px',background:'var(--bg-accent)',borderRadius:'4px'}}>
+              <div style={{font:'500 9px var(--font-mono)',color:'var(--text-muted)',letterSpacing:'1px',textTransform:'uppercase'}}>Leading vs Lagging</div>
+              <div style={{font:'400 11px var(--font-mono)',color:'var(--text-secondary)',marginTop:'2px'}}>{leadAvg} vs {lagAvg} ({gap > 0 ? '+' : ''}{gap})</div>
+              <div style={{font:'400 9px var(--font-mono)',color:'var(--text-muted)',marginTop:'2px'}}>{gap > 10 ? 'Stress building' : gap < -10 ? 'Worst may be past' : 'In balance'}</div>
+            </div>
+            <div style={{padding:'8px 10px',background:'var(--bg-accent)',borderRadius:'4px'}}>
+              <div style={{font:'500 9px var(--font-mono)',color:'var(--text-muted)',letterSpacing:'1px',textTransform:'uppercase'}}>Version</div>
+              <div style={{font:'400 11px var(--font-mono)',color:'var(--text-secondary)',marginTop:'2px'}}>Methodology v3.0</div>
+              <div style={{font:'400 9px var(--font-mono)',color:'var(--text-muted)',marginTop:'2px'}}>9 indicators · SDT + augmented</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

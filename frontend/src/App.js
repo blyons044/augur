@@ -5,6 +5,7 @@ import Nav from './components/Nav';
 import LandingPage from './pages/LandingPage';
 import DashboardPage from './pages/DashboardPage';
 import IndicatorPage from './pages/IndicatorPage';
+import MethodologyPage from './pages/MethodologyPage';
 import EmpireExplorer from './pages/EmpireExplorer';
 import CountryRankings from './pages/CountryRankings';
 import CountryCompare from './pages/CountryCompare';
@@ -62,7 +63,8 @@ function App() {
           />
         } />
         <Route path="/your-lifetime" element={<YourLifetime indicatorData={indicatorData} />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="/methodology" element={<MethodologyPage />} />
+              <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );

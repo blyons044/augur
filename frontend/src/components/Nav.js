@@ -22,6 +22,7 @@ function Nav() {
     { to: '/dashboard', label: 'Dashboard' },
     { to: '/empires', label: 'Empires' },
     { to: '/rankings', label: 'Rankings' },
+    { to: '/methodology', label: 'Methodology' },
     { to: '/compare', label: 'Compare' },
     { to: '/your-lifetime', label: 'Your Lifetime' },
     { to: '/correlations', label: 'Correlations' },
