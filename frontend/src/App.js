@@ -12,6 +12,7 @@ import NarrativeMode from './pages/NarrativeMode';
 import ApiDocs from './pages/ApiDocs';
 import Correlations from './pages/Correlations';
 import NotFound from './pages/NotFound';
+import YourLifetime from './pages/YourLifetime';
 import './index.css';
 
 const API_BASE = process.env.REACT_APP_API_URL || 'https://augur.up.railway.app';
@@ -60,6 +61,7 @@ function App() {
             error={error}
           />
         } />
+        <Route path="/your-lifetime" element={<YourLifetime indicatorData={indicatorData} />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

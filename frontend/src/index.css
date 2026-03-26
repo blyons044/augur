@@ -323,3 +323,28 @@
 .cc-value{font:500 14px var(--font-mono);color:var(--red)}
 .cc-year{font:400 12px var(--font-mono);color:var(--text-muted)}
 .cc-outcome{font:300 13px/1.7 var(--font-body);color:var(--text-secondary)}
+
+.lifetime-page{padding-top:80px}
+.lifetime-input-section{display:flex;gap:12px;align-items:center;margin-bottom:48px}
+.lifetime-input{font:400 24px var(--font-mono);color:#fff;background:var(--bg-card);border:1px solid var(--border);padding:16px 24px;width:160px;text-align:center;appearance:textfield;-moz-appearance:textfield}
+.lifetime-input::-webkit-inner-spin-button,.lifetime-input::-webkit-outer-spin-button{-webkit-appearance:none}
+.lifetime-input:focus{outline:none;border-color:var(--red)}
+.lifetime-input::placeholder{color:var(--text-muted);font-size:16px}
+.lifetime-go{font:500 12px var(--font-mono);letter-spacing:2px;text-transform:uppercase;color:#fff;background:var(--red);border:none;padding:18px 28px;cursor:pointer;transition:all .2s}
+.lifetime-go:hover{background:#c03535;transform:translateY(-1px)}
+.lifetime-results{margin-top:20px}
+.lifetime-age{margin-bottom:40px}
+.lifetime-age-number{font:400 72px var(--font-display);color:#fff;line-height:1;display:block}
+.lifetime-age-label{font:400 14px var(--font-mono);color:var(--text-muted);letter-spacing:1px}
+.lifetime-cards{display:flex;flex-direction:column;gap:32px}
+.lifetime-card{background:var(--bg-card);border:1px solid var(--border);padding:24px;animation:cardReveal .6s ease both}
+.lifetime-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.lifetime-indicator-name{font:500 11px var(--font-mono);letter-spacing:2px;text-transform:uppercase;color:var(--text-muted)}
+.lifetime-then-now{display:flex;align-items:center;gap:10px}
+.lifetime-then{font:400 18px var(--font-mono);color:var(--text-muted)}
+.lifetime-arrow{color:var(--text-muted);font-size:14px}
+.lifetime-now{font:500 18px var(--font-mono)}
+.lifetime-narrative{font:300 15px/1.8 var(--font-body);color:var(--text-primary);margin-bottom:16px}
+.lifetime-summary{margin-top:48px;padding:24px;border-top:1px solid var(--border)}
+.lifetime-summary p{font:300 16px/1.8 var(--font-body);color:var(--text-secondary);text-align:center;max-width:520px;margin:0 auto}
+@media(max-width:768px){.lifetime-age-number{font-size:48px}.lifetime-input{width:120px;font-size:20px}.lifetime-then-now{gap:6px}.lifetime-then,.lifetime-now{font-size:14px}}
