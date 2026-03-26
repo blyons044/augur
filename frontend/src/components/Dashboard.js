@@ -371,18 +371,33 @@ function EmpireArc() {
 function StressOverview({ indicatorData }) {
   const scores = [];
 
-  // Percentile-based scoring: where is the current value relative to its own history?
-  // 0 = historical best, 100 = historical worst
+  // Blended scoring: 50% percentile rank + 50% range position
+  // Percentile: where does current sit among all observations
+  // Range: where does current sit between historical min and max
+  // Blending prevents extreme scores when values cluster near the top
   function computePercentileStress(data, seriesId, invertDirection) {
     if (!data || !data.data) return null;
     const pts = data.data.filter(d => d.series_id === seriesId && d.value != null);
     if (pts.length < 5) return null;
-    const values = pts.map(d => d.value).sort((a, b) => a - b);
-    const current = pts[pts.length - 1].value;
-    const rank = values.filter(v => v <= current).length / values.length;
-    // For most indicators, higher value = more stress
-    // For trust indicators, higher value = LESS stress (invert)
-    return invertDirection ? Math.round((1 - rank) * 100) : Math.round(rank * 100);
+    const values = pts.map(d => d.value);
+    const current = values[values.length - 1];
+    const sorted = [...values].sort((a, b) => a - b);
+    const min = sorted[0];
+    const max = sorted[sorted.length - 1];
+
+    // Percentile rank
+    const pctRank = sorted.filter(v => v <= current).length / sorted.length;
+
+    // Range position (0-1)
+    const range = max - min;
+    const rangePos = range > 0 ? (current - min) / range : 0.5;
+
+    // Blend
+    const raw = invertDirection
+      ? ((1 - pctRank) * 0.5 + (1 - rangePos) * 0.5)
+      : (pctRank * 0.5 + rangePos * 0.5);
+
+    return Math.round(raw * 100);
   }
 
   // Social Cohesion
@@ -410,6 +425,24 @@ function StressOverview({ indicatorData }) {
   // Systemic Capacity
   const mediaScore = computePercentileStress(indicatorData.media_fragmentation, 'gallup_news_trust', true);
   if (mediaScore !== null) scores.push({ name: 'Epistemic Fracture', value: mediaScore, max: 100 });
+
+  // Additional indicators for balanced composite
+
+  // Employment-Population Ratio (higher = less stress)
+  const empScore = computePercentileStress(indicatorData.elite_overproduction, 'EMRATIO', true);
+  if (empScore !== null) scores.push({ name: 'Employment Ratio', value: empScore, max: 100 });
+
+  // Unemployment Rate (higher = more stress)
+  const unempScore = computePercentileStress(indicatorData.elite_overproduction, 'UNRATE', false);
+  if (unempScore !== null) scores.push({ name: 'Unemployment', value: unempScore, max: 100 });
+
+  // Consumer Sentiment (higher = less stress)
+  const sentScore = computePercentileStress(indicatorData.middle_class_decline, 'UMCSENT', true);
+  if (sentScore !== null) scores.push({ name: 'Consumer Sentiment', value: sentScore, max: 100 });
+
+  // Personal Savings Rate (higher = less stress)
+  const savScore = computePercentileStress(indicatorData.middle_class_decline, 'PSAVERT', true);
+  if (savScore !== null) scores.push({ name: 'Savings Rate', value: savScore, max: 100 });
 
   // Geopolitical: US relative decline - hardcoded from data (US share ~15% of world GDP PPP, down from ~50%)
   scores.push({ name: 'Relative Decline', value: 88, max: 100 });
