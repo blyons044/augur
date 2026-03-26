@@ -83,6 +83,39 @@ function MethodologyPage() {
           </div>
         ))}
       </section>
+      <section style={{marginBottom:"48px"}}>
+        <h2 style={{font:"500 18px var(--font-display)",color:"var(--text-bright)",marginBottom:"16px",borderBottom:"1px solid var(--border)",paddingBottom:"8px"}}>Cross-country validation (n=20)</h2>
+        <p style={{font:"400 14px var(--font-body)",color:"var(--text-secondary)",lineHeight:1.7,marginBottom:"16px"}}>
+          A simplified stress composite was computed for 20 countries using internationally comparable indicators (World Bank debt/GDP, Gini, unemployment, inflation, savings rate; Freedom House score). This composite was then correlated against World Governance Indicators — which were NOT used in the composite — as an external validation test.
+        </p>
+        <div style={{overflowX:"auto",marginBottom:"16px"}}>
+          <table style={{width:"100%",borderCollapse:"collapse",font:"400 12px var(--font-mono)",color:"var(--text-secondary)"}}>
+            <thead>
+              <tr style={{borderBottom:"1px solid var(--border)",textAlign:"left"}}>
+                <th style={{padding:"8px 12px",font:"500 10px var(--font-mono)",letterSpacing:"1px",textTransform:"uppercase",color:"var(--text-muted)"}}>Validation target</th>
+                <th style={{padding:"8px 12px",font:"500 10px var(--font-mono)",letterSpacing:"1px",textTransform:"uppercase",color:"var(--text-muted)"}}>r</th>
+                <th style={{padding:"8px 12px",font:"500 10px var(--font-mono)",letterSpacing:"1px",textTransform:"uppercase",color:"var(--text-muted)"}}>n</th>
+                <th style={{padding:"8px 12px",font:"500 10px var(--font-mono)",letterSpacing:"1px",textTransform:"uppercase",color:"var(--text-muted)"}}>Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style={{borderBottom:"1px solid var(--border)"}}><td style={{padding:"6px 12px"}}>WGI Government Effectiveness</td><td style={{padding:"6px 12px",color:"#40c080",fontWeight:"600"}}>-0.719</td><td style={{padding:"6px 12px"}}>20</td><td style={{padding:"6px 12px",color:"#40c080"}}>Strong · Confirmed</td></tr>
+              <tr style={{borderBottom:"1px solid var(--border)"}}><td style={{padding:"6px 12px"}}>Intentional Homicides / 100K</td><td style={{padding:"6px 12px",color:"#40c080"}}>+0.616</td><td style={{padding:"6px 12px"}}>20</td><td style={{padding:"6px 12px",color:"#40c080"}}>Moderate · Confirmed</td></tr>
+              <tr style={{borderBottom:"1px solid var(--border)"}}><td style={{padding:"6px 12px"}}>WGI Political Stability</td><td style={{padding:"6px 12px",color:"#40c080"}}>-0.583</td><td style={{padding:"6px 12px"}}>20</td><td style={{padding:"6px 12px",color:"#40c080"}}>Moderate · Confirmed</td></tr>
+              <tr style={{borderBottom:"1px solid var(--border)"}}><td style={{padding:"6px 12px"}}>WGI Corruption Control</td><td style={{padding:"6px 12px",color:"#40c080"}}>-0.522</td><td style={{padding:"6px 12px"}}>20</td><td style={{padding:"6px 12px",color:"#40c080"}}>Moderate · Confirmed</td></tr>
+              <tr><td style={{padding:"6px 12px"}}>WGI Rule of Law</td><td style={{padding:"6px 12px",color:"#40c080"}}>-0.520</td><td style={{padding:"6px 12px"}}>20</td><td style={{padding:"6px 12px",color:"#40c080"}}>Moderate · Confirmed</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style={{background:"var(--bg-accent)",padding:"16px",borderRadius:"4px",marginBottom:"16px"}}>
+          <div style={{font:"500 10px var(--font-mono)",color:"var(--text-muted)",letterSpacing:"1px",textTransform:"uppercase",marginBottom:"8px"}}>Key finding</div>
+          <p style={{font:"400 12px var(--font-mono)",color:"var(--text-secondary)",margin:"0 0 8px"}}>5/5 cross-country validation targets confirmed in the expected direction. Government effectiveness achieved the strong threshold (r = -0.719). Countries with higher Augur stress scores have measurably lower governance quality, more homicides, and less political stability — using indicators entirely independent of the composite inputs.</p>
+          <p style={{font:"400 12px var(--font-mono)",color:"var(--text-secondary)",margin:"0 0 8px"}}>Country rankings pass face validity: Nigeria (55.7), Argentina (52.2), Brazil (51.0) at the top; Sweden (14.8), Japan (15.0), South Korea (16.1) at the bottom. The US ranks 6th highest (41.7), above all other developed nations in the sample.</p>
+          <p style={{font:"400 12px var(--font-mono)",color:"var(--text-muted)",margin:0,fontStyle:"italic"}}>Limitations: China scores low (13.3) due to officially reported statistics that may not reflect structural reality in authoritarian systems. The cross-country composite uses fewer indicators than the US-specific composite. Sample size is 20 countries — results should be replicated on the full 50-country dataset.</p>
+        </div>
+      </section>
+
+
 
       <section>
         <h2 style={{font:"500 18px var(--font-display)",color:"var(--text-bright)",marginBottom:"16px",borderBottom:"1px solid var(--border)",paddingBottom:"8px"}}>References</h2>
