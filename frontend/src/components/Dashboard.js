@@ -106,7 +106,7 @@ function CompositeTimeline({ indicatorData }) {
       .filter(([yr, data]) => data.scores.length >= 2 && parseInt(yr) >= 1990)
       .map(([yr, data]) => ({
         year: parseInt(yr),
-        score: Math.round(data.scores.reduce((a, b) => a + b, 0) / data.scores.length),
+        score: Math.round(Math.exp(data.scores.reduce((a, s) => a + Math.log(Math.max(s, 1)), 0) / data.scores.length)),
         components: data.scores.length,
       }))
       .sort((a, b) => a.year - b.year);
@@ -194,7 +194,7 @@ function CompositeTimeline({ indicatorData }) {
     <div className={'composite-timeline' + (mounted ? ' composite-timeline-visible' : '')}>
       <div className="composite-timeline-header">
         <span className="empire-arc-label">Composite Stress Index Over Time</span>
-        <span className="empire-arc-sublabel">Arithmetic composite (legacy v1.0 method). Current pillar-level score: see above</span>
+        <span className="empire-arc-sublabel">Pillar-level geometric composite over time</span>
       </div>
       <svg ref={ref} viewBox="0 0 900 260" className="composite-timeline-chart" />
     </div>
@@ -575,15 +575,15 @@ function Dashboard({ indicators, indicatorData }) {
               { id: 'debt_to_gdp', series: 'GFDEGDQ188S', name: 'Debt to GDP', format: v => v.toFixed(1) + '%', unit: '%' },
               { id: 'wealth_inequality', series: 'WFRBST01134', name: 'Top 1% Wealth Share', format: v => v.toFixed(1) + '%', unit: '%' },
               { id: 'political_polarization', series: 'dw_nominate_House_200', name: 'House GOP Ideology', format: v => v.toFixed(3), unit: '' },
-              { id: 'public_trust', series: 'gallup_congress', name: 'Congress Confidence', format: v => Math.round(v) + '%', unit: '%' },
+              { id: 'public_trust', series: 'gallup_congress', name: 'Congress Confidence', format: v => Math.round(v) + '%', unit: '%', higherIsGood: true },
               { id: 'currency_debasement', series: 'CPIAUCSL', name: 'Consumer Price Index', format: v => v.toFixed(1), unit: '' },
               { id: 'currency_debasement', series: 'M2SL', name: 'M2 Money Supply', format: v => '$' + (v/1000).toFixed(1) + 'T', unit: '' },
               { id: 'elite_overproduction', series: 'UNRATE', name: 'Unemployment Rate', format: v => v.toFixed(1) + '%', unit: '%' },
               { id: 'middle_class_decline', series: 'MORTGAGE30US', name: 'Mortgage Rate', format: v => v.toFixed(2) + '%', unit: '%' },
               { id: 'middle_class_decline', series: 'MSPUS', name: 'Median Home Price', format: v => '$' + (v/1000).toFixed(0) + 'K', unit: '' },
-              { id: 'media_fragmentation', series: 'gallup_news_trust', name: 'News Trust', format: v => Math.round(v) + '%', unit: '%' },
-              { id: 'elite_overproduction', series: 'JTSJOL', name: 'Job Openings', format: v => (v/1000).toFixed(1) + 'M', unit: '' },
-              { id: 'geopolitical_standing', series: 'NY.GDP.MKTP.PP.CD', name: 'US GDP (PPP)', format: v => '$' + (v/1e12).toFixed(1) + 'T', unit: '' },
+              { id: 'media_fragmentation', series: 'gallup_news_trust', name: 'News Trust', format: v => Math.round(v) + '%', unit: '%', higherIsGood: true },
+              { id: 'elite_overproduction', series: 'JTSJOL', name: 'Job Openings', format: v => (v/1000).toFixed(1) + 'M', unit: '', higherIsGood: true },
+              { id: 'geopolitical_standing', series: 'NY.GDP.MKTP.PP.CD', name: 'US GDP (PPP)', format: v => '$' + (v/1e12).toFixed(1) + 'T', unit: '', higherIsGood: true },
             ];
             tracked.forEach(t => {
               const d = indicatorData[t.id];
@@ -617,6 +617,7 @@ function Dashboard({ indicators, indicatorData }) {
                 pctChange: pctChange,
                 date: latest.date_value,
                 prevDate: prev.date_value,
+                higherIsGood: t.higherIsGood || false,
               });
             });
             changes.sort((a, b) => Math.abs(b.pctChange) - Math.abs(a.pctChange));
@@ -628,7 +629,7 @@ function Dashboard({ indicators, indicatorData }) {
                   <span className="change-arrow">{ch.from} {ch.pctChange > 0 ? '\u2191' : '\u2193'} {ch.to}</span>
                 </div>
                 <div className="change-bottom">
-                  <span className={'change-pct ' + (Math.abs(ch.pctChange) > 5 ? 'change-big' : '')} style={{color: ch.pctChange > 0 ? 'var(--red)' : 'var(--green)'}}>
+                  <span className={'change-pct ' + (Math.abs(ch.pctChange) > 5 ? 'change-big' : '')} style={{color: (ch.higherIsGood ? ch.pctChange < 0 : ch.pctChange > 0) ? 'var(--red)' : 'var(--green)'}}>
                     {ch.pctChange > 0 ? '+' : ''}{ch.pctChange.toFixed(1)}%
                   </span>
                   <span className="change-date">{ch.prevDate.substring(0,7)} to {ch.date.substring(0,7)}</span>

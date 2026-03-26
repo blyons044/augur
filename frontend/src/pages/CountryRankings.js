@@ -106,11 +106,15 @@ function CountryRankings() {
 
   if (loading) return (
     <div className="loading-screen">
-      <div className="rankings-caveat" style={{margin:'0 0 24px',padding:'12px 16px',background:'rgba(224,160,48,0.08)',border:'1px solid rgba(224,160,48,0.2)',borderRadius:'4px',font:'400 11px var(--font-mono)',color:'var(--text-muted)',lineHeight:1.6}}>
-        <strong>Ranking limitations.</strong> Country rankings use internationally comparable data sources (World Bank, IMF) where available. Not all indicators have equivalent cross-country measures — rankings reflect only indicators with valid international data. Countries with fewer than 67% indicator coverage are flagged. See <a href="/methodology" style={{color:'var(--text-secondary)'}}>Methodology: Missing Data Policy</a>.
-      </div>
       <h1 className="augur-title">AUGUR</h1>
-      <p className="loading-text">Loading cross-country data for 50 nations...</p>
+      <p className="loading-text" style={{marginBottom:'16px'}}>Loading cross-country data for 50 nations...</p>
+      <div style={{width:'200px',height:'3px',background:'var(--bg-accent)',borderRadius:'2px',overflow:'hidden'}}>
+        <div style={{width:'60%',height:'100%',background:'var(--red)',borderRadius:'2px',animation:'loadPulse 1.5s ease-in-out infinite'}} />
+      </div>
+      <style>{'@keyframes loadPulse { 0%{width:20%;opacity:0.5} 50%{width:80%;opacity:1} 100%{width:20%;opacity:0.5} }'}</style>
+      <div style={{marginTop:'24px',padding:'12px 16px',background:'rgba(80,128,192,0.08)',border:'1px solid rgba(80,128,192,0.2)',borderRadius:'4px',font:'400 11px var(--font-mono)',color:'var(--text-muted)',lineHeight:1.6,maxWidth:'500px',textAlign:'center'}}>
+        <strong>International data only.</strong> Rankings use exclusively internationally comparable sources (World Bank, IMF, SIPRI). US-only indicators are excluded.
+      </div>
     </div>
   );
 
