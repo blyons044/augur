@@ -192,6 +192,7 @@ function YourLifetime({ indicatorData }) {
     <div className="app lifetime-page">
       <div className="personalization-caveat" style={{margin:'0 0 24px',padding:'12px 16px',background:'rgba(96,144,192,0.08)',border:'1px solid rgba(96,144,192,0.2)',borderRadius:'4px',font:'400 11px var(--font-mono)',color:'var(--text-muted)',lineHeight:1.6}}>
         <strong>Personalized context, not personalized prediction.</strong> This page overlays your life timeline against structural indicator trends. The juxtaposition is illustrative — it does not imply that these macro trends affected you individually (ecological fallacy). National aggregates do not describe individual experience.
+        <span className="data-range-note" style={{display:'block',marginTop:'8px'}}>Data availability: Most indicators begin between 1961-1972. Birth years before 1960 will have limited context for early life.</span>
       </div>
       <header className="indicator-header">
         <span className="section-label">Personal</span>
