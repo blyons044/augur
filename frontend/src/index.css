@@ -379,3 +379,28 @@
 .change-date{font:400 9px var(--font-mono);color:var(--text-muted);letter-spacing:.5px}
 .no-changes{font:300 14px var(--font-body);color:var(--text-muted)}
 @media(max-width:768px){.changes-feed{grid-template-columns:1fr}}
+
+.connected-section{margin-bottom:48px}
+.connected-header{margin-bottom:24px}
+.connected-desc{font:300 14px/1.7 var(--font-body);color:var(--text-muted)}
+.connected-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:20px}
+.connection-card{background:var(--bg-card);border:1px solid var(--border);padding:24px;transition:border-color .3s;animation:cardReveal .5s ease both;position:relative;overflow:hidden}
+.connection-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(224,64,64,.3),transparent)}
+.connection-card:hover{border-color:var(--border-hover)}
+.connection-pair{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.connection-a,.connection-b{font:600 13px var(--font-mono);letter-spacing:1px;text-transform:uppercase;color:#fff;background:rgba(255,255,255,.05);padding:6px 12px;border-radius:3px}
+.connection-line{flex-shrink:0}
+.connection-text{font:300 13px/1.7 var(--font-body);color:var(--text-secondary);margin-bottom:10px}
+.connection-strength{font:500 11px var(--font-mono);color:var(--text-muted);letter-spacing:1px;opacity:.6}
+.connected-cta{text-align:center;margin-top:16px}
+.connected-link{font:400 11px var(--font-mono);letter-spacing:2px;text-transform:uppercase;color:var(--red);text-decoration:none;transition:opacity .2s}
+.connected-link:hover{opacity:.7}
+@media(max-width:768px){.connected-grid{grid-template-columns:1fr}}
+
+.dashboard-tabs{display:flex;gap:4px;margin-bottom:32px;border-bottom:1px solid var(--border);padding-bottom:0}
+.dash-tab{font:500 10px var(--font-mono);letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);background:none;border:none;padding:12px 20px;cursor:pointer;transition:all .2s;border-bottom:2px solid transparent;margin-bottom:-1px}
+.dash-tab:hover{color:var(--text-primary)}
+.dash-tab-active{color:var(--red);border-bottom-color:var(--red)}
+@media(max-width:768px){.dashboard-tabs{overflow-x:auto;flex-wrap:nowrap}.dash-tab{white-space:nowrap;padding:10px 14px;font-size:9px}}
+
+.tab-hidden{display:none}

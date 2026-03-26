@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import IndicatorCard from './IndicatorCard';
 import AnimatedNumber from './AnimatedNumber';
 const UN = {
@@ -473,11 +473,20 @@ function StressOverview({ indicatorData }) {
 }
 
 function Dashboard({ indicators, indicatorData }) {
+  const [activeTab, setActiveTab] = React.useState('indicators');
   return (
     <main className="dashboard">
       <StressOverview indicatorData={indicatorData} />
       <CompositeTimeline indicatorData={indicatorData} />
       <EmpireArc />
+
+      <div className="dashboard-tabs">
+        <button className={'dash-tab' + (activeTab === 'indicators' ? ' dash-tab-active' : '')} onClick={() => setActiveTab('indicators')}>Indicators</button>
+        <button className={'dash-tab' + (activeTab === 'changes' ? ' dash-tab-active' : '')} onClick={() => setActiveTab('changes')}>What Changed</button>
+        <button className={'dash-tab' + (activeTab === 'connections' ? ' dash-tab-active' : '')} onClick={() => setActiveTab('connections')}>Connections</button>
+        <button className={'dash-tab' + (activeTab === 'supplementary' ? ' dash-tab-active' : '')} onClick={() => setActiveTab('supplementary')}>Under the Surface</button>
+      </div>
+      <div className={"pillar-sections" + (activeTab === "indicators" ? "" : " tab-hidden")}>
       {PILLARS.map((p) => (
         <section key={p.id} className="pillar-section">
           <h2 className="pillar-title">{p.name}</h2>
@@ -488,7 +497,9 @@ function Dashboard({ indicators, indicatorData }) {
           </div>
         </section>
       ))}
-      <section className="changes-section">
+      </div>
+
+      <section className={"changes-section" + (activeTab === "changes" ? "" : " tab-hidden")}>
         <div className="changes-header">
           <span className="section-label">Latest Movements</span>
           <h2 className="section-title" style={{marginBottom: '8px'}}>What changed</h2>
@@ -564,7 +575,68 @@ function Dashboard({ indicators, indicatorData }) {
         </div>
       </section>
 
-      <section className="supplementary-section">
+      <section className={"connected-section" + (activeTab === "connections" ? "" : " tab-hidden")}>
+        <div className="connected-header">
+          <span className="section-label">Structural Connections</span>
+          <h2 className="section-title" style={{marginBottom: '8px'}}>These aren't separate problems</h2>
+          <p className="connected-desc">Augur's indicators don't move independently. When one shifts, others follow. These are the strongest connections in the data.</p>
+        </div>
+        <div className="connected-grid">
+          <div className="connection-card">
+            <div className="connection-pair">
+              <span className="connection-a">Trust</span>
+              <svg className="connection-line" viewBox="0 0 60 20" width="60" height="20">
+                <line x1="0" y1="10" x2="50" y2="10" stroke="#e04040" strokeWidth="2" strokeDasharray="4,3" />
+                <polygon points="50,5 60,10 50,15" fill="#e04040" />
+              </svg>
+              <span className="connection-b">Polarization</span>
+            </div>
+            <p className="connection-text">As institutional trust falls, polarization accelerates. When people stop trusting the system, they retreat to tribal loyalties. Every historical case follows this sequence.</p>
+            <span className="connection-strength">r = -0.89</span>
+          </div>
+          <div className="connection-card">
+            <div className="connection-pair">
+              <span className="connection-a">Debt</span>
+              <svg className="connection-line" viewBox="0 0 60 20" width="60" height="20">
+                <line x1="0" y1="10" x2="50" y2="10" stroke="#e0a030" strokeWidth="2" strokeDasharray="4,3" />
+                <polygon points="50,5 60,10 50,15" fill="#e0a030" />
+              </svg>
+              <span className="connection-b">Wealth Gap</span>
+            </div>
+            <p className="connection-text">Rising sovereign debt and wealth concentration move together. Government borrowing increasingly finances returns to capital holders while costs are socialized across the population.</p>
+            <span className="connection-strength">r = 0.94</span>
+          </div>
+          <div className="connection-card">
+            <div className="connection-pair">
+              <span className="connection-a">Media Trust</span>
+              <svg className="connection-line" viewBox="0 0 60 20" width="60" height="20">
+                <line x1="0" y1="10" x2="50" y2="10" stroke="#5080c0" strokeWidth="2" strokeDasharray="4,3" />
+                <polygon points="50,5 60,10 50,15" fill="#5080c0" />
+              </svg>
+              <span className="connection-b">Polarization</span>
+            </div>
+            <p className="connection-text">When people can't agree on what's true, they can't agree on anything. The collapse of shared information sources tracks almost perfectly with rising partisan division.</p>
+            <span className="connection-strength">r = -0.91</span>
+          </div>
+          <div className="connection-card">
+            <div className="connection-pair">
+              <span className="connection-a">Wealth Gap</span>
+              <svg className="connection-line" viewBox="0 0 60 20" width="60" height="20">
+                <line x1="0" y1="10" x2="50" y2="10" stroke="#c060a0" strokeWidth="2" strokeDasharray="4,3" />
+                <polygon points="50,5 60,10 50,15" fill="#c060a0" />
+              </svg>
+              <span className="connection-b">Trust</span>
+            </div>
+            <p className="connection-text">As wealth concentrates, institutional trust erodes. People stop believing in systems they feel no longer serve them. This feedback loop has driven instability in every era it's appeared.</p>
+            <span className="connection-strength">r = -0.87</span>
+          </div>
+        </div>
+        <div className="connected-cta">
+          <a href="/correlations" className="connected-link">See the full correlation matrix &rarr;</a>
+        </div>
+      </section>
+
+      <section className={"supplementary-section" + (activeTab === "supplementary" ? "" : " tab-hidden")}>
         <div className="supplementary-header">
           <span className="section-label">Supplementary Indicators</span>
           <h2 className="section-title" style={{marginBottom: '8px'}}>Under the surface</h2>
