@@ -488,6 +488,46 @@ function Dashboard({ indicators, indicatorData }) {
           </div>
         </section>
       ))}
+      <section className="supplementary-section">
+        <div className="supplementary-header">
+          <span className="section-label">Supplementary Indicators</span>
+          <h2 className="section-title" style={{marginBottom: '8px'}}>Under the surface</h2>
+          <p className="supplementary-desc">Additional data series that add context to the 13 core indicators.</p>
+        </div>
+        <div className="supplementary-grid">
+          {(() => {
+            const supplementary = [
+              { series: 'MSPUS', indicator: 'middle_class_decline', name: 'Median Home Price', format: v => '$' + (v/1000).toFixed(0) + 'K', context: 'vs $24K in 1970', explainer: 'Median sale price of houses sold in the US. When this grows faster than wages, homeownership becomes structurally inaccessible.' },
+              { series: 'MORTGAGE30US', indicator: 'middle_class_decline', name: '30-Year Mortgage Rate', format: v => v.toFixed(2) + '%', context: 'cost of homeownership', explainer: 'The interest rate on a standard 30-year fixed mortgage. Higher rates mean higher monthly payments and fewer people who can afford to buy.' },
+              { series: 'M2SL', indicator: 'currency_debasement', name: 'M2 Money Supply', format: v => '$' + (v/1000).toFixed(1) + 'T', context: '40% created since 2020', explainer: 'Total dollars in circulation plus savings deposits, money market funds, and small CDs. When this grows faster than economic output, each dollar buys less.' },
+              { series: 'JTSJOL', indicator: 'elite_overproduction', name: 'Job Openings', format: v => (v/1000).toFixed(1) + 'M', context: 'JOLTS data', explainer: 'Total unfilled job openings from the Bureau of Labor Statistics JOLTS survey. High openings with flat wages suggests a mismatch between available jobs and worker expectations or skills.' },
+              { series: 'W270RE1A156NBEA', indicator: 'wealth_inequality', name: 'Labor Share of Output', format: v => v.toFixed(1) + '%', context: 'worker share of GDP declining since 1970', explainer: 'The percentage of total economic output that goes to workers as wages and benefits vs. capital owners as profits. This has been declining for decades, meaning workers capture less of the value they produce.' },
+              { series: 'CSUSHPINSA', indicator: 'middle_class_decline', name: 'Case-Shiller Home Index', format: v => v.toFixed(0), context: 'base 100 in Jan 2000', explainer: 'S&P Case-Shiller US National Home Price Index. Tracks repeat-sale home prices. A value of 300 means home prices have tripled since January 2000.' },
+            ];
+            return supplementary.map(s => {
+              const d = indicatorData[s.indicator];
+              if (!d || !d.data) return null;
+              const pts = d.data.filter(p => p.series_id === s.series && p.value != null);
+              if (!pts.length) return null;
+              const latest = pts[pts.length - 1];
+              const oldest = pts[0];
+              const change = ((latest.value - oldest.value) / Math.abs(oldest.value) * 100);
+              return (
+                <div className="supplementary-card" key={s.series} title={s.explainer}>
+                  <span className="supp-name">{s.name}</span>
+                  <p className="supp-explainer">{s.explainer}</p>
+                  <span className="supp-value">{s.format(latest.value)}</span>
+                  <span className="supp-change" style={{color: change > 0 ? 'var(--red)' : 'var(--green)'}}>
+                    {change > 0 ? '+' : ''}{change.toFixed(0)}% since {oldest.date_value.substring(0,4)}
+                  </span>
+                  <span className="supp-context">{s.context}</span>
+                </div>
+              );
+            }).filter(Boolean);
+          })()}
+        </div>
+      </section>
+
       <footer className="dashboard-footer">
         <p className="footer-text">Every number on Augur traces directly to a publicly available primary source. Every transformation is logged and publicly auditable. Every published data point is cryptographically fingerprinted and independently verifiable.</p>
         <div className="footer-actions">
