@@ -81,6 +81,33 @@ function Correlations({ indicatorData }) {
     return 'Very weak';
   }
 
+  const PAIR_CONTEXT = {
+    'Polarization+Inst. Trust': 'When people lose trust in institutions, they retreat to partisan identity as their primary political framework. The collapse of institutional legitimacy removes the shared ground that makes compromise possible.',
+    'Inst. Trust+Polarization': 'When people lose trust in institutions, they retreat to partisan identity as their primary political framework. The collapse of institutional legitimacy removes the shared ground that makes compromise possible.',
+    'Debt/GDP+Wealth Ineq.': 'Government borrowing increasingly finances returns to asset holders (through bond interest and monetary policy) while costs are distributed across the tax base. Rising debt and rising wealth concentration have reinforced each other in every documented case.',
+    'Wealth Ineq.+Debt/GDP': 'Government borrowing increasingly finances returns to asset holders (through bond interest and monetary policy) while costs are distributed across the tax base. Rising debt and rising wealth concentration have reinforced each other in every documented case.',
+    'Media Trust+Polarization': 'When shared information sources collapse, people sort into separate factual realities. Without agreed-upon facts, political compromise becomes structurally impossible. Every historical period of extreme polarization was preceded by media fragmentation.',
+    'Polarization+Media Trust': 'When shared information sources collapse, people sort into separate factual realities. Without agreed-upon facts, political compromise becomes structurally impossible. Every historical period of extreme polarization was preceded by media fragmentation.',
+    'Wealth Ineq.+Inst. Trust': 'When people feel the economic system no longer serves them, they stop trusting the institutions that maintain it. This feedback loop between concentration and delegitimization appears in every major civilizational transition.',
+    'Inst. Trust+Wealth Ineq.': 'When people feel the economic system no longer serves them, they stop trusting the institutions that maintain it. This feedback loop between concentration and delegitimization appears in every major civilizational transition.',
+    'CPI+Debt/GDP': 'Higher government debt often leads to monetary expansion to service that debt, which drives inflation. Alternatively, both can be symptoms of the same underlying fiscal stress.',
+    'Debt/GDP+CPI': 'Higher government debt often leads to monetary expansion to service that debt, which drives inflation. Alternatively, both can be symptoms of the same underlying fiscal stress.',
+    'Overdose Deaths+Wealth Ineq.': 'Deaths of despair concentrate in communities that experienced the sharpest economic decline. As wealth concentrates, the communities left behind show rising mortality from drugs, alcohol, and suicide. This is the human cost of structural inequality.',
+    'Wealth Ineq.+Overdose Deaths': 'Deaths of despair concentrate in communities that experienced the sharpest economic decline. As wealth concentrates, the communities left behind show rising mortality from drugs, alcohol, and suicide. This is the human cost of structural inequality.',
+    'Overdose Deaths+Inst. Trust': 'Communities with the highest overdose rates also show the lowest institutional trust. When systems fail people, they stop believing in those systems and self-medicate the consequences.',
+    'Inst. Trust+Overdose Deaths': 'Communities with the highest overdose rates also show the lowest institutional trust. When systems fail people, they stop believing in those systems and self-medicate the consequences.',
+    'Home Price+Wealth Ineq.': 'Rising home prices transfer wealth from buyers (typically younger, less wealthy) to owners (typically older, wealthier). Housing becomes a wealth concentration mechanism rather than a path to the middle class.',
+    'Wealth Ineq.+Home Price': 'Rising home prices transfer wealth from buyers (typically younger, less wealthy) to owners (typically older, wealthier). Housing becomes a wealth concentration mechanism rather than a path to the middle class.',
+    'Home Price+CPI': 'Housing costs are a major component of inflation. When home prices rise faster than wages, the CPI follows, but the lived experience of inflation is worse than the headline number suggests.',
+    'CPI+Home Price': 'Housing costs are a major component of inflation. When home prices rise faster than wages, the CPI follows, but the lived experience of inflation is worse than the headline number suggests.',
+    'Savings Rate+Debt/GDP': 'As government debt rises and real wages stagnate, household savings decline. People draw down savings to maintain living standards, making them more vulnerable to economic shocks.',
+    'Debt/GDP+Savings Rate': 'As government debt rises and real wages stagnate, household savings decline. People draw down savings to maintain living standards, making them more vulnerable to economic shocks.',
+    'Unemployment+Overdose Deaths': 'Unemployment and overdose deaths often move together, but the relationship is complicated. Economic despair drives substance abuse, but overdose deaths continued rising even as unemployment fell, suggesting deeper structural damage.',
+    'Overdose Deaths+Unemployment': 'Unemployment and overdose deaths often move together, but the relationship is complicated. Economic despair drives substance abuse, but overdose deaths continued rising even as unemployment fell, suggesting deeper structural damage.',
+    'Media Trust+Inst. Trust': 'Media and institutional trust have collapsed together. When people distrust the press, they lose the mechanism through which institutional accountability is maintained. Without accountability, institutional trust erodes further.',
+    'Inst. Trust+Media Trust': 'Media and institutional trust have collapsed together. When people distrust the press, they lose the mechanism through which institutional accountability is maintained. Without accountability, institutional trust erodes further.',
+  };
+
   const insights = [];
   if (matrix) {
     for (let i = 0; i < INDICATORS.length; i++) {
@@ -88,15 +115,18 @@ function Correlations({ indicatorData }) {
         const val = matrix[i][j];
         if (val !== null && Math.abs(val) > 0.5) {
           const direction = val > 0 ? 'move together' : 'move inversely';
-          let meaning = '';
-          if (val > 0.7) {
-            meaning = 'When ' + INDICATORS[i].name + ' rises, ' + INDICATORS[j].name + ' tends to rise with it. This suggests shared structural drivers.';
-          } else if (val < -0.7) {
-            meaning = 'When ' + INDICATORS[i].name + ' rises, ' + INDICATORS[j].name + ' tends to fall. This suggests a structural tradeoff or feedback loop.';
-          } else if (val > 0) {
-            meaning = 'These indicators show a moderate tendency to move in the same direction.';
-          } else {
-            meaning = 'These indicators show a moderate tendency to move in opposite directions.';
+          const pairKey = INDICATORS[i].name + '+' + INDICATORS[j].name;
+          let meaning = PAIR_CONTEXT[pairKey] || '';
+          if (!meaning) {
+            if (val > 0.7) {
+              meaning = 'When ' + INDICATORS[i].name + ' rises, ' + INDICATORS[j].name + ' tends to rise with it. This suggests shared structural drivers.';
+            } else if (val < -0.7) {
+              meaning = 'When ' + INDICATORS[i].name + ' rises, ' + INDICATORS[j].name + ' tends to fall. This suggests a structural tradeoff or feedback loop.';
+            } else if (val > 0) {
+              meaning = 'These indicators show a moderate tendency to move in the same direction.';
+            } else {
+              meaning = 'These indicators show a moderate tendency to move in opposite directions.';
+            }
           }
           insights.push({
             ind1: INDICATORS[i].name, ind2: INDICATORS[j].name,
