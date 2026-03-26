@@ -141,6 +141,10 @@ function NarrativeMode({ indicatorData }) {
 
   return (
     <div className="app narrative-page">
+      <div className="editorial-disclaimer">
+        <span className="disclaimer-label">EDITORIAL ANALYSIS</span>
+        <span className="disclaimer-text">This guided walkthrough presents data with interpretive context. For raw data without editorial framing, use the <a href="/dashboard">Dashboard</a> or <a href="/api-docs">API</a>.</span>
+      </div>
       <div className="narrative-progress">
         <div className="narrative-progress-fill" style={{width: ((chapter+1)/CHAPTERS.length*100)+'%'}} />
       </div>
