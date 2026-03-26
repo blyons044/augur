@@ -43,7 +43,7 @@ function Correlations({ indicatorData }) {
       d.data.filter(p => p.series_id === ind.series && p.value != null).forEach(p => {
         byYear[parseInt(p.date_value.substring(0, 4))] = p.value;
       });
-      yearlyData[ind.id] = byYear;
+      yearlyData[ind.id + '_' + ind.series] = byYear;
     });
     const allYears = new Set();
     Object.values(yearlyData).forEach(yd => Object.keys(yd).forEach(y => allYears.add(parseInt(y))));
@@ -53,8 +53,8 @@ function Correlations({ indicatorData }) {
       const row = [];
       INDICATORS.forEach((ind2, j) => {
         if (i === j) { row.push(1); return; }
-        const yd1 = yearlyData[ind1.id] || {};
-        const yd2 = yearlyData[ind2.id] || {};
+        const yd1 = yearlyData[ind1.id + '_' + ind1.series] || {};
+        const yd2 = yearlyData[ind2.id + '_' + ind2.series] || {};
         const common = years.filter(y => yd1[y] !== undefined && yd2[y] !== undefined);
         if (common.length < 5) { row.push(null); return; }
         row.push(computeCorrelation(common.map(y => yd1[y]), common.map(y => yd2[y])));
@@ -66,10 +66,19 @@ function Correlations({ indicatorData }) {
 
   function getCellColor(val) {
     if (val === null) return 'var(--bg-accent)';
-    if (val === 1) return 'rgba(160, 160, 180, 0.15)';
+    if (val === 1) return 'rgba(160, 160, 180, 0.1)';
     const abs = Math.abs(val);
     if (val > 0) return 'rgba(224, 64, 64, ' + (abs * 0.5) + ')';
     return 'rgba(64, 192, 128, ' + (abs * 0.5) + ')';
+  }
+
+  function getStrengthLabel(val) {
+    const abs = Math.abs(val);
+    if (abs > 0.9) return 'Very strong';
+    if (abs > 0.7) return 'Strong';
+    if (abs > 0.5) return 'Moderate';
+    if (abs > 0.3) return 'Weak';
+    return 'Very weak';
   }
 
   const insights = [];
@@ -77,11 +86,22 @@ function Correlations({ indicatorData }) {
     for (let i = 0; i < INDICATORS.length; i++) {
       for (let j = i + 1; j < INDICATORS.length; j++) {
         const val = matrix[i][j];
-        if (val !== null && Math.abs(val) > 0.7) {
+        if (val !== null && Math.abs(val) > 0.5) {
+          const direction = val > 0 ? 'move together' : 'move inversely';
+          let meaning = '';
+          if (val > 0.7) {
+            meaning = 'When ' + INDICATORS[i].name + ' rises, ' + INDICATORS[j].name + ' tends to rise with it. This suggests shared structural drivers.';
+          } else if (val < -0.7) {
+            meaning = 'When ' + INDICATORS[i].name + ' rises, ' + INDICATORS[j].name + ' tends to fall. This suggests a structural tradeoff or feedback loop.';
+          } else if (val > 0) {
+            meaning = 'These indicators show a moderate tendency to move in the same direction.';
+          } else {
+            meaning = 'These indicators show a moderate tendency to move in opposite directions.';
+          }
           insights.push({
-            ind1: INDICATORS[i].name, ind2: INDICATORS[j].name, corr: val,
-            direction: val > 0 ? 'move together' : 'move inversely',
-            strength: Math.abs(val) > 0.9 ? 'Very strong' : 'Strong',
+            ind1: INDICATORS[i].name, ind2: INDICATORS[j].name,
+            corr: val, direction, meaning,
+            strength: getStrengthLabel(val),
           });
         }
       }
@@ -93,69 +113,110 @@ function Correlations({ indicatorData }) {
     <div className="app correlations-page">
       <header className="indicator-header">
         <span className="section-label">Structural Analysis</span>
-        <h1 className="indicator-page-title">Indicator Correlations</h1>
+        <h1 className="indicator-page-title">How the indicators connect</h1>
         <p className="section-body-intro" style={{maxWidth: '640px'}}>
-          How do Augur's indicators relate to each other? This matrix shows
-          Pearson correlations computed over common time periods.
-          Strong correlations suggest structural connections between dimensions of stress.
+          These 11 indicators don't move independently. When one shifts, others
+          tend to follow. Red means they move together. Green means they move
+          in opposite directions. Stronger color means stronger connection.
         </p>
       </header>
 
       {matrix ? (
         <>
-          <div className="corr-matrix-container">
-            <div className="corr-matrix" style={{display:'grid', gridTemplateColumns: '80px repeat(11, 1fr)', gap: '2px'}}>
-              <div />
-              {INDICATORS.map(ind => (
-                <div className="corr-header" key={ind.id}>{ind.short}</div>
-              ))}
-              {INDICATORS.map((ind1, i) => (
-                <React.Fragment key={ind1.id}>
-                  <div className="corr-row-label">{ind1.short}</div>
-                  {INDICATORS.map((ind2, j) => {
-                    const val = matrix[i][j];
-                    return (
-                      <div className="corr-cell" key={ind2.id}
-                        style={{background: getCellColor(val)}}
-                        title={ind1.name + ' vs ' + ind2.name + ': ' + (val !== null ? val.toFixed(3) : 'N/A')}>
-                        <span className="corr-value">{val !== null && val !== 1 ? val.toFixed(2) : (val === 1 ? '\u2014' : '')}</span>
-                      </div>
-                    );
-                  })}
-                </React.Fragment>
-              ))}
-            </div>
-            <div className="corr-legend">
-              <span style={{color: '#e04040'}}>Red = positive (move together)</span>
-              <span style={{color: '#40c080'}}>Green = negative (move inversely)</span>
-            </div>
-          </div>
-
           {insights.length > 0 && (
             <section className="corr-insights">
-              <h3 className="empire-section-title">Key Findings</h3>
+              <h3 className="empire-section-title">Strongest connections in the data</h3>
               <div className="insights-list">
-                {insights.slice(0, 8).map((ins, i) => (
+                {insights.slice(0, 9).map((ins, i) => (
                   <div className="insight-card" key={i}>
-                    <div className="insight-header">
-                      <span className="insight-strength" style={{color: ins.corr > 0 ? 'var(--red)' : 'var(--green)'}}>{ins.strength}</span>
-                      <span className="insight-corr">{ins.corr > 0 ? '+' : ''}{ins.corr.toFixed(3)}</span>
+                    <div className="insight-pair">
+                      <span className="insight-ind">{ins.ind1}</span>
+                      <span className="insight-connector" style={{color: ins.corr > 0 ? 'var(--red)' : 'var(--green)'}}>
+                        {ins.corr > 0 ? '\u2194' : '\u21C4'}
+                      </span>
+                      <span className="insight-ind">{ins.ind2}</span>
                     </div>
-                    <p className="insight-text">
-                      <strong>{ins.ind1}</strong> and <strong>{ins.ind2}</strong> {ins.direction}.
-                      {Math.abs(ins.corr) > 0.85 ? ' This suggests shared structural drivers.' : ' This relationship warrants further investigation.'}
-                    </p>
+                    <div className="insight-bar-container">
+                      <div className="insight-bar" style={{
+                        width: Math.abs(ins.corr) * 100 + '%',
+                        background: ins.corr > 0 ? 'var(--red)' : 'var(--green)',
+                        opacity: 0.6 + Math.abs(ins.corr) * 0.4
+                      }} />
+                    </div>
+                    <div className="insight-meta">
+                      <span className="insight-strength" style={{color: ins.corr > 0 ? 'var(--red)' : 'var(--green)'}}>
+                        {ins.strength} {ins.direction}
+                      </span>
+                      <span className="insight-corr">r = {ins.corr > 0 ? '+' : ''}{ins.corr.toFixed(2)}</span>
+                    </div>
+                    <p className="insight-meaning">{ins.meaning}</p>
                   </div>
                 ))}
               </div>
             </section>
           )}
 
+          <section className="corr-matrix-section">
+            <h3 className="empire-section-title">Full correlation matrix</h3>
+            <p className="corr-matrix-explainer">
+              Each cell shows how strongly two indicators are connected.
+              Values range from -1 (perfectly opposite) to +1 (perfectly aligned).
+              Hover over any cell for details.
+            </p>
+            <div className="corr-matrix-container">
+              <div className="corr-matrix" style={{display:'grid', gridTemplateColumns: '90px repeat(11, 1fr)', gap: '2px'}}>
+                <div />
+                {INDICATORS.map(ind => (
+                  <div className="corr-header" key={ind.short}>{ind.short}</div>
+                ))}
+                {INDICATORS.map((ind1, i) => (
+                  <React.Fragment key={ind1.short + i}>
+                    <div className="corr-row-label">{ind1.short}</div>
+                    {INDICATORS.map((ind2, j) => {
+                      const val = matrix[i][j];
+                      return (
+                        <div className="corr-cell" key={ind2.short + j}
+                          style={{background: getCellColor(val)}}
+                          title={val !== null ? ind1.name + ' vs ' + ind2.name + ': r = ' + (val === 1 ? '1.00 (same indicator)' : val.toFixed(3) + ' (' + getStrengthLabel(val) + ')') : 'Insufficient data'}>
+                          <span className="corr-value">{val !== null && val !== 1 ? val.toFixed(2) : (val === 1 ? '\u2014' : '')}</span>
+                        </div>
+                      );
+                    })}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="corr-reading">
+            <h3 className="empire-section-title">How to read this</h3>
+            <div className="reading-grid">
+              <div className="reading-card">
+                <span className="reading-value" style={{color:'var(--red)'}}>+0.9</span>
+                <p className="reading-text">Very strong positive. These indicators almost always move in the same direction. When one goes up, the other goes up.</p>
+              </div>
+              <div className="reading-card">
+                <span className="reading-value" style={{color:'var(--red)'}}>+0.5</span>
+                <p className="reading-text">Moderate positive. These indicators tend to move together, but not always. Other factors are at play.</p>
+              </div>
+              <div className="reading-card">
+                <span className="reading-value" style={{color:'var(--text-muted)'}}>0.0</span>
+                <p className="reading-text">No relationship. These indicators move independently of each other.</p>
+              </div>
+              <div className="reading-card">
+                <span className="reading-value" style={{color:'var(--green)'}}>-0.7</span>
+                <p className="reading-text">Strong negative. When one goes up, the other tends to go down. This suggests a structural tradeoff.</p>
+              </div>
+            </div>
+          </section>
+
           <section className="corr-methodology">
-            <h3 className="empire-section-title">Methodology Note</h3>
+            <h3 className="empire-section-title">Methodology</h3>
             <p className="section-body-intro">
-              Pearson correlations across common annual observations. Minimum 5 overlapping years required.
-              Correlation does not imply causation. These relationships identify structural connections, not causal claims.
+              Pearson correlations across common annual observations. Minimum 5
+              overlapping years required. Correlation identifies patterns, not causes.
+              Two indicators moving together doesn't mean one causes the other.
+              It means they respond to shared structural conditions.
             </p>
           </section>
         </>

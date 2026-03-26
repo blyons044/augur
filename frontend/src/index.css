@@ -410,3 +410,19 @@
 .citation-entry{font:300 13px/1.7 var(--font-body);color:var(--text-secondary);margin-bottom:8px}
 .citation-entry strong{color:var(--text-primary);font-weight:500}
 .citation-entry em{color:var(--text-secondary);font-style:italic}
+
+.insight-pair{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.insight-ind{font:600 12px var(--font-mono);color:#fff;background:rgba(255,255,255,.05);padding:5px 10px;border-radius:3px;letter-spacing:.5px}
+.insight-connector{font-size:18px}
+.insight-bar-container{height:4px;background:var(--bg-accent);border-radius:2px;margin-bottom:10px;overflow:hidden}
+.insight-bar{height:100%;border-radius:2px;transition:width .5s ease}
+.insight-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.insight-meaning{font:300 13px/1.6 var(--font-body);color:var(--text-secondary);margin:0}
+.corr-matrix-section{margin-bottom:48px}
+.corr-matrix-explainer{font:300 14px/1.7 var(--font-body);color:var(--text-muted);margin-bottom:20px}
+.corr-reading{margin-bottom:48px}
+.reading-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.reading-card{background:var(--bg-card);border:1px solid var(--border);padding:16px;text-align:center}
+.reading-value{font:500 24px var(--font-mono);display:block;margin-bottom:8px}
+.reading-text{font:300 12px/1.6 var(--font-body);color:var(--text-secondary);margin:0}
+@media(max-width:768px){.reading-grid{grid-template-columns:repeat(2,1fr)}.insights-list{grid-template-columns:1fr}}
