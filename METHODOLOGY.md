@@ -2,125 +2,134 @@
 
 ## Civilizational Stress Index: Technical Documentation
 
-**Version 1.0 | March 2026**
+**Version 2.0 | March 2026**
 
 ---
 
 ## 1. Overview
 
-Augur is a quantitative civilizational stress index that tracks 13 structural indicators across 4 pillars. Every indicator is derived from publicly available primary-source data. Every transformation is logged. Every published data point is cryptographically fingerprinted using SHA-256 hashing and independently verifiable.
+Augur is a quantitative civilizational stress index that tracks 13 structural indicators across 4 pillars for 50 countries. The dataset contains 329,000+ data points from 15 primary sources. Every indicator is derived from publicly available primary-source data. Every transformation is logged. Every published data point is cryptographically fingerprinted using SHA-256 hashing.
 
-Augur measures structural stress, not destiny. The index identifies conditions that historians, political scientists, and economists have documented as precursors to institutional decline — without making timing claims or policy prescriptions.
+Augur measures structural stress, not destiny. The index identifies conditions that historians, political scientists, and economists have documented as precursors to institutional decline.
 
 ## 2. Principles
 
-1. **All data is free and publicly sourced.** Zero paywalled data. Anyone with a computer can verify every number.
+1. **All data is free and publicly sourced.** Zero paywalled data.
 2. **Political symmetry is absolute.** Identical analytical treatment regardless of partisan implications.
-3. **No timing claims.** The timing of civilizational transitions is never knowable from structural data alone.
+3. **No timing claims.** Civilizational transitions are never predictable from structural data alone.
 4. **Fully open source.** Public GitHub repository, public API, public methodology.
-5. **Cryptographic integrity.** Every data point is SHA-256 fingerprinted. Every transformation is logged.
-6. **No user accounts.** Eliminates the entire PII attack surface. The product is the data, not the user.
+5. **Cryptographic integrity.** Every data point is SHA-256 fingerprinted.
+6. **No user accounts.** The product is the data, not the user.
 
-## 3. Data Sources
+## 3. Data Sources (15)
 
-| Source | Indicators | Access Method | Update Frequency |
-|--------|-----------|---------------|-----------------|
-| Federal Reserve (FRED) | Wealth inequality, debt-to-GDP, CPI, unemployment, labor participation, Treasury yields, GDP | REST API | Weekly (automated) |
-| UCLA VoteView | Political polarization (DW-NOMINATE) | Direct download | Per Congress |
-| World Bank | GDP PPP, military spending, Gini index, education, healthcare, life expectancy, unemployment, inflation | REST API | Weekly (automated) |
-| Gallup | Public trust, media fragmentation | Manual entry from published reports | Annual |
-| World Justice Project | Rule of law index | Manual entry from published reports | Annual |
-| Bridging Divides Initiative | Civil unrest / armed groups | Manual entry from published reports | Annual |
-| EIA | Electricity / infrastructure data | REST API | Annual |
-| USGS / Bureau of Reclamation | Groundwater levels, reservoir data | Manual entry | Annual |
+| Source | Provider | Data | Access |
+|--------|----------|------|--------|
+| FRED | Federal Reserve Bank of St. Louis | Wealth, debt, CPI, employment, housing, credit, money supply, markets, industrial production | REST API, automated weekly |
+| World Bank | World Bank Group | GDP, military, Gini, health, education, governance, demographics, trade, environment for 50 countries | REST API, automated weekly |
+| VoteView | UCLA | Congressional voting ideology (DW-NOMINATE scores) | Direct download |
+| Gallup | Gallup Inc | Institutional trust (10 institutions), media trust (partisan breakdown) | Published reports, manual entry |
+| Freedom House | Freedom House | Freedom in the World scores for 50 countries (0-100) | Published reports, manual entry |
+| Transparency International | TI | Corruption Perceptions Index for 50 countries (0-100) | Published reports, manual entry |
+| World Justice Project | WJP | Rule of law index and global rankings | Published reports, manual entry |
+| IMF | International Monetary Fund | World Economic Outlook projections | REST API |
+| CDC | Centers for Disease Control | Overdose deaths, deaths of despair, suicide rates, life expectancy, maternal/infant mortality | Published data, manual entry |
+| BJS | Bureau of Justice Statistics | Incarceration rates and population | Published data, manual entry |
+| HUD | Dept of Housing and Urban Development | Point-in-time homelessness counts | Published reports, manual entry |
+| USDA | Dept of Agriculture | Food insecurity data | Published reports, manual entry |
+| US Courts | Federal Judiciary | Bankruptcy filings | Published data, manual entry |
+| EIA | Energy Information Administration | Electricity, infrastructure utilization | REST API |
+| USGS / Bureau of Reclamation | Dept of Interior | Groundwater levels, reservoir data, drought | Published data, manual entry |
 
-## 4. Pillar I: Social Cohesion
+## 4. The 13 Indicators
 
-### 4.1 Political Polarization
-- **Source:** VoteView DW-NOMINATE scores (UCLA)
-- **Methodology:** Raw DW-NOMINATE scores downloaded directly. Party means computed per chamber per Congress. The gap between party means is the polarization measure.
-- **Series:** dw_nominate_House_100, dw_nominate_House_200, dw_nominate_Senate_100, dw_nominate_Senate_200
-- **URL:** https://voteview.com/data
+### Pillar I: Social Cohesion
 
-### 4.2 Public Trust in Institutions
-- **Source:** Gallup Confidence in Institutions survey
-- **Methodology:** Percentage responding "a great deal" or "quite a lot" of confidence. Multiple institutional series tracked independently (Congress, Supreme Court, military, media, federal government).
-- **Series:** gallup_congress, gallup_scotus, gallup_military, gallup_newspapers, gallup_tvnews, pew_govt_trust
-- **URL:** https://news.gallup.com/poll/1597/confidence-institutions.aspx
+**4.1 Political Polarization**
+- Source: UCLA VoteView DW-NOMINATE scores
+- Series: House Democrats, House Republicans, Senate Democrats, Senate Republicans, Senate Independents
+- Method: Raw DW-NOMINATE first dimension scores. Party means computed per chamber per Congress.
+- Records: ~165
 
-### 4.3 Rule of Law Erosion
-- **Source:** World Justice Project Rule of Law Index
-- **Methodology:** WJP overall score (0-1 scale) and global rank. Eight dimensions measured: constraints on government powers, absence of corruption, open government, fundamental rights, order and security, regulatory enforcement, civil justice, criminal justice.
-- **Series:** wjp_us_overall, wjp_us_rank
-- **URL:** https://worldjusticeproject.org/rule-of-law-index/
+**4.2 Public Trust in Institutions**
+- Source: Gallup Confidence in Institutions, Pew Research
+- Series: Congress, Supreme Court, military, TV news, newspapers, presidency, police, criminal justice, churches, banks, public schools, medical system, federal government
+- Method: Percentage responding "a great deal" or "quite a lot" of confidence.
+- Records: ~330
 
-### 4.4 Civil Unrest Frequency
-- **Source:** Bridging Divides Initiative (Princeton University)
-- **Methodology:** Annual count of active militia and armed political organizations. Supplemented with YouGov survey data on attitudes toward political violence.
-- **Series:** armed_groups_count, political_violence_justified
-- **URL:** https://bridgingdivides.princeton.edu/
+**4.3 Rule of Law**
+- Sources: World Justice Project, Freedom House, Transparency International
+- Series: WJP overall score, Freedom in the World score (50 countries), Corruption Perceptions Index (50 countries)
+- Method: Direct scores from published indices. No transformations.
+- Records: ~800+
 
-## 5. Pillar II: Economic Structure
+**4.4 Civil Unrest Frequency**
+- Sources: ACLED/BDI, CDC, BJS, FBI
+- Series: Armed groups count, political violence attitudes, drug overdose deaths, deaths of despair, suicide rate, incarceration rate, incarcerated population, gun deaths, hate crimes, mass shootings, police killings, protest events, domestic terrorism cases
+- Method: Annual counts and rates from published data.
+- Records: ~350+
 
-### 5.1 Wealth Inequality
-- **Source:** Federal Reserve Distributional Financial Accounts
-- **Methodology:** Top 1% wealth share from FRED series WFRBST01134. Quarterly data, seasonally adjusted. No transformations applied. Cross-country comparison via World Bank Gini Index (SI.POV.GINI).
-- **Series:** WFRBST01134, WFRBSB50215, WFRBSN09153, SI.POV.GINI
-- **URL:** https://www.federalreserve.gov/releases/z1/dataviz/dfa/
+### Pillar II: Economic Structure
 
-### 5.2 Decline of the Middle Class
-- **Source:** Federal Reserve / FRED
-- **Methodology:** Real median household income (MEHOINUSA672N). Annual data in inflation-adjusted dollars.
-- **Series:** MEHOINUSA672N
-- **URL:** https://fred.stlouisfed.org/series/MEHOINUSA672N
+**4.5 Wealth Inequality**
+- Sources: Federal Reserve DFA, World Bank, Census Bureau
+- Series: Top 1% wealth share, bottom 50% wealth share, next 40% share, Gini index (US + 50 countries), child poverty rate, household net worth, credit card debt, student loan debt, motor vehicle loans, mortgage debt
+- Method: Direct values from source. No transformations applied.
+- Records: ~6,000+
 
-### 5.3 Government Debt to GDP
-- **Source:** Federal Reserve / FRED
-- **Methodology:** Federal debt as percentage of GDP (GFDEGDQ188S). Quarterly data. Also tracks absolute federal debt (GFDEBTN), GDP growth (A191RL1Q225SBEA), and interest payments (A091RC1Q027SBEA).
-- **Series:** GFDEGDQ188S, GFDEBTN, GDP, A191RL1Q225SBEA, A091RC1Q027SBEA
-- **URL:** https://fred.stlouisfed.org/series/GFDEGDQ188S
+**4.6 Middle Class Decline**
+- Sources: FRED, CDC, HUD, USDA, US Courts, Census
+- Series: Median household income, median home price, Case-Shiller index, mortgage rate, homeownership rate, personal savings rate, consumer sentiment, vehicle sales, homelessness count, food insecurity, bankruptcy filings, life expectancy, maternal mortality, infant mortality, uninsured rate, housing affordability
+- Method: Direct values. Housing affordability tracked through price-to-income dynamics.
+- Records: ~14,000+
 
-### 5.4 Currency Debasement / Inflation
-- **Source:** Federal Reserve / FRED + IMF COFER
-- **Methodology:** CPI-U All Items (CPIAUCSL), PCE Price Index (PCEPI), Federal Funds Rate (FEDFUNDS), 10-Year Treasury (DGS10). Dollar reserve share from IMF COFER database.
-- **Series:** CPIAUCSL, PCEPI, FEDFUNDS, DGS10
-- **URL:** https://fred.stlouisfed.org/series/CPIAUCSL
+**4.7 Government Debt to GDP**
+- Sources: FRED, IMF
+- Series: Debt-to-GDP ratio, total federal debt, GDP, real GDP, interest payments, interest-to-GDP ratio, federal receipts, federal expenditures, surplus/deficit, foreign-held debt, Fed-held debt, bank credit, delinquency rates, lending standards
+- Method: Direct values from FRED quarterly releases.
+- Records: ~17,000+
 
-## 6. Pillar III: Systemic Capacity
+**4.8 Currency Debasement**
+- Sources: FRED
+- Series: CPI (all items + 10 subcategories), PCE price index, core PCE, M1/M2/MZM money supply, monetary base, Fed balance sheet, Fed Treasury holdings, commodity prices (gas, diesel, corn, wheat), exchange rates
+- Method: Direct values. No seasonal adjustments beyond what the source provides.
+- Records: ~26,000+
 
-### 6.1 Elite Overproduction
-- **Source:** Federal Reserve / FRED + Burning Glass Institute
-- **Methodology:** Unemployment rate (UNRATE) and labor force participation (CIVPART) as structural proxies. Credential inflation data from Burning Glass Institute research.
-- **Series:** UNRATE, CIVPART
-- **URL:** https://fred.stlouisfed.org/series/UNRATE
+### Pillar III: Systemic Capacity
 
-### 6.2 Infrastructure Decay
-- **Source:** FHWA National Bridge Inventory + EIA
-- **Methodology:** Bridge structural deficiency data from FHWA. Electricity retail sales from EIA as infrastructure utilization proxy.
-- **Series:** elec_retail_sales_res
-- **URL:** https://www.fhwa.dot.gov/bridge/nbi.cfm
+**4.9 Elite Overproduction**
+- Sources: FRED, BLS
+- Series: Unemployment rate (total + by race + by education), labor force participation, employment-population ratio, U6 underemployment, nonfarm payrolls, sector employment (manufacturing, services, government, finance, information, construction, trade, transportation, education/health, leisure), JOLTS (openings, hires, quits, separations, layoffs), average hourly earnings, weekly hours, jobless claims, mean unemployment duration, part-time for economic reasons, multiple jobholders, unit labor costs
+- Method: Direct values from BLS/FRED.
+- Records: ~27,000+
 
-### 6.3 Media Fragmentation & Epistemic Divergence
-- **Source:** Gallup
-- **Methodology:** Annual trust in mass media survey. Percentage responding "a great deal" or "a fair amount." Partisan breakdowns tracked separately.
-- **Series:** gallup_news_trust, gallup_news_trust_rep, gallup_news_trust_dem
-- **URL:** https://news.gallup.com/poll/321116/americans-remain-distrustful-mass-media.aspx
+**4.10 Infrastructure Decay**
+- Sources: FRED, EIA, FHWA, ASCE
+- Series: Industrial production (total + manufacturing + business equipment + consumer goods + materials), capacity utilization, transportation services freight, Chicago Fed activity index, retail sales, manufacturing inventories/shipments/orders, bridges deficient, ASCE grade, power outages, rail accidents, pipeline incidents, broadband penetration, average commute time
+- Method: Direct values from source agencies.
+- Records: ~10,000+
 
-## 7. Pillar IV: External Environment
+**4.11 Media Fragmentation**
+- Source: Gallup
+- Series: Overall news trust, Republican news trust, Democratic news trust, Independent news trust, newspaper circulation, local news deserts
+- Method: Survey percentages and industry data.
+- Records: ~120+
 
-### 7.1 Geopolitical Standing & External Pressure
-- **Source:** World Bank Open Data API
-- **Methodology:** GDP PPP (NY.GDP.MKTP.PP.CD) for 20 countries. Military expenditure as % of GDP (MS.MIL.XPND.GD.ZS). Cross-country comparison on GDP per capita, healthcare, education, life expectancy, unemployment, and inflation.
-- **Series:** NY.GDP.MKTP.PP.CD, MS.MIL.XPND.GD.ZS, plus 7 additional World Bank indicators
-- **URL:** https://data.worldbank.org/
+### Pillar IV: External Environment
 
-### 7.2 Resource & Environmental Stress
-- **Source:** USGS + Bureau of Reclamation
-- **Methodology:** Ogallala Aquifer average water level decline from USGS monitoring wells. Lake Mead elevation from Bureau of Reclamation. Both measured in feet.
-- **Series:** ogallala_decline_avg, lake_mead_elevation
-- **URL:** https://www.usbr.gov/lc/region/g4000/hourly/mead-elv.html
+**4.12 Geopolitical Standing**
+- Sources: World Bank, FRED, IMF
+- Series: 168 World Bank indicators for 50 countries covering GDP, trade, governance, demographics, health, education, military, technology, environment, financial sector. FRED trade data. IMF projections.
+- Method: Direct values from World Bank API. Cross-country comparison on identical methodology.
+- Records: ~228,000+
 
-## 8. Composite Stress Index
+**4.13 Resource Stress**
+- Sources: USGS, Bureau of Reclamation, EPA
+- Series: Lake Mead elevation, Ogallala Aquifer decline, Colorado River flow, groundwater depletion, water main breaks, lead service lines, US drought percentage, Superfund sites, drinking water violations, dam safety deficiencies
+- Method: Direct values from agency reports and monitoring data.
+- Records: ~100+
+
+## 5. Composite Stress Index
 
 The composite score (0-100) is computed as the unweighted mean of five normalized sub-indicators:
 
@@ -130,29 +139,44 @@ The composite score (0-100) is computed as the unweighted mean of five normalize
 4. **Wealth Concentration** = min(100, Top 1% wealth share * 2.5)
 5. **Epistemic Fracture** = 100 - (News trust %)
 
-Higher scores indicate greater structural stress. The current composite score is **83 out of 100**.
+The current composite score is **84/100**. Higher scores indicate greater structural stress.
 
-## 9. Data Integrity
+**Pillar scores** are computed as the mean of their constituent sub-indicators:
+- Social Cohesion: mean of Trust + Polarization = 86
+- Economic Structure: mean of Debt + Wealth = 89
+- Systemic Capacity: Epistemic Fracture = 68
+- External Environment: Relative decline proxy = 88
+
+**Note on methodology:** The composite formula uses a deliberately simple approach (unweighted mean of normalized values) for transparency. More sophisticated approaches (principal component analysis, factor loading) could produce different results. The choice of normalization coefficients (e.g., multiplying debt-to-GDP by 0.8) affects the output and represents an editorial judgment about scale. These choices are documented and can be independently evaluated.
+
+## 6. Data Integrity
 
 Every data pull is logged with:
 - Source URL and timestamp
 - SHA-256 hash of raw response
 - Record count
-- Validation results (range checks, staleness checks, year-over-year change limits)
+- Validation results
 
-Audit logs are stored in `data/audit/` and can be independently verified.
+## 7. Intellectual Foundations
 
-## 10. Limitations
+Augur's framework draws on:
 
-- Manual data entry for some indicators (Gallup, WJP, BDI) introduces update lag
-- The composite score weighting is equal across sub-indicators; alternative weightings could produce different results
-- Historical comparisons with empires are structural analogies, not predictive models
-- Some proxy measures (unemployment for elite overproduction, electricity sales for infrastructure) are imperfect
-- The index currently covers 20 countries for cross-national comparison; expansion to 50+ is planned
+- **Peter Turchin**, *Ages of Discord* (2016) and *End Times* (2023). Structural-demographic theory identifying elite overproduction, popular immiseration, and state fiscal crisis as quantifiable precursors to political instability.
+- **Joseph Tainter**, *The Collapse of Complex Societies* (1988). Diminishing returns on increasing complexity as a driver of civilizational decline.
+- **Ray Dalio**, *Principles for Dealing with the Changing World Order* (2021). Quantitative framework for comparing reserve currency cycles and great power transitions.
+- **Daron Acemoglu and James Robinson**, *Why Nations Fail* (2012). Institutional quality as the primary determinant of long-run national outcomes.
+- **Carmen Reinhart and Kenneth Rogoff**, *This Time Is Different* (2009). Eight centuries of financial crisis data.
 
-## 11. Citation
+## 8. Limitations
 
-To cite Augur in academic work:
+- Manual data entry for some indicators introduces update lag
+- The composite score normalization uses editorial judgments about scale
+- Historical empire comparisons are structural analogies, not predictive models
+- Some proxy measures (unemployment for elite overproduction, electricity for infrastructure) are imperfect
+- The index currently covers 50 countries; expansion is planned
+- Daily-frequency data is excluded to manage storage; all data is monthly, quarterly, or annual
+
+## 9. Citation
 BibTeX:
 ```bibtex
 @misc{augur2026,
@@ -160,34 +184,14 @@ BibTeX:
   author={Adkins, Becca},
   year={2026},
   url={https://augur-index.vercel.app},
-  note={Open source. 300,000+ data points across 50 countries from 10 primary sources.}
+  note={Open source. 329,000+ data points across 50 countries from 15 primary sources.}
 }
 ```
 
-(Original heading kept for reference)
-## 11-old. Citation
+## 10. License
 
-To cite Augur in academic work:
-## 12. Intellectual Foundations
-
-Augur's framework draws on several bodies of academic work:
-
-- **Peter Turchin**, *Ages of Discord* (2016) and *End Times* (2023). Structural-demographic theory identifying elite overproduction, popular immiseration, and state fiscal crisis as quantifiable precursors to political instability. Turchin's work on cliodynamics — the mathematical modeling of historical dynamics — directly informed Augur's indicator selection, particularly the elite overproduction, wealth inequality, and political polarization indicators.
-
-- **Joseph Tainter**, *The Collapse of Complex Societies* (1988). The theory that civilizations collapse when the marginal returns on increasing complexity become negative. Informed Augur's systemic capacity pillar.
-
-- **Ray Dalio**, *Principles for Dealing with the Changing World Order* (2021). Quantitative framework for comparing reserve currency cycles and great power transitions across history. Informed the geopolitical standing and currency debasement indicators.
-
-- **Daron Acemoglu and James Robinson**, *Why Nations Fail* (2012). The argument that institutional quality — not geography, culture, or resources — is the primary determinant of long-run national outcomes. Informed the rule of law and institutional trust indicators.
-
-- **Carmen Reinhart and Kenneth Rogoff**, *This Time Is Different* (2009). Eight centuries of financial crisis data showing recurring patterns in sovereign debt, banking crises, and currency debasement.
-
-Augur does not claim to replicate or validate any of these frameworks. It measures structural conditions using publicly available data and presents them without editorial interpretation. The intellectual debt to these scholars is acknowledged and appreciated.
-
-## 13. License
-
-Augur is fully open source. Data is sourced from public APIs and government databases. The codebase, methodology, and derived datasets are available under MIT License.
+MIT. Data is sourced from public APIs and government databases.
 
 ---
 
-*This document was last updated March 2026.*
+*Version 2.0 — March 2026*
