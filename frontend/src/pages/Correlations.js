@@ -151,6 +151,13 @@ function Correlations({ indicatorData }) {
         </p>
       </header>
 
+      <div style={{margin:'0 0 32px',padding:'16px 20px',background:'rgba(224,160,48,0.08)',border:'1px solid rgba(224,160,48,0.2)',borderRadius:'4px',font:'400 12px var(--font-mono)',color:'var(--text-secondary)',lineHeight:1.7}}>
+        <div style={{font:'500 10px var(--font-mono)',color:'#e0a030',letterSpacing:'1.5px',textTransform:'uppercase',marginBottom:'8px'}}>Methodological disclosure</div>
+        <p style={{margin:'0 0 8px'}}><strong>Correlation is not causation.</strong> These are ecological (country-level) correlations computed from aggregate time series. Relationships observed at the national level may not hold at sub-national or individual levels (Robinson, 1950).</p>
+        <p style={{margin:'0 0 8px'}}>Spurious correlations can arise from shared trends — two variables both increasing over time will correlate even with no causal connection. All correlations shown here should be treated as descriptive, not explanatory.</p>
+        <p style={{margin:0,fontStyle:'italic',color:'var(--text-muted)'}}>For causal analysis, see the structural-demographic theory references on the Methodology page.</p>
+      </div>
+
       {matrix ? (
         <>
           {insights.length > 0 && (

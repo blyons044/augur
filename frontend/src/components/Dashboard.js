@@ -390,7 +390,8 @@ function StressOverview({ indicatorData }) {
         let stress = sp.dir === 'low'
           ? (sp.tx ? sp.tx(raw) : Math.max(0, 100-raw))
           : (sp.tx ? sp.tx(raw) : Math.min(100, raw));
-        scores.push({ id, name:sp.name, raw, stress:Math.round(stress), role:sp.role,
+        const lastDate = pts[pts.length-1].date_value ? pts[pts.length-1].date_value.substring(0,7) : '?';
+        scores.push({ id, name:sp.name, raw, stress:Math.round(stress), role:sp.role, lastDate,
           redFlag:sp.redFlag, redLabel:sp.redLabel, isRedFlag: stress >= sp.redFlag });
       }
     }
@@ -464,7 +465,7 @@ function StressOverview({ indicatorData }) {
                 <div className="stress-bar-track">
                   <div className="stress-bar-fill" style={{width:s.stress+'%',background:s.isRedFlag?'var(--red)':s.stress>50?'var(--amber)':'var(--green)'}} />
                 </div>
-                <span className="stress-bar-val" style={{color:s.isRedFlag?'var(--red)':'var(--text-bright)',fontWeight:s.isRedFlag?'600':'500'}}>{s.stress}</span>
+                <span className="stress-bar-val" style={{color:s.isRedFlag?'var(--red)':'var(--text-bright)',fontWeight:s.isRedFlag?'600':'500'}}>{s.stress}<span style={{font:'400 8px var(--font-mono)',color:'var(--text-muted)',marginLeft:'4px'}}>{s.lastDate}</span></span>
               </div>
             ))}
           </div>

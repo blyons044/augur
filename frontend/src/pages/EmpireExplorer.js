@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const EMPIRES = {
   rome: {
     name: 'Roman Republic → Empire',
-    period: '509 BC – 476 AD',
+      period: '509 BC – 476 AD',
     peak: '~117 AD under Trajan',
     duration: '985 years (Republic + Empire)',
     color: '#c0a050',
@@ -79,6 +79,11 @@ function EmpireExplorer() {
       <header className="indicator-header">
         <span className="section-label">Empire Explorer</span>
         <h1 className="indicator-page-title">Patterns of Decline</h1>
+      <div style={{margin:'0 0 32px',padding:'16px 20px',background:'rgba(224,160,48,0.08)',border:'1px solid rgba(224,160,48,0.2)',borderRadius:'4px',font:'400 12px var(--font-mono)',color:'var(--text-secondary)',lineHeight:1.7}}>
+        <div style={{font:'500 10px var(--font-mono)',color:'var(--amber)',letterSpacing:'1.5px',textTransform:'uppercase',marginBottom:'8px'}}>Selection bias disclosure</div>
+        <p style={{margin:'0 0 8px'}}>This sample includes only empires that experienced decline. Structural parallels between historical cases and contemporary data do not constitute evidence that decline is inevitable.</p>
+        <p style={{margin:0}}>A complete analysis would require comparison with societies that experienced similar structural pressures but did not decline. The absence of counter-examples is a limitation, not a finding.</p>
+      </div>
         <p className="section-body-intro" style={{maxWidth:'640px'}}>
           Every major empire follows structurally similar trajectories.
           The indicators differ in specifics but rhyme in pattern.
