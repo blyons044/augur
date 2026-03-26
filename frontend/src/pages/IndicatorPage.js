@@ -41,6 +41,20 @@ const SERIES_NAMES = {
   'NE.TRD.GNFS.ZS': 'Trade (% GDP)',
   'NY.GNS.ICTR.ZS': 'Gross Savings (% GDP)',
   'ST.INT.ARVL': 'Tourism Arrivals',
+  'drug_overdose_deaths': 'Drug Overdose Deaths',
+  'deaths_of_despair': 'Deaths of Despair',
+  'suicide_rate_us': 'US Suicide Rate',
+  'life_expectancy_cdc': 'US Life Expectancy (CDC)',
+  'incarceration_rate': 'Incarceration Rate',
+  'incarcerated_population': 'Incarcerated Population',
+  'homeless_count': 'Homeless Population',
+  'food_insecure_millions': 'Food Insecure (millions)',
+  'bankruptcy_filings': 'Bankruptcy Filings',
+  'maternal_mortality_us': 'Maternal Mortality',
+  'infant_mortality_us': 'Infant Mortality',
+  'gun_deaths': 'Firearm Deaths',
+  'uninsured_rate': 'Uninsured Rate',
+  'child_poverty_rate': 'Child Poverty Rate',
 };
 
 const META = {

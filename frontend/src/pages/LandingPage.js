@@ -105,7 +105,7 @@ function LandingPage() {
           <h1 className="hero-title">AUGUR</h1>
           <p className="hero-subtitle">Civilizational Stress Index</p>
           <p className="hero-description">
-            13 indicators. 4 pillars. 255,000+ data points from the Federal Reserve,
+            13 indicators. 4 pillars. 329,000+ data points from the Federal Reserve,
             World Bank, UCLA, and primary government sources. Every number publicly
             sourced, cryptographically verified, and politically symmetrical.
           </p>
@@ -288,7 +288,7 @@ function LandingPage() {
         <div className="section-inner cta-inner">
           <h2 className="cta-title">See the data</h2>
           <p className="cta-description">
-            255,000+ data points. 13 indicators. Every number traced to its source.
+            329,000+ data points. 13 indicators. Every number traced to its source.
           </p>
           <Link to="/dashboard" className="hero-cta">Enter the Dashboard</Link>
           <div className="cta-links">
