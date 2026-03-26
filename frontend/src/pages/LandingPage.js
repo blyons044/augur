@@ -254,6 +254,29 @@ function LandingPage() {
         </div>
       </section>
 
+      {/* ---- WHY IT MATTERS ---- */}
+      <section className={`content-section reveal-section ${isVisible('why') ? 'visible' : ''}`} id="why">
+        <div className="section-inner">
+          <span className="section-label">Why this matters</span>
+          <h2 className="section-title">Seeing it is the first step</h2>
+          <div className="section-body">
+            <p>
+              Every civilization that went through this had people who saw the
+              data early and people who didn't. The ones who saw it built local
+              networks, developed practical skills, diversified their financial
+              exposure, and understood how their food and water actually worked.
+              They weren't pessimists. They were realists who gave themselves
+              options.
+            </p>
+            <p>
+              The more people who look at this clearly, the less impact these
+              structural shifts have on all of us. Resilience scales. A prepared
+              community weathers what an unprepared one doesn't.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* ---- CTA ---- */}
       <section className={`content-section cta-section reveal-section ${isVisible('cta') ? 'visible' : ''}`} id="cta">
         <div className="section-inner cta-inner">

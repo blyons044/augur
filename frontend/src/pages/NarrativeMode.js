@@ -97,12 +97,18 @@ const CHAPTERS = [
     id: 'pattern',
     title: 'You\u2019ve seen this before',
     body: "Every one of these indicators \u2014 polarization, institutional distrust, wealth concentration, sovereign debt, relative decline \u2014 has been documented in every major civilizational transition in recorded history. Rome. The Ottomans. The British Empire. The specifics differ. The structural pattern rhymes.",
-    note: "Augur does not predict outcomes. It measures conditions. What you do with the information is up to you.",
+    note: "Every one of those societies had people who saw it coming. The ones who acted early had options. The ones who waited didn't.",
+  },
+  {
+    id: 'resilience',
+    title: 'What people did when they saw it early',
+    body: "Throughout history, the communities that weathered these transitions best shared a few things in common. Strong local networks. Practical skills that didn't depend on centralized systems. Financial resilience outside of a single currency or institution. Knowledge of how food, water, and energy actually work. These aren't fringe behaviors. They're what every stable community in human history has been built on.",
+    note: "Preparation isn't about predicting a date. It's about building a life that's resilient regardless of what happens. The data says the structural conditions are here. What you do with that is up to you.",
   },
   {
     id: 'cta',
     title: 'Now look at all 13',
-    body: "What you just saw was five of Augur's thirteen indicators. The full dashboard includes civil unrest frequency, infrastructure decay, media fragmentation, elite overproduction, currency debasement, resource stress, rule of law erosion, and middle class decline. Every number traces to a publicly available primary source.",
+    body: "What you just saw was five of thirteen indicators. The full dashboard tracks civil unrest, infrastructure decay, media fragmentation, credential inflation, currency debasement, resource stress, rule of law erosion, and middle class decline. The more people who see this clearly, the more resilient we all become.",
   },
 ];
 

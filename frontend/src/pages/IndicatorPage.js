@@ -30,6 +30,7 @@ const META = {
     what: 'DW-NOMINATE scores measure the ideological position of every member of Congress on a liberal-conservative scale, computed from roll-call voting records. When party distributions stop overlapping, bipartisan governance becomes structurally impossible.',
     why: 'Every documented case of republican (small-r) institutional collapse — Rome, Weimar Germany, the French Fourth Republic — was preceded by the elimination of centrist overlap between factional groups. Historically, when this overlap disappears, legislative compromise becomes structurally impossible.',
     series: 'dw_nominate_House_200', source: 'VoteView / UCLA', sourceUrl: 'https://voteview.com/data',
+    practical: 'When legislative systems lose the ability to compromise, governance shifts to executive action and judicial intervention. Communities that maintained cross-partisan local relationships and local governance capacity historically fared better during these periods.',
     methodology: 'Raw DW-NOMINATE scores downloaded directly from UCLA VoteView. Party means computed per chamber per Congress. No editorial adjustment. The gap between party means is the polarization measure.',
     benchmarks: [
       { label: 'Pre-Civil War US (1850s)', value: 0.52, color: '#a06050' },
@@ -56,6 +57,7 @@ const META = {
     what: 'Gallup has measured public confidence in major American institutions since 1973. Trust in Congress, the Supreme Court, the presidency, and media have all declined, though at different rates.',
     why: 'Institutional legitimacy is the invisible infrastructure of governance. When citizens stop believing institutions function in good faith, compliance becomes coercive rather than voluntary — and coercive compliance is expensive, fragile, and historically unsustainable.',
     series: 'gallup_congress', source: 'Gallup Confidence in Institutions', sourceUrl: 'https://news.gallup.com/poll/1597/confidence-institutions.aspx',
+    practical: 'When institutional trust drops below 20%, voluntary compliance with laws and public health measures becomes unreliable. Communities with strong local institutions and mutual aid networks navigated these periods with less disruption.',
     methodology: 'Annual survey data from Gallup. Percentage responding "a great deal" or "quite a lot" of confidence. Multiple institutional series tracked independently.',
     benchmarks: [
       { label: 'Watergate-era low (1976)', value: 36, color: '#e0a030' },
@@ -98,6 +100,7 @@ const META = {
     what: 'The Federal Reserve Distributional Financial Accounts track wealth distribution across American households, updated quarterly. This is not income — it is accumulated wealth: real estate, financial assets, business equity.',
     why: 'Extreme wealth concentration is present in every major case of institutional decline in the historical record. It is not the inequality itself that creates instability — it is the political consequences of inequality: elite capture of institutions, erosion of social mobility, and delegitimization of the economic system.',
     series: 'WFRBST01134', source: 'Federal Reserve DFA', sourceUrl: 'https://www.federalreserve.gov/releases/z1/dataviz/dfa/distribute/chart/',
+    practical: 'Extreme wealth concentration correlates with declining social mobility and political instability. Communities with strong local economies and skills-based employment have historically been more resilient during these periods.',
     methodology: 'Top 1% wealth share from Federal Reserve Distributional Financial Accounts (WFRBST01134). Quarterly data, seasonally adjusted. No transformations applied.',
     benchmarks: [
       { label: 'Gilded Age peak (~1928)', value: 36, color: '#a06050' },
@@ -133,6 +136,7 @@ const META = {
     what: 'Federal debt held by the public as a percentage of gross domestic product. This ratio measures the government\'s debt burden relative to the economy\'s capacity to service it.',
     why: 'Sovereign debt crises are among the most common proximate triggers of institutional rupture. The debt itself is less important than the trajectory — accelerating debt-to-GDP ratios reduce fiscal capacity to respond to crises, creating fragility.',
     series: 'GFDEGDQ188S', source: 'Federal Reserve / FRED', sourceUrl: 'https://fred.stlouisfed.org/series/GFDEGDQ188S',
+    practical: 'Countries that crossed 100% debt-to-GDP resolved it through austerity, inflation, default, or growth. Each affects savings and wages differently. Financial diversification across asset classes and jurisdictions has historically been the most effective individual response.',
     methodology: 'Federal debt to GDP ratio from FRED series GFDEGDQ188S. Quarterly data. No transformations applied to source data.',
     benchmarks: [
       { label: 'WWII peak (1946)', value: 106, color: '#e0a030' },
@@ -194,6 +198,7 @@ const META = {
     what: 'The relative economic and military position of the United States in the global system, measured through GDP share (PPP), military expenditure ratios, and alliance structure stability.',
     why: 'Relative decline in geopolitical standing increases external pressure on domestic institutions while simultaneously reducing the resources available to manage that pressure. This is the classic imperial overextension dynamic.',
     series: 'NY.GDP.MKTP.PP.CD', source: 'World Bank / IMF', sourceUrl: 'https://data.worldbank.org/indicator/NY.GDP.MKTP.PP.CD',
+    practical: 'Relative decline affects currency stability, trade terms, and alliance reliability. Understanding supply chain dependencies and maintaining locally-sourced alternatives for essential goods has historically mattered during hegemonic transitions.',
     methodology: 'GDP PPP in current international dollars from World Bank API. 20 countries tracked for cross-national comparison. Military expenditure as percentage of GDP from World Bank indicator MS.MIL.XPND.GD.ZS.',
   },
   resource_stress: {
@@ -446,6 +451,13 @@ function IndicatorPage({ indicatorData, loading, error }) {
           <h2 className="section-title">Why it matters</h2>
           <p>{meta.why}</p>
         </section>
+
+        {meta.practical && (
+          <section className="indicator-section">
+            <h2 className="section-title">What this means practically</h2>
+            <p className="practical-text">{meta.practical}</p>
+          </section>
+        )}
 
         {meta.crossCountry && (
           <section className="indicator-section">
