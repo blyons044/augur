@@ -25,18 +25,19 @@ const FLAGS = {
   JPN:'\u{1F1EF}\u{1F1F5}', CHN:'\u{1F1E8}\u{1F1F3}', IND:'\u{1F1EE}\u{1F1F3}', BRA:'\u{1F1E7}\u{1F1F7}',
   RUS:'\u{1F1F7}\u{1F1FA}', KOR:'\u{1F1F0}\u{1F1F7}', CAN:'\u{1F1E8}\u{1F1E6}', AUS:'\u{1F1E6}\u{1F1FA}',
   ITA:'\u{1F1EE}\u{1F1F9}', MEX:'\u{1F1F2}\u{1F1FD}', IDN:'\u{1F1EE}\u{1F1E9}', TUR:'\u{1F1F9}\u{1F1F7}',
-  ZAF:'\u{1F1FF}\u{1F1E6}', ARG:'\u{1F1E6}\u{1F1F7}', NGA:'\u{1F1F3}\u{1F1EC}', SWE:'\u{1F1F8}\u{1F1EA}'
+  ZAF:'\u{1F1FF}\u{1F1E6}', ARG:'\u{1F1E6}\u{1F1F7}', NGA:'\u{1F1F3}\u{1F1EC}', SWE:'\u{1F1F8}\u{1F1EA}',
+  SAU:'🇸🇦',  ARE:'🇦🇪',  ISR:'🇮🇱',  EGY:'🇪🇬',  THA:'🇹🇭',  VNM:'🇻🇳',  PHL:'🇵🇭',  MYS:'🇲🇾',  SGP:'🇸🇬',  NZL:'🇳🇿',  NOR:'🇳🇴',  DNK:'🇩🇰',  FIN:'🇫🇮',  CHE:'🇨🇭',  NLD:'🇳🇱',  BEL:'🇧🇪',  AUT:'🇦🇹',  POL:'🇵🇱',  CZE:'🇨🇿',  GRC:'🇬🇷',  PRT:'🇵🇹',  CHL:'🇨🇱',  COL:'🇨🇴',  PER:'🇵🇪',  PAK:'🇵🇰',  BGD:'🇧🇩',  KEN:'🇰🇪',  ETH:'🇪🇹',  IRN:'🇮🇷',  UKR:'🇺🇦',
 };
 
 const METRICS = [
   { id:'gdp_ppp', name:'GDP (PPP)', indicator:'geopolitical_standing', series:'NY.GDP.MKTP.PP.CD', format: v=>'$'+(v/1e12).toFixed(1)+'T', desc:'Economic output adjusted for purchasing power', higherIs:'stronger', sortDir:1 },
   { id:'gdp_pc', name:'GDP Per Capita', indicator:'geopolitical_standing', series:'NY.GDP.PCAP.PP.CD', format: v=>'$'+(v/1000).toFixed(1)+'K', desc:'GDP per person adjusted for purchasing power', higherIs:'wealthier', sortDir:1 },
-  { id:'gini', name:'Gini Index', indicator:'wealth_inequality', series:'SI.POV.GINI', format: v=>v.toFixed(1), desc:'Income inequality (0 = perfect equality, 100 = maximum)', higherIs:'more unequal', sortDir:1 },
+  { id:'gini', name:'Gini Index', indicator:'wealth_inequality', series:'SI.POV.GINI', format: v=>v.toFixed(1), desc:'Income inequality (0 = perfect equality, 100 = maximum)', higherIs:'most equal first', sortDir:-1 },
   { id:'military', name:'Military (% GDP)', indicator:'geopolitical_standing', series:'MS.MIL.XPND.GD.ZS', format: v=>v.toFixed(1)+'%', desc:'Defense expenditure as share of economy', higherIs:'higher burden', sortDir:1 },
   { id:'health', name:'Healthcare (% GDP)', indicator:'geopolitical_standing', series:'SH.XPD.CHEX.GD.ZS', format: v=>v.toFixed(1)+'%', desc:'Current health expenditure as share of GDP', higherIs:'higher spending', sortDir:1 },
   { id:'education', name:'Education (% GDP)', indicator:'geopolitical_standing', series:'SE.XPD.TOTL.GD.ZS', format: v=>v.toFixed(1)+'%', desc:'Government education spending as share of GDP', higherIs:'higher investment', sortDir:1 },
   { id:'life', name:'Life Expectancy', indicator:'geopolitical_standing', series:'SP.DYN.LE00.IN', format: v=>v.toFixed(1)+' yrs', desc:'Life expectancy at birth in years', higherIs:'longer lived', sortDir:1 },
-  { id:'unemployment', name:'Unemployment', indicator:'geopolitical_standing', series:'SL.UEM.TOTL.ZS', format: v=>v.toFixed(1)+'%', desc:'Unemployment rate as percentage of labor force', higherIs:'more unemployed', sortDir:1 },
+  { id:'unemployment', name:'Unemployment', indicator:'geopolitical_standing', series:'SL.UEM.TOTL.ZS', format: v=>v.toFixed(1)+'%', desc:'Unemployment rate as percentage of labor force', higherIs:'lowest unemployment first', sortDir:-1 },
   { id:'trade', name:'Trade (% GDP)', indicator:'geopolitical_standing', series:'NE.TRD.GNFS.ZS', format: v=>v.toFixed(1)+'%', desc:'Total trade as share of GDP', higherIs:'more open', sortDir:1 },
   { id:'savings', name:'Gross Savings (% GDP)', indicator:'geopolitical_standing', series:'NY.GNS.ICTR.ZS', format: v=>v.toFixed(1)+'%', desc:'Gross national savings rate', higherIs:'higher savings', sortDir:1 },
   { id:'fdi', name:'FDI Inflows (% GDP)', indicator:'geopolitical_standing', series:'BX.KLT.DINV.WD.GD.ZS', format: v=>v.toFixed(1)+'%', desc:'Foreign direct investment as share of GDP', higherIs:'more investment', sortDir:1 },
@@ -47,7 +48,7 @@ const METRICS = [
   { id:'govt_eff', name:'Govt Effectiveness', indicator:'geopolitical_standing', series:'GE.EST', format: v=>v.toFixed(2), desc:'Government effectiveness estimate (-2.5 to 2.5)', higherIs:'more effective', sortDir:1 },
   { id:'pol_stability', name:'Political Stability', indicator:'geopolitical_standing', series:'PV.EST', format: v=>v.toFixed(2), desc:'Political stability and absence of violence (-2.5 to 2.5)', higherIs:'more stable', sortDir:1 },
   { id:'fertility', name:'Fertility Rate', indicator:'geopolitical_standing', series:'SP.DYN.TFRT.IN', format: v=>v.toFixed(2), desc:'Total fertility rate (births per woman)', higherIs:'higher fertility', sortDir:1 },
-  { id:'inflation', name:'Inflation Rate', indicator:'geopolitical_standing', series:'FP.CPI.TOTL.ZG', format: v=>v.toFixed(1)+'%', desc:'Consumer price inflation rate', higherIs:'higher inflation', sortDir:1 },
+  { id:'inflation', name:'Inflation Rate', indicator:'geopolitical_standing', series:'FP.CPI.TOTL.ZG', format: v=>v.toFixed(1)+'%', desc:'Consumer price inflation rate', higherIs:'lowest inflation first', sortDir:-1 },
 ];
 
 function CountryRankings() {
