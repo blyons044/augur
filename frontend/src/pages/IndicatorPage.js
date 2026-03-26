@@ -61,7 +61,7 @@ const META = {
   political_polarization: {
     title: 'Political Polarization',
     number: '0%', numberContext: 'ideological overlap between the most conservative Democrat and most liberal Republican in Congress — down from 50%+ in the 1970s.',
-    what: 'DW-NOMINATE scores measure the ideological position of every member of Congress on a liberal-conservative scale, computed from roll-call voting records. When party distributions stop overlapping, bipartisan governance becomes structurally impossible.',
+    what: 'DW-NOMINATE scores measure the ideological position of every member of Congress on a liberal-conservative scale, computed from roll-call voting records. When party distributions stop overlapping, bipartisan governance becomes significantly more difficult.',
     why: 'Multiple cases of republican (small-r) institutional breakdown — Rome, Weimar Germany, the French Fourth Republic — were preceded by the elimination of centrist overlap between factional groups. When this overlap narrows significantly, legislative compromise becomes increasingly difficult.',
     series: 'dw_nominate_House_200', source: 'VoteView / UCLA', sourceUrl: 'https://voteview.com/data',
     practical: 'When legislative systems lose the ability to compromise, governance shifts to executive action and judicial intervention. Communities that maintained cross-partisan local relationships and local governance capacity historically fared better during these periods.',
