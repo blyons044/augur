@@ -376,9 +376,9 @@ function StressOverview({ indicatorData }) {
     wealth_concentration: { name:'Wealth Concentration', role:'leading', series:'WFRBST01134', source:'wealth_inequality', dir:'high', redFlag:80, redLabel:'Gilded Age levels', tx: v => Math.min(100, v*2.5) },
     epistemic_fracture: { name:'Epistemic Fracture', role:'coincident', series:'gallup_news_trust', source:'media_fragmentation', dir:'low', redFlag:75, redLabel:'Below functional democracy threshold' },
     employment_ratio: { name:'Employment Ratio', role:'coincident', series:'EMRATIO', source:'elite_overproduction', dir:'low', redFlag:80, redLabel:'Below historical trend', tx: v => Math.max(0, 100-v) },
-    unemployment: { name:'Unemployment', role:'lagging', series:'UNRATE', source:'elite_overproduction', dir:'high', redFlag:85, redLabel:'Above structural rate', tx: v => Math.min(100, v*10) },
-    consumer_sentiment: { name:'Consumer Sentiment', role:'lagging', series:'UMCSENT', source:'middle_class_decline', dir:'low', redFlag:80, redLabel:'Recessionary levels', tx: v => Math.max(0, 100-v) },
-    savings_rate: { name:'Savings Rate', role:'lagging', series:'PSAVERT', source:'middle_class_decline', dir:'low', redFlag:75, redLabel:'Household fragility', tx: v => Math.max(0, Math.min(100, 100 - v*5)) },
+    unemployment: { name:'Unemployment', role:'lagging', weight:0.7, series:'UNRATE', source:'elite_overproduction', dir:'high', redFlag:85, redLabel:'Above structural rate', tx: v => Math.min(100, v*10) },
+    consumer_sentiment: { name:'Consumer Sentiment', role:'lagging', weight:0.7, series:'UMCSENT', source:'middle_class_decline', dir:'low', redFlag:80, redLabel:'Recessionary levels', tx: v => Math.max(0, 100-v) },
+    savings_rate: { name:'Savings Rate', role:'lagging', weight:0.7, series:'PSAVERT', source:'middle_class_decline', dir:'low', redFlag:75, redLabel:'Household fragility', tx: v => Math.max(0, Math.min(100, 100 - v*5)) },
   };
   const scores = [];
   Object.entries(SPECS).forEach(([id, sp]) => {
@@ -391,7 +391,7 @@ function StressOverview({ indicatorData }) {
           ? (sp.tx ? sp.tx(raw) : Math.max(0, 100-raw))
           : (sp.tx ? sp.tx(raw) : Math.min(100, raw));
         const lastDate = pts[pts.length-1].date_value ? pts[pts.length-1].date_value.substring(0,7) : '?';
-        scores.push({ id, name:sp.name, raw, stress:Math.round(stress), role:sp.role, lastDate,
+        scores.push({ id, name:sp.name, raw, stress:Math.round(stress), role:sp.role, weight:sp.weight||1.0, lastDate,
           redFlag:sp.redFlag, redLabel:sp.redLabel, isRedFlag: stress >= sp.redFlag });
       }
     }
@@ -399,8 +399,10 @@ function StressOverview({ indicatorData }) {
   if (!scores.length) return null;
 
   // Geometric aggregation (Fix #2)
-  const geoProduct = scores.reduce((acc, s) => acc + Math.log(Math.max(s.stress, 1)), 0);
-  const geometric = Math.round(Math.exp(geoProduct / scores.length));
+  const weights = scores.map(s => s.weight || 1.0);
+  const totalWeight = weights.reduce((a, b) => a + b, 0);
+  const geoProduct = scores.reduce((acc, s, i) => acc + weights[i] * Math.log(Math.max(s.stress, 1)), 0);
+  const geometric = Math.round(Math.exp(geoProduct / totalWeight));
   const arithmetic = Math.round(scores.reduce((s, x) => s + x.stress, 0) / scores.length);
 
   // Monte Carlo sensitivity (Fix #1) — 1000 client-side sims
@@ -408,7 +410,8 @@ function StressOverview({ indicatorData }) {
   const rng = (seed) => { let s = seed; return () => { s = (s*16807)%2147483647; return s/2147483647; }; };
   const rand = rng(42);
   for (let i = 0; i < 1000; i++) {
-    const wts = scores.map(() => 0.5 + rand()*1.0);
+    const baseWts = scores.map(s => s.weight || 1.0);
+    const wts = baseWts.map(bw => bw * (0.5 + rand()*1.0));
     const tw = wts.reduce((a,b) => a+b, 0);
     const ls = scores.reduce((acc, s, j) => acc + wts[j]*Math.log(Math.max(s.stress, 1)), 0);
     sims.push(Math.exp(ls / tw));
@@ -436,10 +439,10 @@ function StressOverview({ indicatorData }) {
           <span className="stress-label">Composite Stress Index</span>
           <span className="stress-scale">0 = no stress · 100 = critical</span>
           <span style={{display:'block',marginTop:'6px',font:'400 10px var(--font-mono)',color:'var(--text-muted)',letterSpacing:'.5px'}}>
-            90% CI: [{ciLo}, {ciHi}] · width: {ciW}
+            90% sensitivity CI: [{ciLo}, {ciHi}] · width: {ciW}
           </span>
           <span style={{display:'block',marginTop:'4px',font:'400 9px var(--font-mono)',color:'var(--text-muted)'}}>
-            {ciW < 20 ? 'Robust to weight changes' : 'Sensitive to weight choices'} · Geometric mean
+            {ciW < 20 ? 'Weight-robust' : 'Weight-sensitive'} · Weighted geometric mean
           </span>
         </div>
         <div style={{display:'flex',flexDirection:'column',gap:'16px'}}>
@@ -472,7 +475,7 @@ function StressOverview({ indicatorData }) {
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(140px, 1fr))',gap:'8px',marginTop:'8px'}}>
             <div style={{padding:'8px 10px',background:'var(--bg-accent)',borderRadius:'4px'}}>
               <div style={{font:'500 9px var(--font-mono)',color:'var(--text-muted)',letterSpacing:'1px',textTransform:'uppercase'}}>Method</div>
-              <div style={{font:'400 11px var(--font-mono)',color:'var(--text-secondary)',marginTop:'2px'}}>Geometric mean</div>
+              <div style={{font:'400 11px var(--font-mono)',color:'var(--text-secondary)',marginTop:'2px'}}>Weighted geometric mean</div>
               <div style={{font:'400 9px var(--font-mono)',color:'var(--text-muted)',marginTop:'2px'}}>Arithmetic: {arithmetic}</div>
             </div>
             <div style={{padding:'8px 10px',background:'var(--bg-accent)',borderRadius:'4px'}}>
@@ -487,8 +490,11 @@ function StressOverview({ indicatorData }) {
             <div style={{padding:'8px 10px',background:'var(--bg-accent)',borderRadius:'4px'}}>
               <div style={{font:'500 9px var(--font-mono)',color:'var(--text-muted)',letterSpacing:'1px',textTransform:'uppercase'}}>Version</div>
               <div style={{font:'400 11px var(--font-mono)',color:'var(--text-secondary)',marginTop:'2px'}}>Methodology v3.0</div>
-              <div style={{font:'400 9px var(--font-mono)',color:'var(--text-muted)',marginTop:'2px'}}>9 indicators · SDT + augmented</div>
+              <div style={{font:'400 9px var(--font-mono)',color:'var(--text-muted)',marginTop:'2px'}}>Leading: 1.0 · Coincident: 1.0 · Lagging: 0.7</div>
             </div>
+          <div style={{marginTop:'12px',font:'400 10px var(--font-mono)',color:'var(--text-muted)',lineHeight:1.5,fontStyle:'italic'}}>
+            Temporal alignment: Each indicator uses its most recent observation (dates shown). The composite blends data from different periods. Sensitivity CI reflects weight uncertainty only, not measurement or sampling error.
+          </div>
           </div>
         </div>
       </div>

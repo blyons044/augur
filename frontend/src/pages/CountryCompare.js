@@ -80,6 +80,9 @@ function CountryCompare() {
 
   return (
     <div className="app compare-page">
+      <div className="comparability-warning" style={{margin:'0 0 24px',padding:'12px 16px',background:'rgba(224,160,48,0.08)',border:'1px solid rgba(224,160,48,0.2)',borderRadius:'4px',font:'400 11px var(--font-mono)',color:'var(--text-muted)',lineHeight:1.6}}>
+        <strong>Cross-country comparability notice.</strong> Some indicators use different measurement instruments across countries (e.g., Gallup Congressional approval vs. Gallup World Poll government confidence). Series marked with equivalent constructs are comparable; others should be interpreted as within-country trends only. See <a href="/methodology" style={{color:'var(--text-secondary)'}}>Methodology</a> for full equivalence documentation.
+      </div>
       <header className="indicator-header">
         <span className="section-label">Head to Head</span>
         <h1 className="indicator-page-title">Country Comparison</h1>

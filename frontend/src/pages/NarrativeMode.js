@@ -143,7 +143,7 @@ function NarrativeMode({ indicatorData }) {
     <div className="app narrative-page">
       <div className="editorial-disclaimer">
         <span className="disclaimer-label">EDITORIAL ANALYSIS</span>
-        <span className="disclaimer-text">This guided walkthrough presents data with interpretive context. For raw data without editorial framing, use the <a href="/dashboard">Dashboard</a> or <a href="/api-docs">API</a>.</span>
+        <span className="disclaimer-text">This page presents data with editorial interpretation. Narrative framing reflects the authors' analysis, not objective truth. The underlying data is neutral, publicly sourced, and available for independent analysis via the <a href="/dashboard">Dashboard</a> or <a href="/api-docs">API</a>. All factual claims are sourced. Readers are encouraged to draw their own conclusions from the raw data.</span>
       </div>
       <div className="narrative-progress">
         <div className="narrative-progress-fill" style={{width: ((chapter+1)/CHAPTERS.length*100)+'%'}} />

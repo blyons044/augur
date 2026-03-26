@@ -106,6 +106,9 @@ function CountryRankings() {
 
   if (loading) return (
     <div className="loading-screen">
+      <div className="rankings-caveat" style={{margin:'0 0 24px',padding:'12px 16px',background:'rgba(224,160,48,0.08)',border:'1px solid rgba(224,160,48,0.2)',borderRadius:'4px',font:'400 11px var(--font-mono)',color:'var(--text-muted)',lineHeight:1.6}}>
+        <strong>Ranking limitations.</strong> Country rankings use internationally comparable data sources (World Bank, IMF) where available. Not all indicators have equivalent cross-country measures — rankings reflect only indicators with valid international data. Countries with fewer than 67% indicator coverage are flagged. See <a href="/methodology" style={{color:'var(--text-secondary)'}}>Methodology: Missing Data Policy</a>.
+      </div>
       <h1 className="augur-title">AUGUR</h1>
       <p className="loading-text">Loading cross-country data for 50 nations...</p>
     </div>

@@ -370,6 +370,9 @@ function IndicatorPage({ indicatorData, loading, error }) {
 
   return (
     <div className="app indicator-page">
+      <div className="indicator-methodology-note" style={{margin:'0 0 16px',padding:'10px 14px',borderLeft:'3px solid rgba(96,144,192,0.4)',font:'400 11px var(--font-mono)',color:'var(--text-muted)',lineHeight:1.5}}>
+        All data on this page traces to a publicly available primary source. Transformations are documented in the <a href="/methodology" style={{color:'var(--text-secondary)'}}>Methodology</a>. Raw data is available via the <a href="/api-docs" style={{color:'var(--text-secondary)'}}>API</a>.
+      </div>
       
 
       <header className="indicator-header">

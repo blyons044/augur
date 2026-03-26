@@ -44,7 +44,7 @@ function MethodologyPage() {
           Augur is grounded in structural-demographic theory (Turchin 2003, 2016; Goldstone 1991) but augments it with indicators for epistemic cohesion and consumer sentiment not in the core SDT model. These augmented indicators are tagged as such. Users who wish to compute a pure SDT score can exclude them.
         </p>
         <p style={{font:"400 14px var(--font-body)",color:"var(--text-secondary)",lineHeight:1.7}}>
-          Augur does not predict collapse or specific events. It measures structural conditions that historical research identifies as instability precursors. Like a blood pressure reading — it identifies risk factors, not outcomes.
+          Augur does not predict collapse, specific events, or their timing. External validation confirms it correlates with cumulative structural decay (deaths of despair, institutional erosion) but not with contingent events (protests, terrorism). Like a blood pressure reading — it identifies risk factors, not outcomes.
         </p>
       </section>
 
