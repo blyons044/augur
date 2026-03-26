@@ -404,3 +404,9 @@
 @media(max-width:768px){.dashboard-tabs{overflow-x:auto;flex-wrap:nowrap}.dash-tab{white-space:nowrap;padding:10px 14px;font-size:9px}}
 
 .tab-hidden{display:none}
+
+.academic-citations{margin-top:24px;padding-top:20px;border-top:1px solid var(--border)}
+.citations-label{font:500 9px var(--font-mono);letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:12px}
+.citation-entry{font:300 13px/1.7 var(--font-body);color:var(--text-secondary);margin-bottom:8px}
+.citation-entry strong{color:var(--text-primary);font-weight:500}
+.citation-entry em{color:var(--text-secondary);font-style:italic}

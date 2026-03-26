@@ -153,7 +153,23 @@ Audit logs are stored in `data/audit/` and can be independently verified.
 ## 11. Citation
 
 To cite Augur in academic work:
-## 12. License
+## 12. Intellectual Foundations
+
+Augur's framework draws on several bodies of academic work:
+
+- **Peter Turchin**, *Ages of Discord* (2016) and *End Times* (2023). Structural-demographic theory identifying elite overproduction, popular immiseration, and state fiscal crisis as quantifiable precursors to political instability. Turchin's work on cliodynamics — the mathematical modeling of historical dynamics — directly informed Augur's indicator selection, particularly the elite overproduction, wealth inequality, and political polarization indicators.
+
+- **Joseph Tainter**, *The Collapse of Complex Societies* (1988). The theory that civilizations collapse when the marginal returns on increasing complexity become negative. Informed Augur's systemic capacity pillar.
+
+- **Ray Dalio**, *Principles for Dealing with the Changing World Order* (2021). Quantitative framework for comparing reserve currency cycles and great power transitions across history. Informed the geopolitical standing and currency debasement indicators.
+
+- **Daron Acemoglu and James Robinson**, *Why Nations Fail* (2012). The argument that institutional quality — not geography, culture, or resources — is the primary determinant of long-run national outcomes. Informed the rule of law and institutional trust indicators.
+
+- **Carmen Reinhart and Kenneth Rogoff**, *This Time Is Different* (2009). Eight centuries of financial crisis data showing recurring patterns in sovereign debt, banking crises, and currency debasement.
+
+Augur does not claim to replicate or validate any of these frameworks. It measures structural conditions using publicly available data and presents them without editorial interpretation. The intellectual debt to these scholars is acknowledged and appreciated.
+
+## 13. License
 
 Augur is fully open source. Data is sourced from public APIs and government databases. The codebase, methodology, and derived datasets are available under MIT License.
 

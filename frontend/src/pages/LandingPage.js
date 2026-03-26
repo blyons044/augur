@@ -273,6 +273,13 @@ function LandingPage() {
               structural shifts have on all of us. Resilience scales. A prepared
               community weathers what an unprepared one doesn't.
             </p>
+            <div className="academic-citations">
+              <span className="citations-label">Augur's framework draws on</span>
+              <p className="citation-entry"><strong>Peter Turchin</strong> — <em>Ages of Discord</em> (2016), <em>End Times</em> (2023). Structural-demographic theory: elite overproduction, popular immiseration, and state fiscal crisis as measurable precursors to political instability.</p>
+              <p className="citation-entry"><strong>Joseph Tainter</strong> — <em>The Collapse of Complex Societies</em> (1988). Diminishing returns on complexity as a structural driver of civilizational decline.</p>
+              <p className="citation-entry"><strong>Ray Dalio</strong> — <em>Principles for Dealing with the Changing World Order</em> (2021). Quantitative comparison of reserve currency cycles and great power transitions.</p>
+              <p className="citation-entry"><strong>Daron Acemoglu &amp; James Robinson</strong> — <em>Why Nations Fail</em> (2012). Institutional quality as the primary determinant of long-run national outcomes.</p>
+            </div>
           </div>
         </div>
       </section>
