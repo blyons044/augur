@@ -369,51 +369,82 @@ function EmpireArc() {
 }
 
 function StressOverview({ indicatorData }) {
-  const SPECS = {
-    institutional_trust: { name:'Institutional Trust', role:'leading', series:'gallup_congress', source:'public_trust', dir:'low', redFlag:85, redLabel:'Below crisis threshold' },
-    political_polarization: { name:'Polarization', role:'leading', series:'dw_nominate_House_200', source:'political_polarization', dir:'high', redFlag:80, redLabel:'Historically extreme', tx: v => Math.min(100, v*150) },
-    debt_burden: { name:'Debt Burden', role:'coincident', series:'GFDEGDQ188S', source:'debt_to_gdp', dir:'high', redFlag:90, redLabel:'Exceeds sustainability threshold', tx: v => Math.min(100, v*0.8) },
-    wealth_concentration: { name:'Wealth Concentration', role:'leading', series:'WFRBST01134', source:'wealth_inequality', dir:'high', redFlag:80, redLabel:'Gilded Age levels', tx: v => Math.min(100, v*2.5) },
-    epistemic_fracture: { name:'Epistemic Fracture', role:'coincident', series:'gallup_news_trust', source:'media_fragmentation', dir:'low', redFlag:75, redLabel:'Below functional democracy threshold' },
-    employment_ratio: { name:'Employment Ratio', role:'coincident', series:'EMRATIO', source:'elite_overproduction', dir:'low', redFlag:80, redLabel:'Below historical trend', tx: v => Math.max(0, 100-v) },
-    unemployment: { name:'Unemployment', role:'lagging', weight:0.7, series:'UNRATE', source:'elite_overproduction', dir:'high', redFlag:85, redLabel:'Above structural rate', tx: v => Math.min(100, v*10) },
-    consumer_sentiment: { name:'Consumer Sentiment', role:'lagging', weight:0.7, series:'UMCSENT', source:'middle_class_decline', dir:'low', redFlag:80, redLabel:'Recessionary levels', tx: v => Math.max(0, 100-v) },
-    savings_rate: { name:'Savings Rate', role:'lagging', weight:0.7, series:'PSAVERT', source:'middle_class_decline', dir:'low', redFlag:75, redLabel:'Household fragility', tx: v => Math.max(0, Math.min(100, 100 - v*5)) },
-  };
-  const scores = [];
-  Object.entries(SPECS).forEach(([id, sp]) => {
-    const src = indicatorData[sp.source];
-    if (src && src.data) {
-      const pts = src.data.filter(d => d.series_id === sp.series && d.value != null);
-      if (pts.length) {
-        const raw = pts[pts.length-1].value;
-        let stress = sp.dir === 'low'
-          ? (sp.tx ? sp.tx(raw) : Math.max(0, 100-raw))
-          : (sp.tx ? sp.tx(raw) : Math.min(100, raw));
-        const lastDate = pts[pts.length-1].date_value ? pts[pts.length-1].date_value.substring(0,7) : '?';
-        scores.push({ id, name:sp.name, raw, stress:Math.round(stress), role:sp.role, weight:sp.weight||1.0, lastDate,
-          redFlag:sp.redFlag, redLabel:sp.redLabel, isRedFlag: stress >= sp.redFlag });
+  const PILLARS = {
+    elite: {
+      name: 'Elite dysfunction', domain: 'elite', weight: 1.0,
+      indicators: {
+        political_polarization: { name:'Polarization', series:'dw_nominate_House_200', source:'political_polarization', dir:'high', redFlag:80, redLabel:'Historically extreme', tx: v => Math.min(100, v*150) },
+        wealth_concentration: { name:'Wealth concentration', series:'WFRBST01134', source:'wealth_inequality', dir:'high', redFlag:80, redLabel:'Gilded Age levels', tx: v => Math.min(100, v*2.5) },
       }
+    },
+    state: {
+      name: 'State capacity', domain: 'state', weight: 1.0,
+      indicators: {
+        institutional_trust: { name:'Institutional trust', series:'gallup_congress', source:'public_trust', dir:'low', redFlag:85, redLabel:'Below crisis threshold' },
+        debt_burden: { name:'Debt burden', series:'GFDEGDQ188S', source:'debt_to_gdp', dir:'high', redFlag:90, redLabel:'Exceeds sustainability threshold', tx: v => Math.min(100, v*0.8) },
+      }
+    },
+    population: {
+      name: 'Popular wellbeing', domain: 'population', weight: 1.0,
+      indicators: {
+        employment_ratio: { name:'Employment ratio', series:'EMRATIO', source:'elite_overproduction', dir:'low', redFlag:80, redLabel:'Below historical trend', tx: v => Math.max(0, 100-v) },
+        unemployment: { name:'Unemployment', series:'UNRATE', source:'elite_overproduction', dir:'high', redFlag:85, redLabel:'Above structural rate', tx: v => Math.min(100, v*10) },
+        consumer_sentiment: { name:'Consumer sentiment', series:'UMCSENT', source:'middle_class_decline', dir:'low', redFlag:80, redLabel:'Recessionary levels', tx: v => Math.max(0, 100-v) },
+        savings_rate: { name:'Savings rate', series:'PSAVERT', source:'middle_class_decline', dir:'low', redFlag:75, redLabel:'Household fragility', tx: v => Math.max(0, Math.min(100, 100 - v*5)) },
+      }
+    },
+    epistemic: {
+      name: 'Epistemic environment', domain: 'augmented', weight: 1.0,
+      indicators: {
+        epistemic_fracture: { name:'Media trust', series:'gallup_news_trust', source:'media_fragmentation', dir:'low', redFlag:75, redLabel:'Below functional democracy threshold' },
+      }
+    },
+  };
+
+  const allScores = [];
+  const pillarScores = {};
+
+  Object.entries(PILLARS).forEach(([pillarId, pillar]) => {
+    const pScores = [];
+    Object.entries(pillar.indicators).forEach(([id, sp]) => {
+      const src = indicatorData[sp.source];
+      if (src && src.data) {
+        const pts = src.data.filter(d => d.series_id === sp.series && d.value != null);
+        if (pts.length) {
+          const raw = pts[pts.length-1].value;
+          const lastDate = pts[pts.length-1].date_value ? pts[pts.length-1].date_value.substring(0,7) : '?';
+          let stress = sp.dir === 'low'
+            ? (sp.tx ? sp.tx(raw) : Math.max(0, 100-raw))
+            : (sp.tx ? sp.tx(raw) : Math.min(100, raw));
+          const s = { id, name:sp.name, raw, stress:Math.round(stress), pillarId, pillarName:pillar.name,
+            domain:pillar.domain, lastDate, redFlag:sp.redFlag, redLabel:sp.redLabel, isRedFlag: stress >= sp.redFlag };
+          pScores.push(s);
+          allScores.push(s);
+        }
+      }
+    });
+    if (pScores.length > 0) {
+      const logSum = pScores.reduce((acc, s) => acc + Math.log(Math.max(s.stress, 1)), 0);
+      pillarScores[pillarId] = { name: pillar.name, score: Math.round(Math.exp(logSum / pScores.length)), n: pScores.length, domain: pillar.domain, weight: pillar.weight };
     }
   });
-  if (!scores.length) return null;
 
-  // Geometric aggregation (Fix #2)
-  const weights = scores.map(s => s.weight || 1.0);
-  const totalWeight = weights.reduce((a, b) => a + b, 0);
-  const geoProduct = scores.reduce((acc, s, i) => acc + weights[i] * Math.log(Math.max(s.stress, 1)), 0);
-  const geometric = Math.round(Math.exp(geoProduct / totalWeight));
-  const arithmetic = Math.round(scores.reduce((s, x) => s + x.stress, 0) / scores.length);
+  if (Object.keys(pillarScores).length === 0) return null;
 
-  // Monte Carlo sensitivity (Fix #1) — 1000 client-side sims
+  const pEntries = Object.values(pillarScores);
+  const totalWeight = pEntries.reduce((a, p) => a + p.weight, 0);
+  const compLogSum = pEntries.reduce((acc, p) => acc + p.weight * Math.log(Math.max(p.score, 1)), 0);
+  const geometric = Math.round(Math.exp(compLogSum / totalWeight));
+  const arithmetic = Math.round(pEntries.reduce((a, p) => a + p.score * p.weight, 0) / totalWeight);
+
+  // Monte Carlo on pillar weights
   const sims = [];
   const rng = (seed) => { let s = seed; return () => { s = (s*16807)%2147483647; return s/2147483647; }; };
   const rand = rng(42);
   for (let i = 0; i < 1000; i++) {
-    const baseWts = scores.map(s => s.weight || 1.0);
-    const wts = baseWts.map(bw => bw * (0.5 + rand()*1.0));
+    const wts = pEntries.map(p => p.weight * (0.5 + rand()*1.0));
     const tw = wts.reduce((a,b) => a+b, 0);
-    const ls = scores.reduce((acc, s, j) => acc + wts[j]*Math.log(Math.max(s.stress, 1)), 0);
+    const ls = pEntries.reduce((acc, p, j) => acc + wts[j]*Math.log(Math.max(p.score, 1)), 0);
     sims.push(Math.exp(ls / tw));
   }
   sims.sort((a,b) => a-b);
@@ -421,15 +452,12 @@ function StressOverview({ indicatorData }) {
   const ciHi = Math.round(sims[Math.floor(sims.length*0.95)]);
   const ciW = ciHi - ciLo;
 
-  const redFlags = scores.filter(s => s.isRedFlag);
-  const leading = scores.filter(s => s.role === 'leading');
-  const lagging = scores.filter(s => s.role === 'lagging');
-  const leadAvg = leading.length ? Math.round(leading.reduce((a,s) => a+s.stress, 0)/leading.length) : 0;
-  const lagAvg = lagging.length ? Math.round(lagging.reduce((a,s) => a+s.stress, 0)/lagging.length) : 0;
-  const gap = leadAvg - lagAvg;
-  const coverage = Math.round((scores.length / Object.keys(SPECS).length) * 100);
-  const roleColor = { leading:'#e04040', coincident:'#e0a030', lagging:'#6090c0' };
-  const roleBg = { leading:'rgba(224,64,64,0.12)', coincident:'rgba(224,160,48,0.12)', lagging:'rgba(96,144,192,0.12)' };
+  const redFlags = allScores.filter(s => s.isRedFlag);
+  const pillarColor = { elite:'#e04040', state:'#5080c0', population:'#e0a030', epistemic:'#40c080' };
+  const pillarBg = { elite:'rgba(224,64,64,0.12)', state:'rgba(80,128,192,0.12)', population:'rgba(224,160,48,0.12)', epistemic:'rgba(64,192,128,0.12)' };
+  const dates = allScores.map(s => s.lastDate).filter(d => d !== '?').sort();
+  const oldest = dates[0] || '?';
+  const newest = dates[dates.length-1] || '?';
 
   return (
     <div className="stress-overview">
@@ -442,7 +470,7 @@ function StressOverview({ indicatorData }) {
             90% sensitivity CI: [{ciLo}, {ciHi}] · width: {ciW}
           </span>
           <span style={{display:'block',marginTop:'4px',font:'400 9px var(--font-mono)',color:'var(--text-muted)'}}>
-            {ciW < 20 ? 'Weight-robust' : 'Weight-sensitive'} · Weighted geometric mean
+            {ciW < 20 ? 'Weight-robust' : 'Weight-sensitive'} · Pillar-level geometric
           </span>
         </div>
         <div style={{display:'flex',flexDirection:'column',gap:'16px'}}>
@@ -458,12 +486,21 @@ function StressOverview({ indicatorData }) {
               ))}
             </div>
           )}
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(140px, 1fr))',gap:'10px'}}>
+            {Object.entries(pillarScores).map(([pid, p]) => (
+              <div key={pid} style={{padding:'12px',background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:'4px',borderLeft:'3px solid '+pillarColor[pid]}}>
+                <div style={{font:'500 10px var(--font-mono)',color:pillarColor[pid],letterSpacing:'1px',textTransform:'uppercase',marginBottom:'4px'}}>{p.name}</div>
+                <div style={{font:'400 28px var(--font-display)',color:'var(--text-bright)'}}>{p.score}</div>
+                <div style={{font:'400 9px var(--font-mono)',color:'var(--text-muted)',marginTop:'2px'}}>{p.n} indicator{p.n>1?'s':''} · {p.domain}</div>
+              </div>
+            ))}
+          </div>
           <div className="stress-bars">
-            {scores.sort((a,b) => b.stress-a.stress).map(s => (
+            {allScores.sort((a,b) => b.stress-a.stress).map(s => (
               <div className="stress-bar-row" key={s.id}>
                 <span className="stress-bar-name" style={{display:'flex',alignItems:'center',gap:'6px'}}>
                   {s.name}
-                  <span style={{font:'400 8px var(--font-mono)',padding:'1px 5px',borderRadius:'3px',letterSpacing:'.5px',color:roleColor[s.role],background:roleBg[s.role],textTransform:'uppercase'}}>{s.role}</span>
+                  <span style={{font:'400 8px var(--font-mono)',padding:'1px 5px',borderRadius:'3px',letterSpacing:'.5px',color:pillarColor[s.pillarId],background:pillarBg[s.pillarId],textTransform:'uppercase'}}>{s.pillarName.split(' ')[0]}</span>
                 </span>
                 <div className="stress-bar-track">
                   <div className="stress-bar-fill" style={{width:s.stress+'%',background:s.isRedFlag?'var(--red)':s.stress>50?'var(--amber)':'var(--green)'}} />
@@ -472,29 +509,26 @@ function StressOverview({ indicatorData }) {
               </div>
             ))}
           </div>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(140px, 1fr))',gap:'8px',marginTop:'8px'}}>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(140px, 1fr))',gap:'8px',marginTop:'4px'}}>
             <div style={{padding:'8px 10px',background:'var(--bg-accent)',borderRadius:'4px'}}>
               <div style={{font:'500 9px var(--font-mono)',color:'var(--text-muted)',letterSpacing:'1px',textTransform:'uppercase'}}>Method</div>
-              <div style={{font:'400 11px var(--font-mono)',color:'var(--text-secondary)',marginTop:'2px'}}>Weighted geometric mean</div>
+              <div style={{font:'400 11px var(--font-mono)',color:'var(--text-secondary)',marginTop:'2px'}}>Pillar → composite geometric</div>
               <div style={{font:'400 9px var(--font-mono)',color:'var(--text-muted)',marginTop:'2px'}}>Arithmetic: {arithmetic}</div>
             </div>
             <div style={{padding:'8px 10px',background:'var(--bg-accent)',borderRadius:'4px'}}>
               <div style={{font:'500 9px var(--font-mono)',color:'var(--text-muted)',letterSpacing:'1px',textTransform:'uppercase'}}>Coverage</div>
-              <div style={{font:'400 11px var(--font-mono)',color:'var(--text-secondary)',marginTop:'2px'}}>{scores.length}/{Object.keys(SPECS).length} indicators ({coverage}%)</div>
+              <div style={{font:'400 11px var(--font-mono)',color:'var(--text-secondary)',marginTop:'2px'}}>{allScores.length} indicators · {Object.keys(pillarScores).length} pillars</div>
             </div>
             <div style={{padding:'8px 10px',background:'var(--bg-accent)',borderRadius:'4px'}}>
-              <div style={{font:'500 9px var(--font-mono)',color:'var(--text-muted)',letterSpacing:'1px',textTransform:'uppercase'}}>Leading vs Lagging</div>
-              <div style={{font:'400 11px var(--font-mono)',color:'var(--text-secondary)',marginTop:'2px'}}>{leadAvg} vs {lagAvg} ({gap > 0 ? '+' : ''}{gap})</div>
-              <div style={{font:'400 9px var(--font-mono)',color:'var(--text-muted)',marginTop:'2px'}}>{gap > 10 ? 'Stress building' : gap < -10 ? 'Worst may be past' : 'In balance'}</div>
+              <div style={{font:'500 9px var(--font-mono)',color:'var(--text-muted)',letterSpacing:'1px',textTransform:'uppercase'}}>Data vintage</div>
+              <div style={{font:'400 11px var(--font-mono)',color:'var(--text-secondary)',marginTop:'2px'}}>{oldest} to {newest}</div>
+              <div style={{font:'400 9px var(--font-mono)',color:'var(--text-muted)',marginTop:'2px'}}>Not a synchronized snapshot</div>
             </div>
             <div style={{padding:'8px 10px',background:'var(--bg-accent)',borderRadius:'4px'}}>
               <div style={{font:'500 9px var(--font-mono)',color:'var(--text-muted)',letterSpacing:'1px',textTransform:'uppercase'}}>Version</div>
-              <div style={{font:'400 11px var(--font-mono)',color:'var(--text-secondary)',marginTop:'2px'}}>Methodology v3.0</div>
-              <div style={{font:'400 9px var(--font-mono)',color:'var(--text-muted)',marginTop:'2px'}}>Leading: 1.0 · Coincident: 1.0 · Lagging: 0.7</div>
+              <div style={{font:'400 11px var(--font-mono)',color:'var(--text-secondary)',marginTop:'2px'}}>Methodology v3.1</div>
+              <div style={{font:'400 9px var(--font-mono)',color:'var(--text-muted)',marginTop:'2px'}}>4 pillars · SDT-aligned</div>
             </div>
-          <div style={{marginTop:'12px',font:'400 10px var(--font-mono)',color:'var(--text-muted)',lineHeight:1.5,fontStyle:'italic'}}>
-            Temporal alignment: Each indicator uses its most recent observation (dates shown). The composite blends data from different periods. Sensitivity CI reflects weight uncertainty only, not measurement or sampling error.
-          </div>
           </div>
         </div>
       </div>
