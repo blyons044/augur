@@ -153,6 +153,21 @@ Audit logs are stored in `data/audit/` and can be independently verified.
 ## 11. Citation
 
 To cite Augur in academic work:
+BibTeX:
+```bibtex
+@misc{augur2026,
+  title={Augur: Civilizational Stress Index},
+  author={Adkins, Becca},
+  year={2026},
+  url={https://augur-index.vercel.app},
+  note={Open source. 300,000+ data points across 50 countries from 10 primary sources.}
+}
+```
+
+(Original heading kept for reference)
+## 11-old. Citation
+
+To cite Augur in academic work:
 ## 12. Intellectual Foundations
 
 Augur's framework draws on several bodies of academic work:
