@@ -101,7 +101,7 @@ function LandingPage() {
         <div className="hero-bg" style={{ transform: `translateY(${scrollY * 0.3}px)` }} />
         <canvas ref={canvasRef} className="hero-particles" />
         <div className="hero-content">
-          <p className="hero-pre">Every empire before yours has fallen</p>
+          <p className="hero-pre">The data underneath the headlines</p>
           <h1 className="hero-title">AUGUR</h1>
           <p className="hero-subtitle">Civilizational Stress Index</p>
           <p className="hero-description">
@@ -190,7 +190,7 @@ function LandingPage() {
       <section className={`content-section reveal-section ${isVisible('history') ? 'visible' : ''}`} id="history">
         <div className="section-inner">
           <span className="section-label">The Historical Pattern</span>
-          <h2 className="section-title">Every empire before America has fallen</h2>
+          <h2 className="section-title">Every empire before America has declined</h2>
           <p className="section-body-intro">
             This is the most consistent pattern in recorded history. Rome,
             the Ottomans, the British, the Spanish — each followed structurally

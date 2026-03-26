@@ -194,7 +194,7 @@ function CompositeTimeline({ indicatorData }) {
     <div className={'composite-timeline' + (mounted ? ' composite-timeline-visible' : '')}>
       <div className="composite-timeline-header">
         <span className="empire-arc-label">Composite Stress Index Over Time</span>
-        <span className="empire-arc-sublabel">Backtested from historical data across all available indicators</span>
+        <span className="empire-arc-sublabel">Arithmetic composite (legacy v1.0 method). Current pillar-level score: see above</span>
       </div>
       <svg ref={ref} viewBox="0 0 900 260" className="composite-timeline-chart" />
     </div>
@@ -825,7 +825,7 @@ function Dashboard({ indicators, indicatorData }) {
               AUS: 21, KOR: 30, ITA: 38, BRA: 55, IND: 58, CHN: 62,
             };
             
-            peerScores.USA = 82;
+            peerScores.USA = 71;
 
             peers.forEach(p => {
               if (peerScores[p.code] !== undefined) p.score = peerScores[p.code];
